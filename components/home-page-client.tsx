@@ -17,17 +17,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  // Prefetch other pages
-  useEffect(() => {
-    const prefetchPages = async () => {
-      await Promise.all([
-        import('@/app/webshop/page'),
-        import('@/app/contact/page'),
-      ]);
-    };
-    prefetchPages();
-  }, []);
-
   const currentYear = new Date().getFullYear();
 
   const isHungarian = language === "hu";
@@ -154,7 +143,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             )}
             
             {/* Title overlay at bottom of image */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-7 pt-16">>
+            <div className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-7 pt-16">
               <h1
                 key={`title-${language}`}
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
