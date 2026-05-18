@@ -41,6 +41,144 @@ function formatPrice(price: { unitAmount?: number; currency: string }): string {
   return formatter.format(amount);
 }
 
+function ImageCard({
+  item,
+  index,
+  labels,
+  isActive,
+  setActiveItem,
+  selectedPrice,
+  setSelectedPrice,
+  loading,
+  handleCheckout,
+  menuRef,
+}: {
+  item: MediaItem;
+  index: number;
+  labels: {
+    buyPrint: string;
+    loading: string;
+    freeShipping: string;
+    addToCart: string;
+  };
+  isActive: boolean;
+  setActiveItem: (id: string | null) => void;
+  selectedPrice: Record<string, string>;
+  setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  loading: Record<string, boolean>;
+  handleCheckout: (item: MediaItem) => void;
+  menuRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const hasSelectedSize = !!selectedPrice[item.id];
+  const selectedPriceObj = item.prices.find(p => p.id === selectedPrice[item.id]);
+
+  // First 6 images load eagerly, rest lazy
+  const shouldLoadEagerly = index < 6;
+
+  return (
+    <div
+      className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white"
+      style={{ opacity: imageLoaded ? 1 : 0, transition: "opacity 300ms ease-out" }}
+    >
+      {/* Image container */}
+      <div className="relative">
+        {/* Skeleton while loading */}
+        {!imageLoaded && (
+          <div className="w-full aspect-[4/3] animate-pulse bg-neutral-200" />
+        )}
+
+        {/* Image - natural aspect ratio */}
+        <img
+          src={item.viewUrl}
+          alt={item.title}
+          className={`w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02] ${imageLoaded ? "block" : "hidden"}`}
+          loading={shouldLoadEagerly ? "eager" : "lazy"}
+          fetchPriority={shouldLoadEagerly ? "high" : "low"}
+          decoding={shouldLoadEagerly ? "sync" : "async"}
+          onLoad={() => setImageLoaded(true)}
+        />
+
+        {/* Cart button - bottom right corner */}
+        {imageLoaded && item.prices && item.prices.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setActiveItem(isActive ? null : item.id)}
+            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
+            aria-label={labels.buyPrint}
+          >
+            {isActive ? (
+              <IconX className="size-5 text-text-dark" />
+            ) : (
+              <IconShoppingBag className="size-5 text-text-dark" />
+            )}
+          </button>
+        )}
+
+        {/* Menu overlay */}
+        {isActive && item.prices && (
+          <div
+            ref={menuRef}
+            className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
+          >
+            <h3 className="font-display text-sm font-semibold mb-3">{item.title}</h3>
+
+            {/* Size buttons */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {item.prices
+                .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
+                .map((price) => (
+                  <button
+                    key={price.id}
+                    type="button"
+                    onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
+                    className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
+                      selectedPrice[item.id] === price.id
+                        ? "border-primary bg-primary/10 font-medium text-primary"
+                        : "border-neutral-border hover:border-primary/50"
+                    }`}
+                  >
+                    {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
+                  </button>
+                ))}
+            </div>
+
+            {/* Price (only after size selection) */}
+            {hasSelectedSize && selectedPriceObj && (
+              <p className="text-lg font-semibold text-primary mb-3">
+                {formatPrice(selectedPriceObj)}
+              </p>
+            )}
+
+            {/* Add to cart */}
+            <button
+              type="button"
+              onClick={() => handleCheckout(item)}
+              disabled={loading[item.id] || !hasSelectedSize}
+              className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading[item.id] ? labels.loading : labels.addToCart}
+            </button>
+
+            <p className="mt-2 text-center text-xs text-text-muted">
+              {labels.freeShipping}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Title - only show when image loaded */}
+      {imageLoaded && (
+        <div className="p-3">
+          <h3 className="font-display text-sm font-medium text-text-dark">
+            {item.title}
+          </h3>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
@@ -57,33 +195,6 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Reveal animation
-  useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (!nodes.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
-    );
-
-    const raf = window.requestAnimationFrame(() => {
-      nodes.forEach((node) => observer.observe(node));
-    });
-
-    return () => {
-      window.cancelAnimationFrame(raf);
-      observer.disconnect();
-    };
   }, []);
 
   const handleCheckout = async (item: MediaItem) => {
@@ -156,7 +267,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
         <section className="pt-6 pb-10">
-          <div data-reveal>
+          <div>
             <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
               {labels.subtitle}
             </h2>
@@ -170,105 +281,21 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           <section className="pb-10">
             {/* Masonry-style grid using columns */}
             <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
-              {items.map((item, i) => {
-                const isActive = activeItem === item.id;
-                const hasSelectedSize = !!selectedPrice[item.id];
-                const selectedPriceObj = item.prices.find(p => p.id === selectedPrice[item.id]);
-
-                return (
-                  <div
-                    key={item.id}
-                    className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white"
-                    data-reveal
-                    style={{ "--reveal-delay": `${100 + i * 40}ms` } as React.CSSProperties}
-                  >
-                    {/* Image container */}
-                    <div className="relative">
-                      {/* Image - natural aspect ratio */}
-                      <img
-                        src={item.viewUrl}
-                        alt={item.title}
-                        className="w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02]"
-                        loading="lazy"
-                      />
-
-                      {/* Cart button - bottom right corner */}
-                      {item.prices && item.prices.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => setActiveItem(isActive ? null : item.id)}
-                          className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
-                          aria-label={labels.buyPrint}
-                        >
-                          {isActive ? (
-                            <IconX className="size-5 text-text-dark" />
-                          ) : (
-                            <IconShoppingBag className="size-5 text-text-dark" />
-                          )}
-                        </button>
-                      )}
-
-                      {/* Menu overlay */}
-                      {isActive && item.prices && (
-                        <div
-                          ref={menuRef}
-                          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
-                        >
-                          <h3 className="font-display text-sm font-semibold mb-3">{item.title}</h3>
-                          
-                          {/* Size buttons */}
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {item.prices
-                              .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
-                              .map((price) => (
-                                <button
-                                  key={price.id}
-                                  type="button"
-                                  onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
-                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
-                                    selectedPrice[item.id] === price.id
-                                      ? "border-primary bg-primary/10 font-medium text-primary"
-                                      : "border-neutral-border hover:border-primary/50"
-                                  }`}
-                                >
-                                  {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
-                                </button>
-                              ))}
-                          </div>
-
-                          {/* Price (only after size selection) */}
-                          {hasSelectedSize && selectedPriceObj && (
-                            <p className="text-lg font-semibold text-primary mb-3">
-                              {formatPrice(selectedPriceObj)}
-                            </p>
-                          )}
-
-                          {/* Add to cart */}
-                          <button
-                            type="button"
-                            onClick={() => handleCheckout(item)}
-                            disabled={loading[item.id] || !hasSelectedSize}
-                            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {loading[item.id] ? labels.loading : labels.addToCart}
-                          </button>
-
-                          <p className="mt-2 text-center text-xs text-text-muted">
-                            {labels.freeShipping}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Title (always visible) */}
-                    <div className="p-3">
-                      <h3 className="font-display text-sm font-medium text-text-dark">
-                        {item.title}
-                      </h3>
-                    </div>
-                  </div>
-                );
-              })}
+              {items.map((item, i) => (
+                <ImageCard
+                  key={item.id}
+                  item={item}
+                  index={i}
+                  labels={labels}
+                  isActive={activeItem === item.id}
+                  setActiveItem={setActiveItem}
+                  selectedPrice={selectedPrice}
+                  setSelectedPrice={setSelectedPrice}
+                  loading={loading}
+                  handleCheckout={handleCheckout}
+                  menuRef={menuRef}
+                />
+              ))}
             </div>
           </section>
         )}
