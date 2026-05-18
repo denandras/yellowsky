@@ -143,7 +143,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             )}
             
             {/* Title overlay at bottom of image */}
-            <div className="absolute bottom-0 left-0 right-0 px-6 pt-16 pb-4" style={{ background: 'linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.9) 50%, transparent 100%)' }}>
+            <div className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-7 pt-16">>
               <h1
                 key={`title-${language}`}
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
