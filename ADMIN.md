@@ -66,6 +66,38 @@ Creates Stripe products for artworks that don't have products yet.
 }
 ```
 
+## Coupons
+
+### GET /api/admin/coupons
+Lists all coupons.
+
+### POST /api/admin/coupons
+Creates a coupon with promotion code.
+
+**Body (JSON):**
+```json
+{
+  "code": "EARLYBIRD",
+  "percentOff": 20,
+  "maxRedemptions": 100,  // optional
+  "expiresAt": 1735689600  // optional Unix timestamp
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "coupon": {
+    "id": "coupon_xxx",
+    "name": "EARLYBIRD",
+    "percentOff": 20,
+    "promoCodeId": "promo_xxx",
+    "code": "EARLYBIRD"
+  }
+}
+```
+
 ## Usage
 
 ### Authentication
@@ -106,6 +138,13 @@ curl -X POST https://yellowsky.andrasdenes.com/api/admin/sync-products \
 curl -X POST https://yellowsky.andrasdenes.com/api/admin/sync-products \
   -H "Content-Type: application/json" \
   -d '{"dryRun": false, "limit": 100}'
+```
+
+### 5. Create coupon codes:
+```bash
+curl -X POST https://yellowsky.andrasdenes.com/api/admin/coupons \
+  -H "Content-Type: application/json" \
+  -d '{"code": "EARLYBIRD", "percentOff": 20}'
 ```
 
 ## Security Note
