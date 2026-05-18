@@ -69,11 +69,18 @@ function ImageCard({
   menuRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const hasSelectedSize = !!selectedPrice[item.id];
   const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
 
   // First 6 images load eagerly, rest lazy
   const shouldLoadEagerly = index < 6;
+
+  const handleImageError = () => {
+    console.error(`Failed to load image: ${item.viewUrl}`);
+    setImageError(true);
+    setImageLoaded(true); // Show the card anyway
+  };
 
   return (
     <div
@@ -83,19 +90,27 @@ function ImageCard({
       {/* Image container */}
       <div className="relative">
         {/* Skeleton while loading */}
-        {!imageLoaded && (
+        {!imageLoaded && !imageError && (
           <div className="w-full aspect-[4/3] animate-pulse bg-neutral-200" />
+        )}
+
+        {/* Error state */}
+        {imageError && (
+          <div className="w-full aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+            <p className="text-sm text-text-muted">Image unavailable</p>
+          </div>
         )}
 
         {/* Image - natural aspect ratio */}
         <img
           src={item.viewUrl}
           alt={item.title}
-          className={`w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02] ${imageLoaded ? "block" : "hidden"}`}
+          className={`w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "block" : "hidden"}`}
           loading={shouldLoadEagerly ? "eager" : "lazy"}
           fetchPriority={shouldLoadEagerly ? "high" : "low"}
           decoding={shouldLoadEagerly ? "sync" : "async"}
           onLoad={() => setImageLoaded(true)}
+          onError={handleImageError}
         />
 
         {/* Cart button - bottom right corner (only for items with products) */}

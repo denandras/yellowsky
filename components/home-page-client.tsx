@@ -101,15 +101,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
         {/* Hero - No header on main page */}
-        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-neutral-100" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
-          {/* Blur placeholder */}
-          <img
-            src="/blur-placeholder.jpg"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            aria-hidden="true"
-          />
+        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+          {/* Language switcher - fixed to viewport corner */}
+          <div className="fixed top-4 right-4 z-50">
+            <LanguageSwitcher initialLanguage={initialLanguage} />
+          </div>
           {mounted && (
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <Image
@@ -126,11 +122,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               />
             </div>
           )}
-          {/* Language switcher in hero */}
-          <div className="absolute top-4 right-4 z-30">
-            <LanguageSwitcher initialLanguage={initialLanguage} />
-          </div>
-          <div className="relative z-20 px-6 pb-12" data-reveal>
+          <div className="relative z-20 px-6 pb-12 pt-24" data-reveal>
             <h1
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
               data-reveal
