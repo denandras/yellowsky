@@ -55,7 +55,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     ? {
         title: "Yellowsky",
         subtitle: "Dénes András",
-        subtitleLink: undefined as string | undefined,
+        subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
         ctaLabel: "Most elérhető",
         ctaTitle: "Vásárolj nyomatot",
