@@ -44,7 +44,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
       >
         #yellowskychallenge
-      </button>{" "}
+      </button>
       -t.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
@@ -58,7 +58,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
       >
         #yellowskychallenge
-      </button>{" "}
+      </button>
       .</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
     "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
@@ -113,7 +113,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
-        {/* Hero section with gradients */}
+        {/* Hero section */}
         <section className="relative w-full">
           {/* Language switcher - fixed to viewport corner */}
           <div className="fixed top-4 right-4 z-50">
@@ -123,7 +123,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           {/* Top gradient: page color to white */}
           <div className="h-2 w-full md:h-8" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
 
-          {/* Image on white */}
+          {/* Image with overlaid title text */}
           <div className="relative w-full bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
             {mounted && (
               <div className="absolute inset-0 flex items-center justify-center p-4">
@@ -141,11 +141,9 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 />
               </div>
             )}
-          </div>
-
-          {/* Bottom gradient: white to page color with title overlaid */}
-          <div className="relative w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
-            <div className="px-6 pt-0.5 pb-2 md:pt-4 md:pb-5">
+            
+            {/* Title overlay at bottom of image */}
+            <div className="absolute bottom-0 left-0 right-0 px-6 pt-16 pb-4" style={{ background: 'linear-gradient(to top, #ffffff 0%, rgba(255,255,255,0.9) 50%, transparent 100%)' }}>
               <h1
                 key={`title-${language}`}
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
