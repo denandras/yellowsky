@@ -80,7 +80,7 @@ function ImageCard({
   };
 
   return (
-    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
+    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white relative">
       {/* Image container */}
       <div className="relative">
         {/* Error state */}
@@ -107,63 +107,13 @@ function ImageCard({
             onError={handleImageError}
           />
         </div>
-
-        {/* Cart button in title row - only for items with products */}
-        {/* Menu overlay */}
-        {isActive && item.hasProduct && item.prices && (
-          <div
-            ref={menuRef}
-            className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
-          >
-            <h3 className="font-display text-sm font-semibold mb-3">{item.title}</h3>
-
-            {/* Size buttons */}
-            <div className="flex flex-wrap gap-2 mb-3">
-              {item.prices
-                .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
-                .map((price) => (
-                  <button
-                    key={price.id}
-                    type="button"
-                    onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
-                    className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
-                      selectedPrice[item.id] === price.id
-                        ? "border-primary bg-primary/10 font-medium text-primary"
-                        : "border-neutral-border hover:border-primary/50"
-                    }`}
-                  >
-                    {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
-                  </button>
-                ))}
-            </div>
-
-            {/* Price (only after size selection) */}
-            {hasSelectedSize && selectedPriceObj && (
-              <p className="text-lg font-semibold text-primary mb-3">
-                {formatPrice(selectedPriceObj)}
-              </p>
-            )}
-
-            {/* Add to cart */}
-            <button
-              type="button"
-              onClick={() => handleAddToCart(item)}
-              disabled={loading[item.id] || !hasSelectedSize}
-              className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading[item.id] ? labels.loading : labels.addToCart}
-            </button>
-
-            <p className="mt-2 text-center text-xs text-text-muted">
-              {labels.freeShipping}
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Title */}
-      <div className="flex items-center justify-between gap-2 p-3">
-        <h3 className="font-display text-sm font-medium text-text-dark">
+      {/* Title row with basket button */}
+      <div className="flex items-center justify-between gap-2 p-3"
+003e
+        <h3 className="font-display text-sm font-medium text-text-dark"
+003e
           {item.title}
         </h3>
         {item.hasProduct && item.prices && item.prices.length > 0 && (
@@ -186,6 +136,57 @@ function ImageCard({
           </p>
         )}
       </div>
+
+      {/* Overlay from bottom of card */}
+      {isActive && item.hasProduct && item.prices && (
+        <div
+          ref={menuRef}
+          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
+        >
+          <h3 className="font-display text-sm font-semibold mb-3">{item.title}</h3>
+
+          {/* Size buttons */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {item.prices
+              .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
+              .map((price) => (
+                <button
+                  key={price.id}
+                  type="button"
+                  onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
+                  className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
+                    selectedPrice[item.id] === price.id
+                      ? "border-primary bg-primary/10 font-medium text-primary"
+                      : "border-neutral-border hover:border-primary/50"
+                  }`}
+                >
+                  {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
+                </button>
+              ))}
+          </div>
+
+          {/* Price (only after size selection) */}
+          {hasSelectedSize && selectedPriceObj && (
+            <p className="text-lg font-semibold text-primary mb-3">
+              {formatPrice(selectedPriceObj)}
+            </p>
+          )}
+
+          {/* Add to cart */}
+          <button
+            type="button"
+            onClick={() => handleAddToCart(item)}
+            disabled={loading[item.id] || !hasSelectedSize}
+            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading[item.id] ? labels.loading : labels.addToCart}
+          </button>
+
+          <p className="mt-2 text-center text-xs text-text-muted">
+            {labels.freeShipping}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
