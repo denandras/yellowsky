@@ -81,7 +81,8 @@ export default function LanguageSwitcher({
 }) {
   const router = useRouter();
   const { language, setLanguage } = useSiteLanguage();
-  const activeLanguage = initialLanguage ? normalizeSiteLanguage(initialLanguage) : language;
+  // Use reactive language from hook, not static initialLanguage
+  const activeLanguage = language;
   const isChangingRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
