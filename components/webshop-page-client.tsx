@@ -70,16 +70,36 @@ function ImageCard({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(index < 6);
+  const imgRef = useRef<HTMLImageElement | null>(null);
   const hasSelectedSize = !!selectedPrice[item.id];
   const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
 
-  // First 6 images load eagerly, rest lazy
-  const shouldLoadEagerly = index < 6;
+  // IntersectionObserver to trigger loading for lazy images
+  useEffect(() => {
+    if (index < 6) return; // Eager images already loading
+    if (!imgRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setShouldLoad(true);
+            observer.disconnect();
+          }
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(imgRef.current);
+    return () => observer.disconnect();
+  }, [index]);
 
   const handleImageError = () => {
     console.error(`Failed to load image: ${item.viewUrl}`);
     setImageError(true);
-    setImageLoaded(true); // Show the card anyway
+    setImageLoaded(true);
   };
 
   return (
@@ -103,12 +123,13 @@ function ImageCard({
 
         {/* Image - natural aspect ratio */}
         <img
-          src={item.viewUrl}
+          ref={imgRef}
+          src={shouldLoad ? item.viewUrl : undefined}
           alt={item.title}
           className={`w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "block" : "hidden"}`}
-          loading={shouldLoadEagerly ? "eager" : "lazy"}
-          fetchPriority={shouldLoadEagerly ? "high" : "low"}
-          decoding={shouldLoadEagerly ? "sync" : "async"}
+          loading={index < 6 ? "eager" : "lazy"}
+          fetchPriority={index < 6 ? "high" : "low"}
+          decoding={index < 6 ? "sync" : "async"}
           onLoad={() => setImageLoaded(true)}
           onError={handleImageError}
         />
