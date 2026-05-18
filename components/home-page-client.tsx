@@ -123,7 +123,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </div>
           )}
           {/* Gradient overlay - white fade at bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-20 z-10 bg-gradient-to-t from-white to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-20 z-10 bg-gradient-to-t from-white via-white/80 to-white/0" />
           <div className="relative z-20 px-6 pb-6 pt-24" data-reveal
           >
             <h1
