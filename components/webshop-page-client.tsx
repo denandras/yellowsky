@@ -119,6 +119,7 @@ function ImageCard({
         {item.hasProduct && item.prices && item.prices.length > 0 && (
           <button
             type="button"
+            data-cart-toggle
             onClick={() => setActiveItem(isActive ? null : item.id)}
             className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 transition-all hover:bg-primary/20"
             aria-label={labels.buyPrint}
@@ -201,10 +202,13 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
 
 
-  // Close menu when clicking outside
+  // Close menu when clicking outside (but not on the toggle button)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      const target = e.target as HTMLElement;
+      // Don't close if clicking the toggle button itself
+      if (target.closest('[data-cart-toggle]')) return;
+      if (menuRef.current && !menuRef.current.contains(target)) {
         setActiveItem(null);
       }
     };
