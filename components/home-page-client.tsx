@@ -6,7 +6,7 @@ import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import { IconShoppingBag } from "@/components/icons";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type HomePageClientProps = {
   initialLanguage: SiteLanguage;
@@ -19,59 +19,53 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const currentYear = new Date().getFullYear();
 
-  const labels = language === "hu"
+  const isHungarian = language === "hu";
+
+  const storyParagraphsHu = [
+    <>A koronavírus alatt kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
+      <a
+        href="https://instagram.com/explore/tags/yellowskychallenge"
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      >
+        #yellowskychallenge
+      </a>
+      -t.</>,
+    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
+    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
+  ];
+
+  const storyParagraphsEn = [
+    <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
+      <a
+        href="https://instagram.com/explore/tags/yellowskychallenge"
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      >
+        #yellowskychallenge
+      </a>
+      .</>,
+    <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
+    "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
+  ];
+
+  const labels = isHungarian
     ? {
         title: "Yellowsky",
-        subtitle: "Vázlatok",
-        storyParagraphs: [
-          <>A covidos időszakban kezdtem el vázolni, mert otthon kellett tanulnom egész nap, és a lezárás alatt sehová nem mehettem. Úgy éreztem, ki kell fejeznem magam. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
-            <a
-              href="https://instagram.com/explore/tags/yellowskychallenge"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
-            >
-              #yellowskychallenge
-            </a>
-            -t.</>,
-          <>Sokan követték ezt az utat, amit azóta sem hagytam abba teljesen. Voltak időszakok, amikor a{" "}
-            <a
-              href="https://andrasdenes.com"
-              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
-            >
-              harsonázásra
-            </a>
-            {" "}kellett koncentrálnom, de néha akkor is vázoltam valamit.</>,
-          "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
-        ],
+        subtitle: "Dénes András",
+        subtitleLink: undefined as string | undefined,
+        storyParagraphs: storyParagraphsHu,
         ctaLabel: "Most elérhető",
         ctaTitle: "Vásárolj nyomatot",
         footerTagline: "Yellowsky • Vázlatok Budapestről",
       }
     : {
         title: "Yellowsky",
-        subtitle: "Sketches",
-        storyParagraphs: [
-          <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
-            <a
-              href="https://instagram.com/explore/tags/yellowskychallenge"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
-            >
-              #yellowskychallenge
-            </a>
-            .</>,
-          <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
-            <a
-              href="https://andrasdenes.com"
-              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
-            >
-              playing the trombone
-            </a>
-            , but sometimes I sketched a bit.</>,
-          "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
-        ],
+        subtitle: "by András Dénes",
+        subtitleLink: "https://andrasdenes.com",
+        storyParagraphs: storyParagraphsEn,
         ctaLabel: "Available now",
         ctaTitle: "Get your print",
         footerTagline: "Yellowsky • Sketches from Budapest",
@@ -150,9 +144,18 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
             >
               <div className="h-px w-12 bg-primary" />
-              <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
-                {labels.subtitle}
-              </p>
+              {labels.subtitleLink ? (
+                <a
+                  href={labels.subtitleLink}
+                  className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                >
+                  {labels.subtitle}
+                </a>
+              ) : (
+                <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+                  {labels.subtitle}
+                </p>
+              )}
             </div>
           </div>
         </section>
