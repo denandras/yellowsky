@@ -121,10 +121,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Top gradient: page color to white */}
-          <div className="h-2 w-full md:h-4" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
+          <div className="h-1 w-full md:h-2" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
 
-          {/* Image with overlaid title text */}
-          <div className="relative w-full bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+          {/* Image */}
+          <div className="relative w-full bg-white" style={{ minHeight: 'clamp(200px, 40vh, 500px)' }}>
             {mounted && (
               <div className="absolute inset-0 flex items-center justify-center p-4">
                 <Image
@@ -144,7 +144,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Title text below image */}
-          <div className="bg-white px-6 py-2">
+          <div className="bg-white px-6 py-1">
             <h1
               key={`title-${language}`}
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -176,11 +176,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Bottom gradient: white to page color */}
-          <div className="h-4 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
+          <div className="h-2 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
         </section>
 
         {/* Story */}
-        <section className="px-6 pt-4 pb-6">
+        <section className="px-6 pt-2 pb-6">
           <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
             {labels.storyParagraphs.map((paragraph, idx) => (
               <p
