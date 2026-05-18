@@ -134,6 +134,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div className="relative w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
             <div className="px-6 pt-4 pb-5">
               <h1
+                key={`title-${language}`}
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
                 data-reveal
                 style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
@@ -141,6 +142,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 {labels.title}
               </h1>
               <div
+                key={`subtitle-${language}`}
                 className="flex items-center gap-3"
                 data-reveal
                 style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
@@ -165,7 +167,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
         {/* Story */}
         <section className="px-6 pt-8 pb-6">
-          <div className="mx-auto max-w-2xl space-y-6" data-reveal>
+          <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
             {labels.storyParagraphs.map((paragraph, idx) => (
               <p
                 key={`story-${idx}`}
@@ -181,7 +183,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
         {/* CTA - Gallery button */}
         <section className="px-6 py-8">
-          <div data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
+          <div key={`cta-${language}`} data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
               className="block w-full mx-auto"
