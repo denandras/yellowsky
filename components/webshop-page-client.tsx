@@ -108,22 +108,7 @@ function ImageCard({
           />
         </div>
 
-        {/* Cart button - bottom right corner (only for items with products) */}
-        {imageLoaded && item.hasProduct && item.prices && item.prices.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="absolute bottom-0 right-0 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
-            aria-label={labels.buyPrint}
-          >
-            {isActive ? (
-              <IconX className="size-5 text-text-dark" />
-            ) : (
-              <IconShoppingBag className="size-5 text-text-dark" />
-            )}
-          </button>
-        )}
-
+        {/* Cart button in title row - only for items with products */}
         {/* Menu overlay */}
         {isActive && item.hasProduct && item.prices && (
           <div
@@ -177,10 +162,24 @@ function ImageCard({
       </div>
 
       {/* Title */}
-      <div className="p-3">
+      <div className="flex items-center justify-between gap-2 p-3">
         <h3 className="font-display text-sm font-medium text-text-dark">
           {item.title}
         </h3>
+        {item.hasProduct && item.prices && item.prices.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setActiveItem(isActive ? null : item.id)}
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 transition-all hover:bg-primary/20"
+            aria-label={labels.buyPrint}
+          >
+            {isActive ? (
+              <IconX className="size-4 text-text-dark" />
+            ) : (
+              <IconShoppingBag className="size-4 text-text-dark" />
+            )}
+          </button>
+        )}
         {!item.hasProduct && (
           <p className="text-xs text-text-muted mt-1">
             Coming soon
