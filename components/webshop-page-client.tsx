@@ -62,7 +62,7 @@ export default function WebshopPageClient() {
                 key={i}
                 className="aspect-square rounded-xl border border-neutral-border bg-neutral-100"
                 data-reveal
-                style={{ "--reveal-delay": `${100 + i * 60}ms` }}
+                style={{ "--reveal-delay": `${100 + i * 60}ms` } as React.CSSProperties}
               />
             ))}
           </div>

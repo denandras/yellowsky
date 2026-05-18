@@ -72,7 +72,7 @@ export default function ContactPageClient() {
 
             <div className="relative md:col-span-8 md:order-2">
               <div className="relative z-10 space-y-3 md:pt-10">
-                <div data-reveal style={{ "--reveal-delay": "120ms" }}>
+                <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties}>
                   <a
                     href="mailto:contact@andrasdenes.com"
                     className="interactive-surface group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md"
@@ -91,7 +91,7 @@ export default function ContactPageClient() {
                   </a>
                 </div>
 
-                <div data-reveal style={{ "--reveal-delay": "180ms" }}>
+                <div data-reveal style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
                   <a
                     href="https://instagram.com/abstract.sketcher"
                     target="_blank"
@@ -129,7 +129,7 @@ export default function ContactPageClient() {
 
             <div className="relative md:col-span-8 md:order-1">
               <div className="relative z-10 space-y-3 md:pt-10">
-                <div data-reveal style={{ "--reveal-delay": "120ms" }}>
+                <div data-reveal style={{ "--reveal-delay": "120ms" } as React.CSSProperties}>
                   <section className="rounded-2xl border border-neutral-border bg-white p-6">
                     <form action="https://formsubmit.co/contact@andrasdenes.com" method="POST" className="space-y-4" noValidate>
                       <input type="hidden" name="_subject" value={labels.subject} />
