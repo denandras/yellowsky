@@ -201,6 +201,18 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+
+  // Prefetch other pages
+  useEffect(() => {
+    const prefetchPages = async () => {
+      await Promise.all([
+        import('@/app/page'),
+        import('@/app/contact/page'),
+      ]);
+    };
+    prefetchPages();
+  }, []);
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

@@ -14,6 +14,17 @@ type ContactPageClientProps = {
 export default function ContactPageClient({ initialLanguage }: ContactPageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
 
+  // Prefetch other pages
+  useEffect(() => {
+    const prefetchPages = async () => {
+      await Promise.all([
+        import('@/app/page'),
+        import('@/app/webshop/page'),
+      ]);
+    };
+    prefetchPages();
+  }, []);
+
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;

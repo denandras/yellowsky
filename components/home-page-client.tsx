@@ -17,6 +17,17 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Prefetch other pages
+  useEffect(() => {
+    const prefetchPages = async () => {
+      await Promise.all([
+        import('@/app/webshop/page'),
+        import('@/app/contact/page'),
+      ]);
+    };
+    prefetchPages();
+  }, []);
+
   const currentYear = new Date().getFullYear();
 
   const isHungarian = language === "hu";
