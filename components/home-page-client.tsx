@@ -21,32 +21,16 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const isHungarian = language === "hu";
 
-  const openHashtag = () => {
-    const hashtag = 'yellowskychallenge';
-    const deepLink = `instagram://tag?name=${hashtag}`;
-    const webLink = `https://instagram.com/explore/tags/${hashtag}`;
-    
-    // Try Instagram app deep link first (works on mobile with app)
-    // Fall back to web URL after timeout (desktop or app not installed)
-    const start = Date.now();
-    window.location.href = deepLink;
-    
-    setTimeout(() => {
-      if (Date.now() - start < 2000) {
-        window.open(webLink, '_blank', 'noopener,noreferrer');
-      }
-    }, 1500);
-  };
-
   const storyParagraphsHu = [
     <>A koronavírus alatt kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
-      <button
-        type="button"
-        onClick={openHashtag}
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
+      <a
+        href="https://instagram.com/explore/tags/yellowskychallenge"
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
       >
         #yellowskychallenge
-      </button>
+      </a>{" "}
       -t.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
@@ -54,13 +38,14 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const storyParagraphsEn = [
     <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
-      <button
-        type="button"
-        onClick={openHashtag}
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
+      <a
+        href="https://instagram.com/explore/tags/yellowskychallenge"
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
       >
         #yellowskychallenge
-      </button>
+      </a>{" "}
       .</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
     "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
