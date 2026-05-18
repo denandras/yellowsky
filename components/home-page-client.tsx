@@ -106,8 +106,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
-          {/* Gradient overlay fading into page */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
           {/* Blur placeholder */}
           <img
             src="/blur-placeholder.jpg"
@@ -131,7 +129,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               />
             </div>
           )}
-          <div className="relative z-20 px-6 pb-12 pt-24" data-reveal>
+          {/* Gradient overlay - white fading in at bottom */}
+          <div className="absolute inset-x-0 bottom-0 h-48 z-10 bg-gradient-to-t from-white to-transparent" />
+          <div className="relative z-20 px-6 pb-6 pt-24" data-reveal
+          >
             <h1
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
               data-reveal
