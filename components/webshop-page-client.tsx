@@ -322,10 +322,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <IconShoppingBag className="size-5 text-primary" />
-              <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.title}</h1>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <IconShoppingBag className="size-5 text-primary" />
+                <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.title}</h1>
+              </Link>
+            </div>
             <div className="flex items-center gap-3">
               <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
               <LanguageSwitcher initialLanguage={initialLanguage} />
