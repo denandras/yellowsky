@@ -113,7 +113,7 @@ function ImageCard({
           <button
             type="button"
             onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
+            className="absolute bottom-0 right-0 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
             aria-label={labels.buyPrint}
           >
             {isActive ? (
