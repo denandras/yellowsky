@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import ProximityEffects from "@/components/proximity-effects";
 import "./globals.css";
 
 const inter = Inter({
@@ -51,7 +50,6 @@ export default function RootLayout({
         <link rel="prefetch" href="/contact" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
-        <ProximityEffects />
         {children}
         <Analytics />
       </body>
