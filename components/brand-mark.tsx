@@ -1,5 +1,9 @@
-export default function BrandMark() {
+export default function BrandMark({ size = 24 }: { size?: number }) {
   return (
-    <div className="h-6 w-6 rounded-full bg-primary" aria-label="Yellowsky logo" />
+    <div 
+      className="rounded-full bg-primary" 
+      style={{ height: size, width: size }}
+      aria-label="Yellowsky logo" 
+    />
   );
 }

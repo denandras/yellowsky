@@ -1,9 +1,9 @@
 "use client";
 
 import BottomNav from "@/components/bottom-nav";
-import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import { IconShoppingBag, IconX } from "@/components/icons";
+import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
 import type { StripeProduct, StripePrice } from "@/lib/stripe-products";
 import { useEffect, useState, useRef } from "react";
@@ -120,6 +120,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         loading: "Betöltés...",
         freeShipping: "Ingyenes szállítás",
         addToCart: "Kosárba",
+        continue: "Vásárlás folytatása",
       }
     : {
         title: "Webshop",
@@ -134,16 +135,17 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         loading: "Loading...",
         freeShipping: "Free shipping",
         addToCart: "Add to Cart",
+        continue: "Continue shopping",
       };
 
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
         <div className="flex h-16 w-full items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <BrandMark />
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <IconShoppingBag className="size-5 text-primary" />
             <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.title}</h1>
-          </div>
+          </Link>
           <LanguageSwitcher initialLanguage={initialLanguage} />
         </div>
       </header>

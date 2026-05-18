@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   DEFAULT_SITE_LANGUAGE,
   normalizeSiteLanguage,
@@ -36,10 +36,12 @@ export function useSiteLanguage(initialLanguage?: SiteLanguage) {
     return normalizeSiteLanguage(fromStorage ?? fromCookie ?? DEFAULT_SITE_LANGUAGE);
   });
 
+  // Persist when language changes
   useEffect(() => {
     persistLanguage(language);
   }, [language]);
 
+  // Listen for changes from other components/tabs
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key !== SITE_LANGUAGE_STORAGE_KEY) return;
@@ -63,8 +65,7 @@ export function useSiteLanguage(initialLanguage?: SiteLanguage) {
   const api = useMemo(() => ({
     language,
     setLanguage: (next: SiteLanguage) => {
-      const normalized = normalizeSiteLanguage(next);
-      setLanguage(normalized);
+      setLanguage(normalizeSiteLanguage(next));
     },
   }), [language]);
 
@@ -81,12 +82,36 @@ export default function LanguageSwitcher({
   const router = useRouter();
   const { language, setLanguage } = useSiteLanguage();
   const activeLanguage = initialLanguage ? normalizeSiteLanguage(initialLanguage) : language;
+  const isChangingRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setAndRefresh = (next: SiteLanguage) => {
     if (next === activeLanguage) return;
+    if (isChangingRef.current) return;
+
+    isChangingRef.current = true;
     setLanguage(next);
-    router.refresh();
+
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Debounce refresh and reset changing flag
+    timeoutRef.current = setTimeout(() => {
+      router.refresh();
+      isChangingRef.current = false;
+    }, 100);
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div

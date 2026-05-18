@@ -4,7 +4,7 @@ import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
-import { IconGroups } from "@/components/icons";
+import { IconShoppingBag } from "@/components/icons";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useRef, useState } from "react";
 
@@ -13,8 +13,6 @@ type HomePageClientProps = {
 };
 
 export default function HomePageClient({ initialLanguage }: HomePageClientProps) {
-  const heroRef = useRef<HTMLElement | null>(null);
-  const [headerProgress, setHeaderProgress] = useState(0);
   const { language } = useSiteLanguage(initialLanguage);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -80,25 +78,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
       };
 
   useEffect(() => {
-    const update = () => {
-      const heroHeight = heroRef.current?.offsetHeight ?? Math.round(window.innerHeight * 0.8);
-      const start = Math.max(24, heroHeight - 220);
-      const end = Math.max(start + 1, heroHeight - 120);
-      const progress = Math.max(0, Math.min(1, (window.scrollY - start) / (end - start)));
-      setHeaderProgress(progress);
-    };
-
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
-  useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
 
@@ -126,26 +105,9 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-      <header
-        className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b border-neutral-border bg-white/80 px-4 py-3 backdrop-blur-md"
-        style={{
-          opacity: headerProgress,
-          transform: `translateY(${Math.round((1 - headerProgress) * -14)}px)`,
-          pointerEvents: headerProgress > 0.08 ? "auto" : "none",
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <BrandMark />
-          <span className="font-display text-lg font-bold tracking-tight uppercase">
-            {labels.title}
-          </span>
-        </div>
-        <LanguageSwitcher initialLanguage={initialLanguage} light={headerProgress > 0.08} />
-      </header>
-
       <main className="flex-1 pb-24">
-        {/* Hero */}
-        <section ref={heroRef} className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[16/8]">
+        {/* Hero - No header on main page */}
+        <section className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[16/7]">
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
           {/* Blur placeholder */}
           <img
@@ -158,7 +120,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             <div className="absolute inset-0">
               <Image
                 alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-cover transition-opacity duration-500"
+                className="h-full w-full object-cover object-center transition-opacity duration-500"
                 src="/hero.jpg"
                 fill
                 priority
@@ -170,26 +132,22 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               />
             </div>
           )}
+          {/* Language switcher in hero */}
+          <div className="absolute top-4 right-4 z-30">
+            <LanguageSwitcher initialLanguage={initialLanguage} light />
+          </div>
           <div className="relative z-20 px-6 pb-12" data-reveal>
             <h1
-              className="relative font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+              className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
               data-reveal
-              style={{
-                "--reveal-delay": "120ms",
-                top: `${Math.round(headerProgress * -22)}px`,
-                opacity: 1 - headerProgress * 0.35,
-              } as React.CSSProperties}
+              style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
             >
               {labels.title}
             </h1>
             <div
-              className="relative flex items-center gap-3"
+              className="flex items-center gap-3"
               data-reveal
-              style={{
-                "--reveal-delay": "220ms",
-                top: `${Math.round(headerProgress * -14)}px`,
-                opacity: 1 - headerProgress * 0.75,
-              } as React.CSSProperties}
+              style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
             >
               <div className="h-px w-12 bg-primary" />
               <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
@@ -215,16 +173,14 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
         </section>
 
-        {/* CTA */}
+        {/* CTA - max half width, basket icon */}
         <section className="px-6 py-8">
           <div data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
-              className="interactive-surface group block rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md"
-              data-proximity
-              data-proximity-strength="2.1"
+              className="block max-w-[50%] mx-auto"
             >
-              <div className="flex items-center justify-between">
+              <div className="group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
                 <div>
                   <p className="mb-1 text-xs font-bold tracking-widest text-primary uppercase">
                     {labels.ctaLabel}
@@ -233,8 +189,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                     {labels.ctaTitle}
                   </h3>
                 </div>
-                <div className="flex size-12 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
-                  <IconGroups className="size-6" />
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
+                  <IconShoppingBag className="size-6" />
                 </div>
               </div>
             </a>
@@ -246,7 +202,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
       <footer className="bg-background-light py-12 pb-32 text-center">
         <div className="mb-9 flex justify-center">
-          <div className="h-8 w-8 rounded-full bg-primary" />
+          <BrandMark size={32} />
         </div>
         <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
           © {currentYear} András Dénes
