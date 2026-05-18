@@ -88,7 +88,7 @@ export default function HomePageClient() {
                 "--reveal-delay": "120ms",
                 top: `${Math.round(headerProgress * -22)}px`,
                 opacity: 1 - headerProgress * 0.35,
-              }}
+              } as React.CSSProperties}
             >
               Yellowsky
             </h1>
@@ -99,7 +99,7 @@ export default function HomePageClient() {
                 "--reveal-delay": "220ms",
                 top: `${Math.round(headerProgress * -14)}px`,
                 opacity: 1 - headerProgress * 0.75,
-              }}
+              } as React.CSSProperties}
             >
               <div className="h-px w-12 bg-primary" />
               <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
@@ -112,7 +112,7 @@ export default function HomePageClient() {
         {/* Story */}
         <section className="px-6 py-12">
           <div className="mx-auto max-w-2xl space-y-6" data-reveal>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "100ms" }}>
+            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
               I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
               <a
                 href="https://instagram.com/explore/tags/yellowskychallenge"
@@ -124,7 +124,7 @@ export default function HomePageClient() {
               </a>
               .
             </p>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "180ms" }}>
+            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
               Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
               <a
                 href="https://andrasdenes.com"
@@ -134,7 +134,7 @@ export default function HomePageClient() {
               </a>
               , but sometimes I sketched a bit.
             </p>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "260ms" }}>
+            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "260ms" } as React.CSSProperties}>
               Now that I have done my master&apos;s degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.
             </p>
           </div>
@@ -142,7 +142,7 @@ export default function HomePageClient() {
 
         {/* CTA */}
         <section className="px-6 py-8">
-          <div data-reveal style={{ "--reveal-delay": "340ms" }}>
+          <div data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
               className="interactive-surface group block rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md"
