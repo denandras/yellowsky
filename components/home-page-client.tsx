@@ -106,13 +106,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
-          {/* Blur placeholder */}
-          <img
-            src="/blur-placeholder.jpg"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            aria-hidden="true"
-          />
           {mounted && (
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <Image
