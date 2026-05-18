@@ -103,17 +103,9 @@ function ImageCard({
   };
 
   return (
-    <div
-      className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white"
-      style={{ opacity: imageLoaded ? 1 : 0, transition: "opacity 300ms ease-out" }}
-    >
+    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
       {/* Image container */}
       <div className="relative">
-        {/* Skeleton while loading */}
-        {!imageLoaded && !imageError && (
-          <div className="w-full aspect-[4/3] animate-pulse bg-neutral-200" />
-        )}
-
         {/* Error state */}
         {imageError && (
           <div className="w-full aspect-[4/3] bg-neutral-100 flex items-center justify-center">
@@ -202,19 +194,17 @@ function ImageCard({
         )}
       </div>
 
-      {/* Title - only show when image loaded */}
-      {imageLoaded && (
-        <div className="p-3">
-          <h3 className="font-display text-sm font-medium text-text-dark">
-            {item.title}
-          </h3>
-          {!item.hasProduct && (
-            <p className="text-xs text-text-muted mt-1">
-              Coming soon
-            </p>
-          )}
-        </div>
-      )}
+      {/* Title */}
+      <div className="p-3">
+        <h3 className="font-display text-sm font-medium text-text-dark">
+          {item.title}
+        </h3>
+        {!item.hasProduct && (
+          <p className="text-xs text-text-muted mt-1">
+            Coming soon
+          </p>
+        )}
+      </div>
     </div>
   );
 }
