@@ -144,7 +144,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Title text below image */}
-          <div className="bg-white px-6 py-8">
+          <div className="bg-white px-6 py-4">
             <h1
               key={`title-${language}`}
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -176,11 +176,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Bottom gradient: white to page color */}
-          <div className="h-8 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
+          <div className="h-4 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
         </section>
 
         {/* Story */}
-        <section className="px-6 pt-8 pb-6">
+        <section className="px-6 pt-4 pb-6">
           <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
             {labels.storyParagraphs.map((paragraph, idx) => (
               <p
