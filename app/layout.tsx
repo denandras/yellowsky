@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { CartProvider } from "@/lib/cart-context";
 import "./globals.css";
 
 const inter = Inter({
@@ -52,7 +53,9 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/blur-placeholder.jpg" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
         <Analytics />
       </body>
     </html>

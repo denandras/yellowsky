@@ -2,6 +2,9 @@
 
 import BottomNav from "@/components/bottom-nav";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
+import CartButton from "@/components/cart-button";
+import CartDrawer from "@/components/cart-drawer";
+import { useCart } from "@/lib/cart-context";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
@@ -12,14 +15,10 @@ type MediaItem = {
   title: string;
   viewUrl: string;
   downloadUrl: string;
-  productId: string;
-  productName: string;
-  prices: Array<{
-    id: string;
-    nickname?: string;
-    unitAmount?: number;
-    currency: string;
-  }>;
+  productId?: string;
+  productName?: string;
+  prices?: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
+  hasProduct: boolean;
 };
 
 type WebshopPageClientProps = {
@@ -50,7 +49,7 @@ function ImageCard({
   selectedPrice,
   setSelectedPrice,
   loading,
-  handleCheckout,
+  handleAddToCart,
   menuRef,
 }: {
   item: MediaItem;
@@ -66,12 +65,12 @@ function ImageCard({
   selectedPrice: Record<string, string>;
   setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   loading: Record<string, boolean>;
-  handleCheckout: (item: MediaItem) => void;
+  handleAddToCart: (item: MediaItem) => void;
   menuRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const hasSelectedSize = !!selectedPrice[item.id];
-  const selectedPriceObj = item.prices.find(p => p.id === selectedPrice[item.id]);
+  const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
 
   // First 6 images load eagerly, rest lazy
   const shouldLoadEagerly = index < 6;
@@ -99,8 +98,8 @@ function ImageCard({
           onLoad={() => setImageLoaded(true)}
         />
 
-        {/* Cart button - bottom right corner */}
-        {imageLoaded && item.prices && item.prices.length > 0 && (
+        {/* Cart button - bottom right corner (only for items with products) */}
+        {imageLoaded && item.hasProduct && item.prices && item.prices.length > 0 && (
           <button
             type="button"
             onClick={() => setActiveItem(isActive ? null : item.id)}
@@ -116,7 +115,7 @@ function ImageCard({
         )}
 
         {/* Menu overlay */}
-        {isActive && item.prices && (
+        {isActive && item.hasProduct && item.prices && (
           <div
             ref={menuRef}
             className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
@@ -153,7 +152,7 @@ function ImageCard({
             {/* Add to cart */}
             <button
               type="button"
-              onClick={() => handleCheckout(item)}
+              onClick={() => handleAddToCart(item)}
               disabled={loading[item.id] || !hasSelectedSize}
               className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -173,6 +172,11 @@ function ImageCard({
           <h3 className="font-display text-sm font-medium text-text-dark">
             {item.title}
           </h3>
+          {!item.hasProduct && (
+            <p className="text-xs text-text-muted mt-1">
+              Coming soon
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -181,9 +185,12 @@ function ImageCard({
 
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
+  const { addItem, items: cartItems } = useCart();
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -197,17 +204,40 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCheckout = async (item: MediaItem) => {
+  const handleAddToCart = (item: MediaItem) => {
     const priceId = selectedPrice[item.id];
-    if (!priceId) return;
+    if (!priceId || !item.prices) return;
 
-    setLoading(prev => ({ ...prev, [item.id]: true }));
+    const selectedPriceObj = item.prices.find(p => p.id === priceId);
+    if (!selectedPriceObj) return;
 
+    addItem({
+      id: `${item.id}-${priceId}`,
+      priceId,
+      productId: item.productId || item.id,
+      productName: item.productName || item.title,
+      productTitle: item.title,
+      size: selectedPriceObj.nickname || "Standard",
+      price: selectedPriceObj.unitAmount || 0,
+      currency: selectedPriceObj.currency,
+      viewUrl: item.viewUrl,
+    });
+
+    setActiveItem(null);
+  };
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+
+    setCheckoutLoading(true);
     try {
+      // For now, checkout the first item
+      // TODO: Multi-item checkout via Stripe
+      const firstItem = cartItems[0];
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId: firstItem.priceId }),
       });
 
       const data = await response.json();
@@ -217,16 +247,16 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     } catch (err) {
       console.error("Checkout error:", err);
     } finally {
-      setLoading(prev => ({ ...prev, [item.id]: false }));
+      setCheckoutLoading(false);
     }
   };
 
   const labels = language === "hu"
     ? {
         title: "Webshop",
-        subtitle: "Nyomatok és műalkotások",
+        subtitle: "Műalkotások nyomatai",
         description: hasConfig && items.length > 0
-          ? "Vásárolj nyomatokat — ingyenes szállítás világszerte."
+          ? "Vásárolj giclèe minőségű nyomatokat — ingyenes szállítás világszerte."
           : hasConfig
             ? "Hamarosan műalkotások."
             : "A galéria konfigurációja nem elérhető.",
@@ -236,12 +266,22 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         freeShipping: "Ingyenes szállítás",
         addToCart: "Kosárba",
         continue: "Vásárlás folytatása",
+        comingSoon: "Hamarosan",
+        cart: {
+          title: "Kosár",
+          empty: "A kosarad üres",
+          remove: "Eltávolítás",
+          checkout: "Pénztár",
+          total: "Összesen",
+          loading: "Feldolgozás...",
+          ariaLabel: "Kosár megnyitása",
+        },
       }
     : {
         title: "Webshop",
-        subtitle: "Prints & Artworks",
+        subtitle: "Prints of Artworks",
         description: hasConfig && items.length > 0
-          ? "Browse and purchase prints — free worldwide shipping."
+          ? "Browse and purchase giclèe quality prints — free worldwide shipping."
           : hasConfig
             ? "Artwork coming soon."
             : "Gallery configuration not available.",
@@ -251,67 +291,89 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         freeShipping: "Free shipping",
         addToCart: "Add to Cart",
         continue: "Continue shopping",
+        comingSoon: "Coming soon",
+        cart: {
+          title: "Cart",
+          empty: "Your cart is empty",
+          remove: "Remove",
+          checkout: "Checkout",
+          total: "Total",
+          loading: "Processing...",
+          ariaLabel: "Open cart",
+        },
       };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-      <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-        <div className="flex h-16 w-full items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <IconShoppingBag className="size-5 text-primary" />
-            <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.title}</h1>
-          </Link>
-          <LanguageSwitcher initialLanguage={initialLanguage} />
-        </div>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
-        <section className="pt-6 pb-10">
-          <div>
-            <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
-              {labels.subtitle}
-            </h2>
-            <p className="text-sm text-text-muted">
-              {labels.description}
-            </p>
-          </div>
-        </section>
-
-        {hasConfig && items.length > 0 && (
-          <section className="pb-10">
-            {/* Masonry-style grid using columns */}
-            <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
-              {items.map((item, i) => (
-                <ImageCard
-                  key={item.id}
-                  item={item}
-                  index={i}
-                  labels={labels}
-                  isActive={activeItem === item.id}
-                  setActiveItem={setActiveItem}
-                  selectedPrice={selectedPrice}
-                  setSelectedPrice={setSelectedPrice}
-                  loading={loading}
-                  handleCheckout={handleCheckout}
-                  menuRef={menuRef}
-                />
-              ))}
+    <>
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onCheckout={handleCheckout}
+        labels={labels.cart}
+        loading={checkoutLoading}
+      />
+      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
+        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
+          <div className="flex h-16 w-full items-center justify-between px-6">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <IconShoppingBag className="size-5 text-primary" />
+              <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.title}</h1>
+            </Link>
+            <div className="flex items-center gap-3">
+              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
+              <LanguageSwitcher initialLanguage={initialLanguage} />
             </div>
-          </section>
-        )}
+          </div>
+        </header>
 
-        {!hasConfig && (
-          <section className="pb-10">
-            <div className="rounded-xl border border-neutral-border bg-white p-6">
-              <p className="text-text-muted">
+        <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
+          <section className="pt-6 pb-10">
+            <div>
+              <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
+                {labels.subtitle}
+              </h2>
+              <p className="text-sm text-text-muted">
                 {labels.description}
               </p>
             </div>
           </section>
-        )}
-      </main>
 
-      <BottomNav active="webshop" />
-    </div>
+          {hasConfig && items.length > 0 && (
+            <section className="pb-10">
+              {/* Masonry-style grid using columns */}
+              <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
+                {items.map((item, i) => (
+                  <ImageCard
+                    key={item.id}
+                    item={item}
+                    index={i}
+                    labels={labels}
+                    isActive={activeItem === item.id}
+                    setActiveItem={setActiveItem}
+                    selectedPrice={selectedPrice}
+                    setSelectedPrice={setSelectedPrice}
+                    loading={loading}
+                    handleAddToCart={handleAddToCart}
+                    menuRef={menuRef}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {!hasConfig && (
+            <section className="pb-10">
+              <div className="rounded-xl border border-neutral-border bg-white p-6">
+                <p className="text-text-muted">
+                  {labels.description}
+                </p>
+              </div>
+            </section>
+          )}
+        </main>
+
+        <BottomNav active="webshop" />
+      </div>
+    </>
   );
 }

@@ -101,7 +101,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
         {/* Hero - No header on main page */}
-        <section className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[21/9]">
+        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-neutral-100" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
           {/* Blur placeholder */}
           <img
@@ -111,10 +111,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             aria-hidden="true"
           />
           {mounted && (
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 flex items-center justify-center p-4">
               <Image
                 alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-cover object-center transition-opacity duration-500 md:scale-110"
+                className="h-full w-full object-contain"
                 src="/hero.jpg"
                 fill
                 priority
@@ -122,13 +122,13 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 onLoad={(e) => {
                   (e.target as HTMLImageElement).style.opacity = "1";
                 }}
-                style={{ opacity: 0 }}
+                style={{ opacity: 0, objectFit: "contain", objectPosition: "center" }}
               />
             </div>
           )}
           {/* Language switcher in hero */}
           <div className="absolute top-4 right-4 z-30">
-            <LanguageSwitcher initialLanguage={initialLanguage} light />
+            <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
           <div className="relative z-20 px-6 pb-12" data-reveal>
             <h1

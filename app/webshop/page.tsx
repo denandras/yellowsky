@@ -13,9 +13,10 @@ type MediaItem = {
   title: string;
   viewUrl: string;
   downloadUrl: string;
-  productId: string;
-  productName: string;
-  prices: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
+  productId?: string;
+  productName?: string;
+  prices?: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
+  hasProduct: boolean;
 };
 
 export const metadata: Metadata = {
@@ -100,17 +101,16 @@ async function getArtItems(): Promise<MediaItem[]> {
 
   const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));
 
-  // Filter to only show artworks that have matching Stripe products
-  const availableItems: MediaItem[] = [];
+  // Show all artworks, with prices when products exist
+  const allItems: MediaItem[] = [];
 
   for (const key of sortedKeys) {
     const filename = extractFilename(key);
     const product = artworkToProduct.get(filename);
-
-    if (!product) continue;
+    const hasProduct = !!product;
 
     const ext = key.split(".").pop()?.toLowerCase() ?? "jpg";
-    const ordinal = String(availableItems.length + 1).padStart(3, "0");
+    const ordinal = String(allItems.length + 1).padStart(3, "0");
     const safeName = `yellowsky-${ordinal}.${ext}`;
     const accessToken = createMediaAccessToken(
       {
@@ -121,23 +121,29 @@ async function getArtItems(): Promise<MediaItem[]> {
       tokenSecret,
     );
 
-    availableItems.push({
-      id: product.id,
-      title: product.name,
+    // Extract title from filename (remove extension)
+    const title = filename.replace(/\.[^.]+$/, "");
+
+    allItems.push({
+      id: hasProduct ? product.id : `art-${allItems.length}`,
+      title: hasProduct ? product.name : title,
       viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
       downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
-      productId: product.id,
-      productName: product.name,
-      prices: product.prices.map(p => ({
-        id: p.id,
-        nickname: p.nickname ?? undefined,
-        unitAmount: p.unitAmount ?? undefined,
-        currency: p.currency,
-      })),
+      hasProduct,
+      ...(hasProduct && product ? {
+        productId: product.id,
+        productName: product.name,
+        prices: product.prices.map(p => ({
+          id: p.id,
+          nickname: p.nickname ?? undefined,
+          unitAmount: p.unitAmount ?? undefined,
+          currency: p.currency,
+        })),
+      } : {}),
     });
   }
 
-  return availableItems;
+  return allItems;
 }
 
 export default async function WebshopPage() {
