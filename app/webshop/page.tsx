@@ -92,21 +92,19 @@ async function getArtItems(): Promise<MediaItem[]> {
   let stripeProducts = await fetchStripeProducts();
   let artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
-  // If some artworks are missing products, trigger sync
-  const hasArtworks = filenames.length > 0;
+  // Check if sync is needed (some artworks missing products)
   const missingProducts = filenames.filter(f => !artworkToProduct.has(f));
   
-  if (hasArtworks && missingProducts.length > 0) {
-    // Auto-sync: create products for missing artworks
-    console.log(`[Webshop] ${missingProducts.length} artworks missing products, triggering sync...`);
-    const syncResult = await syncArtworksToStripe();
-    console.log("[Webshop] Sync result:", syncResult);
+  // Run sync in background - don't block page load
+  if (missingProducts.length > 0) {
+    console.log(`[Webshop] ${missingProducts.length} artworks missing products, triggering background sync...`);
     
-    // Re-fetch products after sync
-    if (syncResult.created > 0) {
-      stripeProducts = await fetchStripeProducts();
-      artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
-    }
+    // Fire and forget - sync runs in background
+    syncArtworksToStripe().then(result => {
+      console.log("[Webshop] Background sync result:", result);
+    }).catch(err => {
+      console.error("[Webshop] Background sync error:", err);
+    });
   }
 
   const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));

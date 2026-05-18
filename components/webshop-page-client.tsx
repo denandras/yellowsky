@@ -3,9 +3,10 @@
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
+import { IconShoppingBag, IconX } from "@/components/icons";
 import type { SiteLanguage } from "@/lib/site-language";
 import type { StripeProduct, StripePrice } from "@/lib/stripe-products";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type MediaItem = {
   id: string;
@@ -25,7 +26,7 @@ type WebshopPageClientProps = {
 
 function formatPrice(price: StripePrice): string {
   if (!price.unitAmount) return "";
-  const amount = price.unitAmount / 100; // Stripe stores in cents/fillér
+  const amount = price.unitAmount / 100;
   const currency = price.currency.toUpperCase();
   const formatter = new Intl.NumberFormat("hu-HU", {
     style: "currency",
@@ -40,7 +41,21 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const { language } = useSiteLanguage(initialLanguage);
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setActiveItem(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Reveal animation
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
@@ -68,7 +83,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   }, []);
 
   const handleCheckout = async (item: MediaItem) => {
-    const priceId = selectedPrice[item.id] || item.product?.prices[0]?.id;
+    const priceId = selectedPrice[item.id];
     if (!priceId) return;
 
     setLoading(prev => ({ ...prev, [item.id]: true }));
@@ -100,10 +115,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           : hasConfig
             ? "Hamarosan műalkotások."
             : "A galéria konfigurációja nem elérhető.",
-        selectSize: "Válassz méretet",
-        addToCart: "Kosárba",
+        selectSize: "Méret",
+        buyPrint: "Nyomat",
         loading: "Betöltés...",
-        freeShipping: "Ingyenes szállítás világszerte",
+        freeShipping: "Ingyenes szállítás",
+        addToCart: "Kosárba",
       }
     : {
         title: "Webshop",
@@ -113,10 +129,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           : hasConfig
             ? "Artwork coming soon."
             : "Gallery configuration not available.",
-        selectSize: "Select size",
-        addToCart: "Add to Cart",
+        selectSize: "Size",
+        buyPrint: "Buy",
         loading: "Loading...",
-        freeShipping: "Free worldwide shipping",
+        freeShipping: "Free shipping",
+        addToCart: "Add to Cart",
       };
 
   return (
@@ -145,103 +162,107 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
         {hasConfig && items.length > 0 && (
           <section className="pb-10">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {/* Masonry-style grid using columns */}
+            <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
               {items.map((item, i) => {
-                // Calculate aspect ratio from actual image dimensions
-                const aspectRatio = item.width && item.height ? item.width / item.height : 1;
-                const paddingBottom = item.width && item.height ? `${(item.height / item.width) * 100}%` : "100%";
+                const isActive = activeItem === item.id;
+                const hasSelectedSize = !!selectedPrice[item.id];
+                const selectedPriceObj = item.product?.prices?.find(p => p.id === selectedPrice[item.id]);
 
                 return (
                   <div
                     key={item.id}
-                    className="flex flex-col overflow-hidden rounded-xl border border-neutral-border bg-white"
+                    className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white"
                     data-reveal
                     style={{ "--reveal-delay": `${100 + i * 40}ms` } as React.CSSProperties}
                   >
-                    {/* Image with blur placeholder */}
-                    <div
-                      className="relative w-full overflow-hidden bg-white"
-                      style={{ paddingBottom }}
-                    >
-                      {/* Blur placeholder */}
-                      <img
-                        src="/blur-placeholder.jpg"
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover"
-                        aria-hidden="true"
-                      />
-                      {/* Actual image */}
+                    {/* Image container */}
+                    <div className="relative">
+                      {/* Image */}
                       <img
                         src={item.viewUrl}
                         alt={item.title}
-                        className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300 hover:scale-105"
+                        className="w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02]"
                         loading="lazy"
-                        onLoad={(e) => {
-                          // Fade in when loaded
-                          (e.target as HTMLImageElement).style.opacity = "1";
-                        }}
-                        style={{ opacity: 0 }}
                       />
+
+                      {/* Cart button - bottom right corner */}
+                      {item.product?.prices && item.product.prices.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setActiveItem(isActive ? null : item.id)}
+                          className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
+                          aria-label={labels.buyPrint}
+                        >
+                          {isActive ? (
+                            <IconX className="size-5 text-text-dark" />
+                          ) : (
+                            <IconShoppingBag className="size-5 text-text-dark" />
+                          )}
+                        </button>
+                      )}
+
+                      {/* Menu overlay */}
+                      {isActive && item.product?.prices && (
+                        <div
+                          ref={menuRef}
+                          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
+                        >
+                          <h3 className="font-display text-sm font-semibold mb-3">{item.title}</h3>
+                          
+                          {/* Size buttons */}
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {item.product.prices
+                              .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
+                              .map((price) => (
+                                <button
+                                  key={price.id}
+                                  type="button"
+                                  onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
+                                  className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
+                                    selectedPrice[item.id] === price.id
+                                      ? "border-primary bg-primary/10 font-medium text-primary"
+                                      : "border-neutral-border hover:border-primary/50"
+                                  }`}
+                                >
+                                  {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
+                                </button>
+                              ))}
+                          </div>
+
+                          {/* Price (only after size selection) */}
+                          {hasSelectedSize && selectedPriceObj && (
+                            <p className="text-lg font-semibold text-primary mb-3">
+                              {formatPrice(selectedPriceObj)}
+                            </p>
+                          )}
+
+                          {/* Add to cart */}
+                          <button
+                            type="button"
+                            onClick={() => handleCheckout(item)}
+                            disabled={loading[item.id] || !hasSelectedSize}
+                            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {loading[item.id] ? labels.loading : labels.addToCart}
+                          </button>
+
+                          <p className="mt-2 text-center text-xs text-text-muted">
+                            {labels.freeShipping}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
-                  {/* Details */}
-                  <div className="flex flex-1 flex-col p-4">
-                    <h3 className="font-display text-lg font-semibold">{item.title}</h3>
-
-                    {/* Size selector */}
-                    {item.product?.prices && item.product.prices.length > 0 && (
-                      <div className="mt-3">
-                        <label className="mb-1.5 block text-xs font-medium text-text-muted">
-                          {labels.selectSize}
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                          {item.product.prices
-                            .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
-                            .map((price) => (
-                              <button
-                                key={price.id}
-                                type="button"
-                                onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
-                                className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
-                                  selectedPrice[item.id] === price.id
-                                    ? "border-primary bg-primary/10 font-medium text-primary"
-                                    : "border-neutral-border hover:border-primary/50"
-                                }`}
-                              >
-                                {price.nickname || `${(price.unitAmount ?? 0) / 100} ${price.currency.toUpperCase()}`}
-                              </button>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Price */}
-                    {item.product?.prices && item.product.prices.length > 0 && (
-                      <p className="mt-2 text-lg font-semibold text-primary">
-                        {formatPrice(item.product.prices.find(p => p.id === (selectedPrice[item.id] || item.product?.prices[0]?.id)) || item.product.prices[0])}
-                      </p>
-                    )}
-
-                    {/* Add to cart */}
-                    {item.product?.prices && item.product.prices.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => handleCheckout(item)}
-                        disabled={loading[item.id]}
-                        className="mt-auto rounded-xl bg-primary py-3 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
-                      >
-                        {loading[item.id] ? labels.loading : labels.addToCart}
-                      </button>
-                    )}
-
-                    {/* Free shipping note */}
-                    <p className="mt-2 text-center text-xs text-text-muted">
-                      {labels.freeShipping}
-                    </p>
+                    {/* Title (always visible) */}
+                    <div className="p-3">
+                      <h3 className="font-display text-sm font-medium text-text-dark">
+                        {item.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </section>
         )}
