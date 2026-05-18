@@ -95,7 +95,7 @@ export default function LanguageSwitcher({
   light?: boolean;
 }) {
   const router = useRouter();
-  const { language, setLanguage } = useSiteLanguage();
+  const { language, setLanguage } = useSiteLanguage(initialLanguage);
   const isChangingRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
