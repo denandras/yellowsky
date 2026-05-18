@@ -199,7 +199,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               href="/webshop"
               className="block w-full"
             >
-              <div className="group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
+              <div className="group flex items-center gap-4 rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
+                  <IconShoppingBag className="size-6" />
+                </div>
                 <div>
                   <h3 className="font-display text-xl font-semibold">
                     {labels.ctaTitle}
@@ -207,9 +210,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                   <p className="mt-1 text-xs font-medium tracking-widest text-text-muted">
                     {labels.ctaLabel}
                   </p>
-                </div>
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
-                  <IconShoppingBag className="size-6" />
                 </div>
               </div>
             </a>
