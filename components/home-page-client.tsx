@@ -101,7 +101,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
         {/* Hero - No header on main page */}
-        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-background-light" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+        <section className="relative w-full overflow-hidden bg-background-light" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
           {/* Language switcher - fixed to viewport corner */}
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
@@ -122,36 +122,35 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               />
             </div>
           )}
-          {/* Gradient overlay - smooth fade into content */}
-          <div className="absolute inset-x-0 bottom-0 h-20 z-10" style={{ background: 'linear-gradient(to top, #fafafa 0%, #fafafa 50%, rgba(250,250,250,0) 100%)' }} />
-          <div className="relative z-20 px-6 pb-8 pt-28" data-reveal
+        </section>
+
+        {/* Title and subtitle - below the image */}
+        <section className="bg-background-light px-6 pt-8 pb-6">
+          <h1
+            className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+            data-reveal
+            style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
           >
-            <h1
-              className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
-              data-reveal
-              style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
-            >
-              {labels.title}
-            </h1>
-            <div
-              className="flex items-center gap-3"
-              data-reveal
-              style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
-            >
-              <div className="h-px w-12 bg-primary" />
-              {labels.subtitleLink ? (
-                <a
-                  href={labels.subtitleLink}
-                  className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-                >
-                  {labels.subtitle}
-                </a>
-              ) : (
-                <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
-                  {labels.subtitle}
-                </p>
-              )}
-            </div>
+            {labels.title}
+          </h1>
+          <div
+            className="flex items-center gap-3"
+            data-reveal
+            style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
+          >
+            <div className="h-px w-12 bg-primary" />
+            {labels.subtitleLink ? (
+              <a
+                href={labels.subtitleLink}
+                className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+              >
+                {labels.subtitle}
+              </a>
+            ) : (
+              <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+                {labels.subtitle}
+              </p>
+            )}
           </div>
         </section>
 
