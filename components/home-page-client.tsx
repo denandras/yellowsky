@@ -132,7 +132,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
           {/* Bottom gradient: white to page color with title overlaid */}
           <div className="relative w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
-            <div className="px-6 py-6">
+            <div className="px-6 pt-4 pb-5">
               <h1
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
                 data-reveal
