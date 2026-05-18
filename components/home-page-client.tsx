@@ -101,7 +101,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
         {/* Hero - No header on main page */}
-        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+        <section className="relative flex w-full flex-col justify-end overflow-hidden bg-background-light" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
           {/* Language switcher - fixed to viewport corner */}
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
@@ -122,8 +122,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               />
             </div>
           )}
-          {/* Gradient overlay - white fade at bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-20 z-10 bg-gradient-to-t from-white via-white/80 to-white/0" />
+          {/* Gradient overlay - smooth fade into content */}
+          <div className="absolute inset-x-0 bottom-0 h-28 z-10" style={{ background: 'linear-gradient(to top, #fafafa 0%, #fafafa 40%, rgba(250,250,250,0.6) 70%, rgba(250,250,250,0) 100%)' }} />
           <div className="relative z-20 px-6 pb-6 pt-24" data-reveal
           >
             <h1

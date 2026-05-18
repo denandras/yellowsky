@@ -29,15 +29,30 @@ function persistLanguage(next: SiteLanguage) {
 
 export function useSiteLanguage(initialLanguage?: SiteLanguage) {
   const [language, setLanguage] = useState<SiteLanguage>(() => {
+    // Server-rendered initialLanguage is the source of truth
     if (initialLanguage) return normalizeSiteLanguage(initialLanguage);
-    if (typeof window === "undefined") return DEFAULT_SITE_LANGUAGE;
-    const fromStorage = window.localStorage.getItem(SITE_LANGUAGE_STORAGE_KEY);
-    const fromCookie = readCookieLanguage();
-    return normalizeSiteLanguage(fromStorage ?? fromCookie ?? DEFAULT_SITE_LANGUAGE);
+    return DEFAULT_SITE_LANGUAGE;
   });
 
-  // Persist when language changes
+  // Track if we've completed initial hydration
+  const didHydrate = useRef(false);
+
+  // Sync from storage ONLY after hydration (prevents mismatch)
   useEffect(() => {
+    const fromStorage = window.localStorage.getItem(SITE_LANGUAGE_STORAGE_KEY);
+    const fromCookie = readCookieLanguage();
+    const stored = normalizeSiteLanguage(fromStorage ?? fromCookie ?? DEFAULT_SITE_LANGUAGE);
+    
+    // If user had a stored preference different from server, use that
+    if (stored !== language) {
+      setLanguage(stored);
+    }
+    didHydrate.current = true;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Persist when language changes (but not on initial mount)
+  useEffect(() => {
+    if (!didHydrate.current) return;
     persistLanguage(language);
   }, [language]);
 
@@ -81,13 +96,11 @@ export default function LanguageSwitcher({
 }) {
   const router = useRouter();
   const { language, setLanguage } = useSiteLanguage();
-  // Use reactive language from hook, not static initialLanguage
-  const activeLanguage = language;
   const isChangingRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setAndRefresh = (next: SiteLanguage) => {
-    if (next === activeLanguage) return;
+    if (next === language) return;
     if (isChangingRef.current) return;
 
     isChangingRef.current = true;
@@ -124,10 +137,10 @@ export default function LanguageSwitcher({
     >
       <button
         type="button"
-        disabled={activeLanguage === "hu"}
+        disabled={language === "hu"}
         onClick={() => setAndRefresh("hu")}
         className={`px-1.5 py-0.5 transition-opacity ${
-          activeLanguage === "hu"
+          language === "hu"
             ? "cursor-default font-semibold"
             : "cursor-pointer opacity-60 hover:opacity-100"
         }`}
@@ -137,10 +150,10 @@ export default function LanguageSwitcher({
       <span className={`px-1 ${light ? "text-white/50" : "text-text-muted"}`}>|</span>
       <button
         type="button"
-        disabled={activeLanguage === "en"}
+        disabled={language === "en"}
         onClick={() => setAndRefresh("en")}
         className={`px-1.5 py-0.5 transition-opacity ${
-          activeLanguage === "en"
+          language === "en"
             ? "cursor-default font-semibold"
             : "cursor-pointer opacity-60 hover:opacity-100"
         }`}
