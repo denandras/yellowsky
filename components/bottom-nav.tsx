@@ -13,6 +13,18 @@ export default function BottomNav({ active }: BottomNavProps) {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-border bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
       <div className="mx-auto grid h-16 w-full max-w-2xl grid-cols-3">
         <Link
+          href="/contact"
+          prefetch={true}
+          className={`${itemBase} ${
+            active === "contact"
+              ? "text-primary"
+              : "text-neutral-400 hover:text-primary"
+          }`}
+        >
+          <IconSend className="size-5" />
+        </Link>
+
+        <Link
           href="/"
           prefetch={true}
           className={`${itemBase} ${
@@ -34,18 +46,6 @@ export default function BottomNav({ active }: BottomNavProps) {
           }`}
         >
           <IconShoppingBag className="size-5" />
-        </Link>
-
-        <Link
-          href="/contact"
-          prefetch={true}
-          className={`${itemBase} ${
-            active === "contact"
-              ? "text-primary"
-              : "text-neutral-400 hover:text-primary"
-          }`}
-        >
-          <IconSend className="size-5" />
         </Link>
       </div>
     </nav>

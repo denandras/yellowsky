@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import ContactPageClient from "@/components/contact-page-client";
+import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 
-export const metadata: Metadata = {
-  title: "Contact | Yellowsky",
-  description: "Get in touch about prints, commissions, or collaborations.",
-};
+export default async function ContactPage() {
+  const cookieStore = await cookies();
+  const initialLanguage = normalizeSiteLanguage(
+    cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
+  );
 
-export default function ContactPage() {
-  return <ContactPageClient />;
+  return <ContactPageClient initialLanguage={initialLanguage} />;
 }

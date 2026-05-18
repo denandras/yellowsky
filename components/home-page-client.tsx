@@ -3,12 +3,81 @@
 import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
+import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import { IconGroups } from "@/components/icons";
+import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useRef, useState } from "react";
 
-export default function HomePageClient() {
+type HomePageClientProps = {
+  initialLanguage: SiteLanguage;
+};
+
+export default function HomePageClient({ initialLanguage }: HomePageClientProps) {
   const heroRef = useRef<HTMLElement | null>(null);
   const [headerProgress, setHeaderProgress] = useState(0);
+  const { language } = useSiteLanguage(initialLanguage);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const currentYear = new Date().getFullYear();
+
+  const labels = language === "hu"
+    ? {
+        title: "Yellowsky",
+        subtitle: "Vázlatok",
+        storyParagraphs: [
+          <>A covidos időszakban kezdtem el vázolni, mert otthon kellett tanulnom egész nap, és a lezárás alatt sehová nem mehettem. Úgy éreztem, ki kell fejeznem magam. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
+            <a
+              href="https://instagram.com/explore/tags/yellowskychallenge"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+            >
+              #yellowskychallenge
+            </a>
+            -t.</>,
+          <>Sokan követték ezt az utat, amit azóta sem hagytam abba teljesen. Voltak időszakok, amikor a{" "}
+            <a
+              href="https://andrasdenes.com"
+              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+            >
+              harsonázásra
+            </a>
+            {" "}kellett koncentrálnom, de néha akkor is vázoltam valamit.</>,
+          "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
+        ],
+        ctaLabel: "Most elérhető",
+        ctaTitle: "Vásárolj nyomatot",
+        footerTagline: "Yellowsky • Vázlatok Budapestről",
+      }
+    : {
+        title: "Yellowsky",
+        subtitle: "Sketches",
+        storyParagraphs: [
+          <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
+            <a
+              href="https://instagram.com/explore/tags/yellowskychallenge"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+            >
+              #yellowskychallenge
+            </a>
+            .</>,
+          <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
+            <a
+              href="https://andrasdenes.com"
+              className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+            >
+              playing the trombone
+            </a>
+            , but sometimes I sketched a bit.</>,
+          "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
+        ],
+        ctaLabel: "Available now",
+        ctaTitle: "Get your print",
+        footerTagline: "Yellowsky • Sketches from Budapest",
+      };
 
   useEffect(() => {
     const update = () => {
@@ -55,8 +124,6 @@ export default function HomePageClient() {
     };
   }, []);
 
-  const currentYear = new Date().getFullYear();
-
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <header
@@ -70,16 +137,28 @@ export default function HomePageClient() {
         <div className="flex items-center gap-2">
           <BrandMark />
           <span className="font-display text-lg font-bold tracking-tight uppercase">
-            Yellowsky
+            {labels.title}
           </span>
         </div>
+        <LanguageSwitcher initialLanguage={initialLanguage} light={headerProgress > 0.08} />
       </header>
 
       <main className="flex-1 pb-24">
         {/* Hero */}
         <section ref={heroRef} className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[16/8]">
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
-          <div className="absolute inset-0 bg-primary/10" />
+          {mounted && (
+            <div className="absolute inset-0">
+              <Image
+                alt="Yellowsky Seoul sketch - yellow architectural illustration"
+                className="h-full w-full object-cover"
+                src="/hero.jpg"
+                fill
+                priority
+                sizes="100vw"
+              />
+            </div>
+          )}
           <div className="relative z-20 px-6 pb-12" data-reveal>
             <h1
               className="relative font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -90,7 +169,7 @@ export default function HomePageClient() {
                 opacity: 1 - headerProgress * 0.35,
               } as React.CSSProperties}
             >
-              Yellowsky
+              {labels.title}
             </h1>
             <div
               className="relative flex items-center gap-3"
@@ -103,7 +182,7 @@ export default function HomePageClient() {
             >
               <div className="h-px w-12 bg-primary" />
               <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
-                Sketches
+                {labels.subtitle}
               </p>
             </div>
           </div>
@@ -112,31 +191,16 @@ export default function HomePageClient() {
         {/* Story */}
         <section className="px-6 py-12">
           <div className="mx-auto max-w-2xl space-y-6" data-reveal>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
-              I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
-              <a
-                href="https://instagram.com/explore/tags/yellowskychallenge"
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+            {labels.storyParagraphs.map((paragraph, idx) => (
+              <p
+                key={`story-${idx}`}
+                className="text-base leading-relaxed text-text-muted"
+                data-reveal
+                style={{ "--reveal-delay": `${100 + idx * 80}ms` } as React.CSSProperties}
               >
-                #yellowskychallenge
-              </a>
-              .
-            </p>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
-              Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
-              <a
-                href="https://andrasdenes.com"
-                className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
-              >
-                playing the trombone
-              </a>
-              , but sometimes I sketched a bit.
-            </p>
-            <p className="text-base leading-relaxed text-text-muted" data-reveal style={{ "--reveal-delay": "260ms" } as React.CSSProperties}>
-              Now that I have done my master&apos;s degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.
-            </p>
+                {paragraph}
+              </p>
+            ))}
           </div>
         </section>
 
@@ -152,10 +216,10 @@ export default function HomePageClient() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="mb-1 text-xs font-bold tracking-widest text-primary uppercase">
-                    Available now
+                    {labels.ctaLabel}
                   </p>
                   <h3 className="font-display text-xl font-semibold">
-                    Get your print
+                    {labels.ctaTitle}
                   </h3>
                 </div>
                 <div className="flex size-12 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
@@ -177,7 +241,7 @@ export default function HomePageClient() {
           © {currentYear} András Dénes
         </p>
         <p className="text-[10px] text-text-muted/60">
-          Yellowsky • Sketches from Budapest
+          {labels.footerTagline}
         </p>
       </footer>
     </div>

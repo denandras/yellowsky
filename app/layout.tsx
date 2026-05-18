@@ -48,6 +48,7 @@ export default function RootLayout({
         <link rel="prefetch" href="/" />
         <link rel="prefetch" href="/webshop" />
         <link rel="prefetch" href="/contact" />
+        <link rel="prefetch" href="/legal" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
         {children}

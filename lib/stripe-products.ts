@@ -1,0 +1,139 @@
+import Stripe from "stripe";
+import { getStripeSecretKey } from "./stripe-config";
+
+export type StripeProduct = {
+  id: string;
+  name: string;
+  description: string | null;
+  images: string[];
+  active: boolean;
+  metadata: Record<string, string>;
+  prices: StripePrice[];
+};
+
+export type StripePrice = {
+  id: string;
+  productId: string;
+  nickname: string | null;
+  unitAmount: number | null;
+  currency: string;
+  active: boolean;
+};
+
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe | null {
+  const key = getStripeSecretKey();
+  if (!key) return null;
+  if (stripeInstance) return stripeInstance;
+  stripeInstance = new Stripe(key, {
+    apiVersion: "2026-04-22.dahlia",
+  });
+  return stripeInstance;
+}
+
+export async function fetchStripeProducts(): Promise<StripeProduct[]> {
+  const stripe = getStripe();
+  if (!stripe) return [];
+
+  const products: StripeProduct[] = [];
+  let hasMore = true;
+  let startingAfter: string | undefined;
+
+  while (hasMore) {
+    const response = await stripe.products.list({
+      active: true,
+      limit: 100,
+      expand: ["data.default_price"],
+      ...(startingAfter ? { starting_after: startingAfter } : {}),
+    });
+
+    for (const product of response.data) {
+      // Fetch all prices for this product
+      const prices = await stripe.prices.list({
+        product: product.id,
+        active: true,
+        limit: 100,
+      });
+
+      products.push({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        images: product.images,
+        active: product.active,
+        metadata: product.metadata,
+        prices: prices.data.map((price) => ({
+          id: price.id,
+          productId: product.id,
+          nickname: price.nickname,
+          unitAmount: price.unit_amount,
+          currency: price.currency,
+          active: price.active,
+        })),
+      });
+    }
+
+    hasMore = response.has_more;
+    if (response.data.length > 0) {
+      startingAfter = response.data[response.data.length - 1].id;
+    }
+  }
+
+  return products;
+}
+
+/**
+ * Matches a product name to an artwork filename.
+ * Product names like "2020.01 Venice" should match files like "2020.01 Venice.png"
+ */
+export function matchProductToArtwork(
+  productName: string,
+  artworkFilenames: string[]
+): string | null {
+  // Try exact match first (without extension)
+  const baseName = productName.trim();
+  const match = artworkFilenames.find((filename) => {
+    const fileBase = filename.replace(/\.[^.]+$/, "");
+    return fileBase === baseName;
+  });
+  if (match) return match;
+
+  // Try case-insensitive match
+  const lowerBase = baseName.toLowerCase();
+  const matchLower = artworkFilenames.find((filename) => {
+    const fileBase = filename.replace(/\.[^.]+$/, "").toLowerCase();
+    return fileBase === lowerBase;
+  });
+  if (matchLower) return matchLower;
+
+  // Try partial match (product name contains or is contained by filename)
+  const partialMatch = artworkFilenames.find((filename) => {
+    const fileBase = filename.replace(/\.[^.]+$/, "");
+    return fileBase.includes(baseName) || baseName.includes(fileBase);
+  });
+
+  return partialMatch || null;
+}
+
+/**
+ * Creates a mapping of artwork filenames to Stripe products.
+ * Only includes artworks that have matching active Stripe products.
+ */
+export function mapArtworksToProducts(
+  artworkFilenames: string[],
+  products: StripeProduct[]
+): Map<string, StripeProduct> {
+  const map = new Map<string, StripeProduct>();
+
+  for (const product of products) {
+    if (!product.active) continue;
+
+    const matchedFile = matchProductToArtwork(product.name, artworkFilenames);
+    if (matchedFile) {
+      map.set(matchedFile, product);
+    }
+  }
+
+  return map;
+}

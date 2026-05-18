@@ -2,10 +2,18 @@
 
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
+import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import { IconMail, IconOpenInNew, IconCamera } from "@/components/icons";
+import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect } from "react";
 
-export default function ContactPageClient() {
+type ContactPageClientProps = {
+  initialLanguage: SiteLanguage;
+};
+
+export default function ContactPageClient({ initialLanguage }: ContactPageClientProps) {
+  const { language } = useSiteLanguage(initialLanguage);
+
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
@@ -32,28 +40,45 @@ export default function ContactPageClient() {
     };
   }, []);
 
-  const labels = {
-    header: "Get in Touch",
-    email: "Email",
-    instagram: "Instagram",
-    name: "Name",
-    emailAddress: "Email Address",
-    message: "Message",
-    placeholderName: "Your name",
-    placeholderEmail: "Your email",
-    placeholderMessage: "How can I help you?",
-    send: "Send Message",
-    subject: "New inquiry from yellowsky.andrasdenes.com",
-  };
+  const labels = language === "hu"
+    ? {
+        header: "Kapcsolat",
+        email: "Email",
+        instagram: "Instagram",
+        name: "Név",
+        emailAddress: "Email cím",
+        message: "Üzenet",
+        placeholderName: "Neved",
+        placeholderEmail: "Email címed",
+        placeholderMessage: "Miben segíthetek?",
+        send: "Üzenet küldése",
+        subject: "Új üzenet a yellowsky.andrasdenes.com oldalról",
+        formTitle: "Űrlap",
+      }
+    : {
+        header: "Get in Touch",
+        email: "Email",
+        instagram: "Instagram",
+        name: "Name",
+        emailAddress: "Email Address",
+        message: "Message",
+        placeholderName: "Your name",
+        placeholderEmail: "Your email",
+        placeholderMessage: "How can I help you?",
+        send: "Send Message",
+        subject: "New inquiry from yellowsky.andrasdenes.com",
+        formTitle: "Form",
+      };
 
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-        <div className="flex h-16 w-full items-center justify-center px-6">
+        <div className="flex h-16 w-full items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <BrandMark />
             <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.header}</h1>
           </div>
+          <LanguageSwitcher initialLanguage={initialLanguage} />
         </div>
       </header>
 
@@ -118,12 +143,12 @@ export default function ContactPageClient() {
           {/* Contact form */}
           <div className="relative grid gap-6 border-b border-neutral-border/70 py-10 md:grid-cols-12 md:gap-8" data-reveal>
             <h3 className="pointer-events-none absolute top-11 right-1 z-0 hidden max-w-[92%] font-display text-6xl leading-[0.85] font-bold tracking-tight text-text-dark/10 uppercase md:block lg:text-7xl">
-              Form
+              {labels.formTitle}
             </h3>
 
             <div className="md:col-span-4 md:order-2 md:text-right">
               <h3 className="font-display text-4xl leading-[0.88] font-bold tracking-tight uppercase md:hidden">
-                Form
+                {labels.formTitle}
               </h3>
             </div>
 

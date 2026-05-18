@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { cookies } from "next/headers";
+import { ListObjectsV2Command, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from "@/lib/s4-config";
 import { createMediaAccessToken } from "@/lib/media-access-token";
+import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
+import { fetchStripeProducts, mapArtworksToProducts, type StripeProduct } from "@/lib/stripe-products";
+import probe from "probe-image-size";
 import WebshopPageClient from "@/components/webshop-page-client";
 
 type MediaItem = {
@@ -9,6 +13,9 @@ type MediaItem = {
   title: string;
   viewUrl: string;
   downloadUrl: string;
+  product?: StripeProduct;
+  width?: number;
+  height?: number;
 };
 
 export const metadata: Metadata = {
@@ -33,6 +40,10 @@ function extractTitle(key: string): string {
   const filename = key.split("/").pop() ?? key;
   const name = filename.replace(/\.[^.]+$/, "");
   return name.replace(/[_-]/g, " ");
+}
+
+function extractFilename(key: string): string {
+  return key.split("/").pop() ?? key;
 }
 
 async function getArtItems(): Promise<MediaItem[]> {
@@ -73,11 +84,26 @@ async function getArtItems(): Promise<MediaItem[]> {
     token = list.IsTruncated ? list.NextContinuationToken : undefined;
   } while (token);
 
+  // Get filenames for matching
+  const filenames = keys.map(extractFilename);
+
+  // Fetch Stripe products and match to artworks
+  const stripeProducts = await fetchStripeProducts();
+  const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+
   const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));
 
-  return sortedKeys.map((key, index) => {
+  // Filter to only show artworks that have matching Stripe products
+  const availableItems: MediaItem[] = [];
+
+  for (const key of sortedKeys) {
+    const filename = extractFilename(key);
+    const product = artworkToProduct.get(filename);
+
+    if (!product) continue; // Skip artworks without Stripe products
+
     const ext = fileExtension(key);
-    const ordinal = String(index + 1).padStart(3, "0");
+    const ordinal = String(availableItems.length + 1).padStart(3, "0");
     const safeName = `yellowsky-${ordinal}.${ext}`;
     const accessToken = createMediaAccessToken(
       {
@@ -89,18 +115,51 @@ async function getArtItems(): Promise<MediaItem[]> {
     );
     const encodedToken = encodeURIComponent(accessToken);
 
-    return {
-      id: `${index}`,
-      title: extractTitle(key),
+    // Fetch image dimensions from S3
+    let width: number | undefined;
+    let height: number | undefined;
+
+    try {
+      const imageResponse = await client.send(
+        new GetObjectCommand({
+          Bucket: cfg.bucket,
+          Key: key,
+        }),
+      );
+
+      const stream = imageResponse.Body as NodeJS.ReadableStream;
+      if (stream) {
+        const probed = await probe(stream);
+        width = probed.width;
+        height = probed.height;
+      }
+    } catch (err) {
+      console.error(`Failed to probe image dimensions for ${key}:`, err);
+    }
+
+    availableItems.push({
+      id: product.id,
+      title: product.name,
       viewUrl: `/api/media/file?token=${encodedToken}`,
       downloadUrl: `/api/media/file?token=${encodedToken}&download=1`,
-    };
-  });
+      product,
+      width,
+      height,
+    });
+  }
+
+  return availableItems;
 }
 
 export default async function WebshopPage() {
+  const cookieStore = await cookies();
+  const initialLanguage = normalizeSiteLanguage(
+    cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
+  );
+
   const artItems = await getArtItems();
   const hasConfig = !!getS4Config() && !!getS4ArtPrefix();
+  const hasStripe = artItems.some(item => item.product);
 
-  return <WebshopPageClient items={artItems} hasConfig={hasConfig} />;
+  return <WebshopPageClient items={artItems} hasConfig={hasConfig && hasStripe} initialLanguage={initialLanguage} />;
 }
