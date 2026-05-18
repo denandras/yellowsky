@@ -5,6 +5,7 @@ import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from "@/lib/s4-confi
 import { createMediaAccessToken } from "@/lib/media-access-token";
 import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 import { fetchStripeProducts, mapArtworksToProducts, type StripeProduct } from "@/lib/stripe-products";
+import { syncArtworksToStripe } from "@/lib/sync-artworks";
 import probe from "probe-image-size";
 import WebshopPageClient from "@/components/webshop-page-client";
 
@@ -88,8 +89,25 @@ async function getArtItems(): Promise<MediaItem[]> {
   const filenames = keys.map(extractFilename);
 
   // Fetch Stripe products and match to artworks
-  const stripeProducts = await fetchStripeProducts();
-  const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+  let stripeProducts = await fetchStripeProducts();
+  let artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+
+  // If we have artworks but no matching products, trigger sync
+  const hasArtworks = filenames.length > 0;
+  const hasProducts = filenames.some(f => artworkToProduct.has(f));
+  
+  if (hasArtworks && !hasProducts) {
+    // Auto-sync: create products for artworks
+    console.log("[Webshop] No products found, triggering sync...");
+    const syncResult = await syncArtworksToStripe();
+    console.log("[Webshop] Sync result:", syncResult);
+    
+    // Re-fetch products after sync
+    if (syncResult.created > 0) {
+      stripeProducts = await fetchStripeProducts();
+      artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+    }
+  }
 
   const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));
 
