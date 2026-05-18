@@ -121,7 +121,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Top gradient: page color to white */}
-          <div className="h-2 w-full md:h-8" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
+          <div className="h-2 w-full md:h-4" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
 
           {/* Image with overlaid title text */}
           <div className="relative w-full bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
@@ -144,7 +144,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Title text below image */}
-          <div className="bg-white px-6 py-4">
+          <div className="bg-white px-6 py-2">
             <h1
               key={`title-${language}`}
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
