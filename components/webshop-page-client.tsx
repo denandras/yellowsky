@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart-context";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type MediaItem = {
   id: string;
@@ -70,31 +70,8 @@ function ImageCard({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(index < 6);
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const hasSelectedSize = !!selectedPrice[item.id];
   const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
-
-  // IntersectionObserver to trigger loading for lazy images
-  useEffect(() => {
-    if (index < 6) return; // Eager images already loading
-    if (!containerRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setShouldLoad(true);
-            observer.disconnect();
-          }
-        }
-      },
-      { rootMargin: "200px" }
-    );
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [index]);
 
   const handleImageError = () => {
     console.error(`Failed to load image: ${item.viewUrl}`);
@@ -103,7 +80,7 @@ function ImageCard({
   };
 
   return (
-    <div ref={containerRef} className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
+    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
       {/* Image container */}
       <div className="relative">
         {/* Error state */}
@@ -113,17 +90,23 @@ function ImageCard({
           </div>
         )}
 
-        {/* Image - natural aspect ratio */}
-        <img
-          src={shouldLoad ? item.viewUrl : undefined}
-          alt={item.title}
-          className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
-          loading={index < 6 ? "eager" : "lazy"}
-          fetchPriority={index < 6 ? "high" : "low"}
-          decoding={index < 6 ? "sync" : "async"}
-          onLoad={() => setImageLoaded(true)}
-          onError={handleImageError}
-        />
+        {/* Image - natural aspect ratio with placeholder */}
+        <div className="relative w-full">
+          {/* Placeholder while loading */}
+          {!imageLoaded && !imageError && (
+            <div className="w-full aspect-[4/3] bg-neutral-50" />
+          )}
+          <img
+            src={item.viewUrl}
+            alt={item.title}
+            className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0 absolute inset-0"}`}
+            loading={index < 6 ? "eager" : "lazy"}
+            fetchPriority={index < 6 ? "high" : "low"}
+            decoding={index < 6 ? "sync" : "async"}
+            onLoad={() => setImageLoaded(true)}
+            onError={handleImageError}
+          />
+        </div>
 
         {/* Cart button - bottom right corner (only for items with products) */}
         {imageLoaded && item.hasProduct && item.prices && item.prices.length > 0 && (
