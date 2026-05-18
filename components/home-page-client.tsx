@@ -57,8 +57,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         subtitle: "Dénes András",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
-        ctaLabel: "Most elérhető",
-        ctaTitle: "Vásárolj nyomatot",
+        ctaLabel: "giclèe nyomatok elérhetők",
+        ctaTitle: "A galériához",
         footerTagline: "Yellowsky • Vázlatok Budapestről",
       }
     : {
@@ -66,8 +66,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         subtitle: "by András Dénes",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsEn,
-        ctaLabel: "Available now",
-        ctaTitle: "Get your print",
+        ctaLabel: "giclèe prints available",
+        ctaTitle: "To the Gallery",
         footerTagline: "Yellowsky • Sketches from Budapest",
       };
 
@@ -179,7 +179,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
         </section>
 
-        {/* CTA - max half width, basket icon */}
+        {/* CTA - Gallery button */}
         <section className="px-6 py-8">
           <div data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
@@ -188,12 +188,12 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             >
               <div className="group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
                 <div>
-                  <p className="mb-1 text-xs font-bold tracking-widest text-primary uppercase">
-                    {labels.ctaLabel}
-                  </p>
                   <h3 className="font-display text-xl font-semibold">
                     {labels.ctaTitle}
                   </h3>
+                  <p className="mt-1 text-xs font-medium tracking-widest text-text-muted">
+                    {labels.ctaLabel}
+                  </p>
                 </div>
                 <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
                   <IconShoppingBag className="size-6" />

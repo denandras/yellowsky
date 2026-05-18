@@ -39,8 +39,9 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://yellowsky.andrasdenes.com"}/webshop?success=1`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://yellowsky.andrasdenes.com"}/webshop?canceled=1`,
       shipping_address_collection: {
-        allowed_countries: ["HU", "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "GB", "US", "CA"],
+        allowed_countries: ["HU", "AT", "BE", "BG", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "GB", "US", "CA"],
       },
+      allow_promotion_codes: true,
     });
 
     return NextResponse.json({ url: session.url });
