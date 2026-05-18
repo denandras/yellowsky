@@ -239,13 +239,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
     setCheckoutLoading(true);
     try {
-      // For now, checkout the first item
-      // TODO: Multi-item checkout via Stripe
-      const firstItem = cartItems[0];
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: firstItem.priceId }),
+        body: JSON.stringify({
+          items: cartItems.map(item => ({ priceId: item.priceId, quantity: 1 })),
+        }),
       });
 
       const data = await response.json();

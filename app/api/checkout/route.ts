@@ -16,21 +16,26 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { priceId } = body;
+    const { priceId, items } = body as { priceId?: string; items?: Array<{ priceId: string; quantity?: number }> };
 
-    if (!priceId) {
-      return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
+    // Support both single priceId (backward compat) and items array
+    let lineItems: Array<{ price: string; quantity: number }>;
+
+    if (items && items.length > 0) {
+      lineItems = items.map(item => ({
+        price: item.priceId,
+        quantity: item.quantity ?? 1,
+      }));
+    } else if (priceId) {
+      lineItems = [{ price: priceId, quantity: 1 }];
+    } else {
+      return NextResponse.json({ error: "Missing priceId or items" }, { status: 400 });
     }
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://yellowsky.andrasdenes.com"}/webshop?success=1`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://yellowsky.andrasdenes.com"}/webshop?canceled=1`,
       shipping_address_collection: {
