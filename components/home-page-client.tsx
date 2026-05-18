@@ -100,57 +100,66 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
-        {/* Hero - No header on main page */}
-        <section className="relative w-full overflow-hidden bg-background-light" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+        {/* Hero section with gradients */}
+        <section className="relative w-full">
           {/* Language switcher - fixed to viewport corner */}
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
-          {mounted && (
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-              <Image
-                alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-contain transition-opacity duration-500"
-                src="/hero.jpg"
-                fill
-                priority
-                sizes="100vw"
-                onLoad={(e) => {
-                  (e.target as HTMLImageElement).style.opacity = "1";
-                }}
-                style={{ opacity: 0, objectFit: "contain", objectPosition: "center" }}
-              />
-            </div>
-          )}
-        </section>
 
-        {/* Title and subtitle - below the image */}
-        <section className="bg-background-light px-6 pt-8 pb-6">
-          <h1
-            className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
-            data-reveal
-            style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
-          >
-            {labels.title}
-          </h1>
-          <div
-            className="flex items-center gap-3"
-            data-reveal
-            style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
-          >
-            <div className="h-px w-12 bg-primary" />
-            {labels.subtitleLink ? (
-              <a
-                href={labels.subtitleLink}
-                className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-              >
-                {labels.subtitle}
-              </a>
-            ) : (
-              <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
-                {labels.subtitle}
-              </p>
+          {/* Top gradient: page color to white */}
+          <div className="h-8 w-full" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
+
+          {/* Image on white */}
+          <div className="relative w-full bg-white" style={{ minHeight: 'clamp(300px, 50vh, 600px)' }}>
+            {mounted && (
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <Image
+                  alt="Yellowsky Seoul sketch - yellow architectural illustration"
+                  className="h-full w-full object-contain transition-opacity duration-500"
+                  src="/hero.jpg"
+                  fill
+                  priority
+                  sizes="100vw"
+                  onLoad={(e) => {
+                    (e.target as HTMLImageElement).style.opacity = "1";
+                  }}
+                  style={{ opacity: 0, objectFit: "contain", objectPosition: "center" }}
+                />
+              </div>
             )}
+          </div>
+
+          {/* Bottom gradient: white to page color with title overlaid */}
+          <div className="relative w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
+            <div className="px-6 py-6">
+              <h1
+                className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+                data-reveal
+                style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
+              >
+                {labels.title}
+              </h1>
+              <div
+                className="flex items-center gap-3"
+                data-reveal
+                style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
+              >
+                <div className="h-px w-12 bg-primary" />
+                {labels.subtitleLink ? (
+                  <a
+                    href={labels.subtitleLink}
+                    className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                  >
+                    {labels.subtitle}
+                  </a>
+                ) : (
+                  <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+                    {labels.subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </section>
 
