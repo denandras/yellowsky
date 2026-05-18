@@ -123,8 +123,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </div>
           )}
           {/* Gradient overlay - smooth fade into content */}
-          <div className="absolute inset-x-0 bottom-0 h-28 z-10" style={{ background: 'linear-gradient(to top, #fafafa 0%, #fafafa 40%, rgba(250,250,250,0.6) 70%, rgba(250,250,250,0) 100%)' }} />
-          <div className="relative z-20 px-6 pb-6 pt-32" data-reveal
+          <div className="absolute inset-x-0 bottom-0 h-20 z-10" style={{ background: 'linear-gradient(to top, #fafafa 0%, #fafafa 50%, rgba(250,250,250,0) 100%)' }} />
+          <div className="relative z-20 px-6 pb-8 pt-20" data-reveal
           >
             <h1
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -156,7 +156,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </section>
 
         {/* Story */}
-        <section className="px-6 py-12">
+        <section className="px-6 pt-8 pb-6">
           <div className="mx-auto max-w-2xl space-y-6" data-reveal>
             {labels.storyParagraphs.map((paragraph, idx) => (
               <p
