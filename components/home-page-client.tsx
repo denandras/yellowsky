@@ -106,11 +106,18 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
+          {/* Blur placeholder */}
+          <img
+            src="/blur-placeholder.jpg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            aria-hidden="true"
+          />
           {mounted && (
             <div className="absolute inset-0 flex items-center justify-center p-4">
               <Image
                 alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain transition-opacity duration-500"
                 src="/hero.jpg"
                 fill
                 priority
@@ -173,7 +180,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
-              className="block max-w-[50%] mx-auto"
+              className="block w-full mx-auto"
             >
               <div className="group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
                 <div>
