@@ -94,7 +94,7 @@ function ImageCard({
         <div className="relative w-full">
           {/* Placeholder while loading */}
           {!imageLoaded && !imageError && (
-            <div className="w-full aspect-[4/3] bg-neutral-50" />
+            <div className="w-full aspect-[210/297] bg-neutral-50" />
           )}
           <img
             src={item.viewUrl}
