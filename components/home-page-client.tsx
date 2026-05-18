@@ -107,7 +107,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
       <main className="flex-1 pb-24">
         {/* Hero - No header on main page */}
-        <section className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[16/7]">
+        <section className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[21/9]">
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
           {/* Blur placeholder */}
           <img
@@ -120,7 +120,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             <div className="absolute inset-0">
               <Image
                 alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-cover object-center transition-opacity duration-500"
+                className="h-full w-full object-cover object-center transition-opacity duration-500 md:scale-110"
                 src="/hero.jpg"
                 fill
                 priority
