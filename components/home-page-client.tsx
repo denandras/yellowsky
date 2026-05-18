@@ -21,16 +21,32 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const isHungarian = language === "hu";
 
+  const openHashtag = () => {
+    const hashtag = 'yellowskychallenge';
+    const deepLink = `instagram://tag?name=${hashtag}`;
+    const webLink = `https://instagram.com/explore/tags/${hashtag}`;
+    
+    // Try Instagram app deep link first (works on mobile with app)
+    // Fall back to web URL after timeout (desktop or app not installed)
+    const start = Date.now();
+    window.location.href = deepLink;
+    
+    setTimeout(() => {
+      if (Date.now() - start < 2000) {
+        window.open(webLink, '_blank', 'noopener,noreferrer');
+      }
+    }, 1500);
+  };
+
   const storyParagraphsHu = [
     <>A koronavírus alatt kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
-      <a
-        href="https://instagram.com/explore/tags/yellowskychallenge"
-        target="_blank"
-        rel="noreferrer"
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      <button
+        type="button"
+        onClick={openHashtag}
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
       >
         #yellowskychallenge
-      </a>
+      </button>
       -t.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
@@ -38,14 +54,13 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const storyParagraphsEn = [
     <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
-      <a
-        href="https://instagram.com/explore/tags/yellowskychallenge"
-        target="_blank"
-        rel="noreferrer"
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      <button
+        type="button"
+        onClick={openHashtag}
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
       >
         #yellowskychallenge
-      </a>
+      </button>
       .</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
     "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
@@ -132,7 +147,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
           {/* Bottom gradient: white to page color with title overlaid */}
           <div className="relative w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
-            <div className="px-6 pt-4 pb-5">
+            <div className="px-6 pt-2 pb-5 md:pt-4">
               <h1
                 key={`title-${language}`}
                 className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -183,10 +198,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
         {/* CTA - Gallery button */}
         <section className="px-6 py-8">
-          <div key={`cta-${language}`} data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
+          <div key={`cta-${language}`} className="mx-auto max-w-2xl" data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
-              className="block w-full mx-auto"
+              className="block w-full"
             >
               <div className="group flex items-center justify-between rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
                 <div>
