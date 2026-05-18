@@ -124,7 +124,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           )}
           {/* Gradient overlay - smooth fade into content */}
           <div className="absolute inset-x-0 bottom-0 h-28 z-10" style={{ background: 'linear-gradient(to top, #fafafa 0%, #fafafa 40%, rgba(250,250,250,0.6) 70%, rgba(250,250,250,0) 100%)' }} />
-          <div className="relative z-20 px-6 pb-6 pt-24" data-reveal
+          <div className="relative z-20 px-6 pb-6 pt-32" data-reveal
           >
             <h1
               className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
