@@ -4,7 +4,19 @@ import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import { useEffect } from "react";
 
-export default function WebshopPageClient() {
+type MediaItem = {
+  id: string;
+  title: string;
+  viewUrl: string;
+  downloadUrl: string;
+};
+
+type WebshopPageClientProps = {
+  items: MediaItem[];
+  hasConfig: boolean;
+};
+
+export default function WebshopPageClient({ items, hasConfig }: WebshopPageClientProps) {
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
@@ -49,24 +61,46 @@ export default function WebshopPageClient() {
               Prints & Artworks
             </h2>
             <p className="text-sm text-text-muted">
-              Coming soon — select prints will be available for purchase here.
+              {hasConfig && items.length > 0
+                ? "Browse and purchase prints — free worldwide shipping."
+                : hasConfig
+                  ? "Artwork coming soon."
+                  : "Gallery configuration not available."}
             </p>
           </div>
         </section>
 
-        {/* Placeholder gallery grid */}
-        <section className="pb-10">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square rounded-xl border border-neutral-border bg-neutral-100"
-                data-reveal
-                style={{ "--reveal-delay": `${100 + i * 60}ms` } as React.CSSProperties}
-              />
-            ))}
-          </div>
-        </section>
+        {hasConfig && items.length > 0 && (
+          <section className="pb-10">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {items.map((item, i) => (
+                <div
+                  key={item.id}
+                  className="group aspect-square overflow-hidden rounded-xl border border-neutral-border bg-neutral-100"
+                  data-reveal
+                  style={{ "--reveal-delay": `${100 + i * 40}ms` } as React.CSSProperties}
+                >
+                  <img
+                    src={item.viewUrl}
+                    alt={item.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {!hasConfig && (
+          <section className="pb-10">
+            <div className="rounded-xl border border-neutral-border bg-white p-6">
+              <p className="text-text-muted">
+                Gallery is not configured. Add S3 environment variables to display artwork.
+              </p>
+            </div>
+          </section>
+        )}
       </main>
 
       <BottomNav active="webshop" />
