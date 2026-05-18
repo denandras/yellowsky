@@ -71,14 +71,14 @@ function ImageCard({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(index < 6);
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const hasSelectedSize = !!selectedPrice[item.id];
   const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
 
   // IntersectionObserver to trigger loading for lazy images
   useEffect(() => {
     if (index < 6) return; // Eager images already loading
-    if (!imgRef.current) return;
+    if (!containerRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -92,7 +92,7 @@ function ImageCard({
       { rootMargin: "200px" }
     );
 
-    observer.observe(imgRef.current);
+    observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [index]);
 
@@ -103,7 +103,7 @@ function ImageCard({
   };
 
   return (
-    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
+    <div ref={containerRef} className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white">
       {/* Image container */}
       <div className="relative">
         {/* Error state */}
@@ -115,10 +115,9 @@ function ImageCard({
 
         {/* Image - natural aspect ratio */}
         <img
-          ref={imgRef}
           src={shouldLoad ? item.viewUrl : undefined}
           alt={item.title}
-          className={`w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "block" : "hidden"}`}
+          className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 6 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}
