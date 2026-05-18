@@ -106,6 +106,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           <div className="fixed top-4 right-4 z-50">
             <LanguageSwitcher initialLanguage={initialLanguage} />
           </div>
+          {/* Gradient overlay fading into page */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
           {/* Blur placeholder */}
           <img
             src="/blur-placeholder.jpg"
