@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { ListObjectsV2Command, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from "@/lib/s4-config";
 import { createMediaAccessToken } from "@/lib/media-access-token";
 import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
-import { fetchStripeProducts, mapArtworksToProducts, type StripeProduct } from "@/lib/stripe-products";
+import { fetchStripeProducts, mapArtworksToProducts } from "@/lib/stripe-products";
 import { syncArtworksToStripe } from "@/lib/sync-artworks";
-import probe from "probe-image-size";
 import WebshopPageClient from "@/components/webshop-page-client";
 
 type MediaItem = {
@@ -14,9 +13,9 @@ type MediaItem = {
   title: string;
   viewUrl: string;
   downloadUrl: string;
-  product?: StripeProduct;
-  width?: number;
-  height?: number;
+  productId: string;
+  productName: string;
+  prices: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
 };
 
 export const metadata: Metadata = {
@@ -25,22 +24,13 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60; // Cache for 60 seconds
 
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
 
 function isImageKey(key: string) {
   const ext = key.split(".").pop()?.toLowerCase();
   return !!ext && IMAGE_EXTENSIONS.has(ext);
-}
-
-function fileExtension(key: string) {
-  return key.split(".").pop()?.toLowerCase() ?? "jpg";
-}
-
-function extractTitle(key: string): string {
-  const filename = key.split("/").pop() ?? key;
-  const name = filename.replace(/\.[^.]+$/, "");
-  return name.replace(/[_-]/g, " ");
 }
 
 function extractFilename(key: string): string {
@@ -53,44 +43,49 @@ async function getArtItems(): Promise<MediaItem[]> {
   const artPrefix = getS4ArtPrefix();
   if (!cfg || !tokenSecret || !artPrefix) return [];
 
-  const client = new S3Client({
-    endpoint: cfg.endpoint,
-    region: cfg.region,
-    forcePathStyle: true,
-    credentials: {
-      accessKeyId: cfg.accessKeyId,
-      secretAccessKey: cfg.secretAccessKey,
-    },
-  });
+  // Parallelize: fetch S3 list and Stripe products at the same time
+  const [s3Result, stripeProducts] = await Promise.all([
+    (async () => {
+      const client = new S3Client({
+        endpoint: cfg.endpoint,
+        region: cfg.region,
+        forcePathStyle: true,
+        credentials: {
+          accessKeyId: cfg.accessKeyId,
+          secretAccessKey: cfg.secretAccessKey,
+        },
+      });
 
-  const keys: string[] = [];
-  let token: string | undefined;
+      const keys: string[] = [];
+      let token: string | undefined;
 
-  do {
-    const list = await client.send(
-      new ListObjectsV2Command({
-        Bucket: cfg.bucket,
-        Prefix: artPrefix,
-        ContinuationToken: token,
-        MaxKeys: 500,
-      }),
-    );
+      do {
+        const list = await client.send(
+          new ListObjectsV2Command({
+            Bucket: cfg.bucket,
+            Prefix: artPrefix,
+            ContinuationToken: token,
+            MaxKeys: 500,
+          }),
+        );
 
-    for (const obj of list.Contents ?? []) {
-      if (!obj.Key) continue;
-      if (!isImageKey(obj.Key)) continue;
-      keys.push(obj.Key);
-    }
+        for (const obj of list.Contents ?? []) {
+          if (!obj.Key) continue;
+          if (!isImageKey(obj.Key)) continue;
+          keys.push(obj.Key);
+        }
 
-    token = list.IsTruncated ? list.NextContinuationToken : undefined;
-  } while (token);
+        token = list.IsTruncated ? list.NextContinuationToken : undefined;
+      } while (token);
 
-  // Get filenames for matching
+      return { keys, client };
+    })(),
+    fetchStripeProducts(),
+  ]);
+
+  const { keys, client } = s3Result;
   const filenames = keys.map(extractFilename);
-
-  // Fetch Stripe products and match to artworks
-  let stripeProducts = await fetchStripeProducts();
-  let artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+  const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
   // Check if sync is needed (some artworks missing products)
   const missingProducts = filenames.filter(f => !artworkToProduct.has(f));
@@ -98,11 +93,7 @@ async function getArtItems(): Promise<MediaItem[]> {
   // Run sync in background - don't block page load
   if (missingProducts.length > 0) {
     console.log(`[Webshop] ${missingProducts.length} artworks missing products, triggering background sync...`);
-    
-    // Fire and forget - sync runs in background
-    syncArtworksToStripe().then(result => {
-      console.log("[Webshop] Background sync result:", result);
-    }).catch(err => {
+    syncArtworksToStripe().catch(err => {
       console.error("[Webshop] Background sync error:", err);
     });
   }
@@ -116,9 +107,9 @@ async function getArtItems(): Promise<MediaItem[]> {
     const filename = extractFilename(key);
     const product = artworkToProduct.get(filename);
 
-    if (!product) continue; // Skip artworks without Stripe products
+    if (!product) continue;
 
-    const ext = fileExtension(key);
+    const ext = key.split(".").pop()?.toLowerCase() ?? "jpg";
     const ordinal = String(availableItems.length + 1).padStart(3, "0");
     const safeName = `yellowsky-${ordinal}.${ext}`;
     const accessToken = createMediaAccessToken(
@@ -129,38 +120,20 @@ async function getArtItems(): Promise<MediaItem[]> {
       },
       tokenSecret,
     );
-    const encodedToken = encodeURIComponent(accessToken);
-
-    // Fetch image dimensions from S3
-    let width: number | undefined;
-    let height: number | undefined;
-
-    try {
-      const imageResponse = await client.send(
-        new GetObjectCommand({
-          Bucket: cfg.bucket,
-          Key: key,
-        }),
-      );
-
-      const stream = imageResponse.Body as NodeJS.ReadableStream;
-      if (stream) {
-        const probed = await probe(stream);
-        width = probed.width;
-        height = probed.height;
-      }
-    } catch (err) {
-      console.error(`Failed to probe image dimensions for ${key}:`, err);
-    }
 
     availableItems.push({
       id: product.id,
       title: product.name,
-      viewUrl: `/api/media/file?token=${encodedToken}`,
-      downloadUrl: `/api/media/file?token=${encodedToken}&download=1`,
-      product,
-      width,
-      height,
+      viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
+      downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
+      productId: product.id,
+      productName: product.name,
+      prices: product.prices.map(p => ({
+        id: p.id,
+        nickname: p.nickname ?? undefined,
+        unitAmount: p.unitAmount ?? undefined,
+        currency: p.currency,
+      })),
     });
   }
 
@@ -175,7 +148,7 @@ export default async function WebshopPage() {
 
   const artItems = await getArtItems();
   const hasConfig = !!getS4Config() && !!getS4ArtPrefix();
-  const hasStripe = artItems.some(item => item.product);
+  const hasStripe = artItems.length > 0;
 
   return <WebshopPageClient items={artItems} hasConfig={hasConfig && hasStripe} initialLanguage={initialLanguage} />;
 }

@@ -5,7 +5,6 @@ import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switche
 import { IconShoppingBag, IconX } from "@/components/icons";
 import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
-import type { StripeProduct, StripePrice } from "@/lib/stripe-products";
 import { useEffect, useState, useRef } from "react";
 
 type MediaItem = {
@@ -13,9 +12,14 @@ type MediaItem = {
   title: string;
   viewUrl: string;
   downloadUrl: string;
-  product?: StripeProduct;
-  width?: number;
-  height?: number;
+  productId: string;
+  productName: string;
+  prices: Array<{
+    id: string;
+    nickname?: string;
+    unitAmount?: number;
+    currency: string;
+  }>;
 };
 
 type WebshopPageClientProps = {
@@ -24,7 +28,7 @@ type WebshopPageClientProps = {
   initialLanguage: SiteLanguage;
 };
 
-function formatPrice(price: StripePrice): string {
+function formatPrice(price: { unitAmount?: number; currency: string }): string {
   if (!price.unitAmount) return "";
   const amount = price.unitAmount / 100;
   const currency = price.currency.toUpperCase();
@@ -169,7 +173,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
               {items.map((item, i) => {
                 const isActive = activeItem === item.id;
                 const hasSelectedSize = !!selectedPrice[item.id];
-                const selectedPriceObj = item.product?.prices?.find(p => p.id === selectedPrice[item.id]);
+                const selectedPriceObj = item.prices.find(p => p.id === selectedPrice[item.id]);
 
                 return (
                   <div
@@ -180,7 +184,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                   >
                     {/* Image container */}
                     <div className="relative">
-                      {/* Image */}
+                      {/* Image - natural aspect ratio */}
                       <img
                         src={item.viewUrl}
                         alt={item.title}
@@ -189,7 +193,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                       />
 
                       {/* Cart button - bottom right corner */}
-                      {item.product?.prices && item.product.prices.length > 0 && (
+                      {item.prices && item.prices.length > 0 && (
                         <button
                           type="button"
                           onClick={() => setActiveItem(isActive ? null : item.id)}
@@ -205,7 +209,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                       )}
 
                       {/* Menu overlay */}
-                      {isActive && item.product?.prices && (
+                      {isActive && item.prices && (
                         <div
                           ref={menuRef}
                           className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
@@ -214,7 +218,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                           
                           {/* Size buttons */}
                           <div className="flex flex-wrap gap-2 mb-3">
-                            {item.product.prices
+                            {item.prices
                               .sort((a, b) => (a.unitAmount ?? 0) - (b.unitAmount ?? 0))
                               .map((price) => (
                                 <button
