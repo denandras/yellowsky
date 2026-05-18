@@ -50,6 +50,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Empty response" }, { status: 500 });
     }
 
+    const buffer = Buffer.from(body);
+
     const ext = payload.key.split(".").pop()?.toLowerCase() ?? "jpg";
     const contentType = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : ext === "gif" ? "image/gif" : "image/jpeg";
 
@@ -63,7 +65,7 @@ export async function GET(request: NextRequest) {
       headers["Content-Disposition"] = `attachment; filename="${payload.name}"`;
     }
 
-    return new NextResponse(body, { status: 200, headers });
+    return new NextResponse(buffer, { status: 200, headers });
   } catch (err) {
     console.error("S3 fetch error:", err);
     return NextResponse.json({ error: "Failed to fetch from S3" }, { status: 500 });
