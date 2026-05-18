@@ -141,39 +141,42 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 />
               </div>
             )}
-            
-            {/* Title overlay at bottom of image */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-7 pt-16">
-              <h1
-                key={`title-${language}`}
-                className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
-                data-reveal
-                style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
-              >
-                {labels.title}
-              </h1>
-              <div
-                key={`subtitle-${language}`}
-                className="flex items-center gap-3"
-                data-reveal
-                style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
-              >
-                <div className="h-px w-12 bg-primary" />
-                {labels.subtitleLink ? (
-                  <a
-                    href={labels.subtitleLink}
-                    className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-                  >
-                    {labels.subtitle}
-                  </a>
-                ) : (
-                  <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
-                    {labels.subtitle}
-                  </p>
-                )}
-              </div>
+          </div>
+
+          {/* Title text below image */}
+          <div className="bg-white px-6 py-8">
+            <h1
+              key={`title-${language}`}
+              className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+              data-reveal
+              style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
+            >
+              {labels.title}
+            </h1>
+            <div
+              key={`subtitle-${language}`}
+              className="flex items-center gap-3"
+              data-reveal
+              style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
+            >
+              <div className="h-px w-12 bg-primary" />
+              {labels.subtitleLink ? (
+                <a
+                  href={labels.subtitleLink}
+                  className="font-display text-sm font-semibold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                >
+                  {labels.subtitle}
+                </a>
+              ) : (
+                <p className="font-display text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+                  {labels.subtitle}
+                </p>
+              )}
             </div>
           </div>
+
+          {/* Bottom gradient: white to page color */}
+          <div className="h-8 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
         </section>
 
         {/* Story */}
