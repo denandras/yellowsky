@@ -147,15 +147,26 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         {/* Hero */}
         <section ref={heroRef} className="relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden md:aspect-[16/8]">
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-light via-background-light/40 to-transparent" />
+          {/* Blur placeholder */}
+          <img
+            src="/blur-placeholder.jpg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            aria-hidden="true"
+          />
           {mounted && (
             <div className="absolute inset-0">
               <Image
                 alt="Yellowsky Seoul sketch - yellow architectural illustration"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition-opacity duration-500"
                 src="/hero.jpg"
                 fill
                 priority
                 sizes="100vw"
+                onLoad={(e) => {
+                  (e.target as HTMLImageElement).style.opacity = "1";
+                }}
+                style={{ opacity: 0 }}
               />
             </div>
           )}

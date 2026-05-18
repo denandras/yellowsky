@@ -90,24 +90,34 @@ export default function LanguageSwitcher({
 
   return (
     <div
-      className={`inline-flex items-center text-xs font-bold tracking-wider ${
-        light ? "text-white" : "text-neutral-200"
+      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-bold tracking-wider ${
+        light
+          ? "bg-white/10 text-white"
+          : "bg-neutral-100 text-text-dark"
       }`}
     >
       <button
         type="button"
         disabled={activeLanguage === "hu"}
         onClick={() => setAndRefresh("hu")}
-        className={`px-1.5 py-0.5 transition-opacity ${activeLanguage === "hu" ? "cursor-default text-white" : "cursor-pointer text-white/80 hover:text-white"}`}
+        className={`px-1.5 py-0.5 transition-opacity ${
+          activeLanguage === "hu"
+            ? "cursor-default font-semibold"
+            : "cursor-pointer opacity-60 hover:opacity-100"
+        }`}
       >
         HU
       </button>
-      <span className="px-1 text-white/70">|</span>
+      <span className={`px-1 ${light ? "text-white/50" : "text-text-muted"}`}>|</span>
       <button
         type="button"
         disabled={activeLanguage === "en"}
         onClick={() => setAndRefresh("en")}
-        className={`px-1.5 py-0.5 transition-opacity ${activeLanguage === "en" ? "cursor-default text-white" : "cursor-pointer text-white/80 hover:text-white"}`}
+        className={`px-1.5 py-0.5 transition-opacity ${
+          activeLanguage === "en"
+            ? "cursor-default font-semibold"
+            : "cursor-pointer opacity-60 hover:opacity-100"
+        }`}
       >
         EN
       </button>

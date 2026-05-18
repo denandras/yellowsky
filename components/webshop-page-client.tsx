@@ -158,16 +158,29 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                     data-reveal
                     style={{ "--reveal-delay": `${100 + i * 40}ms` } as React.CSSProperties}
                   >
-                    {/* Image with dynamic aspect ratio */}
+                    {/* Image with blur placeholder */}
                     <div
-                      className="relative w-full overflow-hidden bg-neutral-100"
+                      className="relative w-full overflow-hidden bg-white"
                       style={{ paddingBottom }}
                     >
+                      {/* Blur placeholder */}
+                      <img
+                        src="/blur-placeholder.jpg"
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover"
+                        aria-hidden="true"
+                      />
+                      {/* Actual image */}
                       <img
                         src={item.viewUrl}
                         alt={item.title}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300 hover:scale-105"
                         loading="lazy"
+                        onLoad={(e) => {
+                          // Fade in when loaded
+                          (e.target as HTMLImageElement).style.opacity = "1";
+                        }}
+                        style={{ opacity: 0 }}
                       />
                     </div>
 

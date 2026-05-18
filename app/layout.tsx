@@ -49,6 +49,7 @@ export default function RootLayout({
         <link rel="prefetch" href="/webshop" />
         <link rel="prefetch" href="/contact" />
         <link rel="prefetch" href="/legal" />
+        <link rel="preload" as="image" href="/blur-placeholder.jpg" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
         {children}
