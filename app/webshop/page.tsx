@@ -92,13 +92,13 @@ async function getArtItems(): Promise<MediaItem[]> {
   let stripeProducts = await fetchStripeProducts();
   let artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
-  // If we have artworks but no matching products, trigger sync
+  // If some artworks are missing products, trigger sync
   const hasArtworks = filenames.length > 0;
-  const hasProducts = filenames.some(f => artworkToProduct.has(f));
+  const missingProducts = filenames.filter(f => !artworkToProduct.has(f));
   
-  if (hasArtworks && !hasProducts) {
-    // Auto-sync: create products for artworks
-    console.log("[Webshop] No products found, triggering sync...");
+  if (hasArtworks && missingProducts.length > 0) {
+    // Auto-sync: create products for missing artworks
+    console.log(`[Webshop] ${missingProducts.length} artworks missing products, triggering sync...`);
     const syncResult = await syncArtworksToStripe();
     console.log("[Webshop] Sync result:", syncResult);
     
