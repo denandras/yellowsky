@@ -160,11 +160,13 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     s3: {
       total: artworkNames.size,
+      artworkNames: [...artworkNames].sort(),
     },
     stripe: {
       totalProducts: allProducts.length,
       yellowskyByMetadata: yellowskyByMetadata.length,
       yellowskyByName: yellowskyByName.length,
+      yellowskyByMetadataNames: yellowskyByMetadata.map((p) => p.name).sort(),
       active: yellowskyProducts.filter((p) => p.active).length,
       inactive: yellowskyProducts.filter((p) => !p.active).length,
     },
