@@ -176,7 +176,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Fade from white to page background */}
-          <div className="h-24 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
+          <div className="h-16 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
         </section>
 
         {/* Story */}
