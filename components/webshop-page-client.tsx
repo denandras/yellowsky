@@ -222,37 +222,27 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Reveal animation on scroll - runs once on mount
+  // Reveal animation on scroll
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
-
-    // Mark elements as ready for reveal animation (triggers CSS to hide them)
-    // Elements start visible (CSS default) and only get hidden after JS confirms
-    // it can properly observe them - prevents stuck invisible elements
-    nodes.forEach((node) => {
-      if (!node.classList.contains("is-visible")) {
-        node.classList.add("reveal-ready");
-      }
-    });
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
-            entry.target.classList.remove("reveal-ready");
             observer.unobserve(entry.target);
           }
         }
       },
-      { threshold: 0.01, rootMargin: "50px" }, // More lenient - trigger early
+      { threshold: 0.01, rootMargin: "50px" },
     );
 
     nodes.forEach((node) => observer.observe(node));
 
     return () => observer.disconnect();
-  }, []); // Empty deps - only run once on mount
+  }, []);
 
 
 
@@ -427,7 +417,8 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           {hasConfig && items.length > 0 && (
             <section className="pb-10">
               {/* Masonry-style grid using columns */}
-              <div className="columns-1 gap-4 md:columns-2 lg:columns-3">
+              <div className="columns-1 gap-4 md:columns-2 lg:columns-3" style={{ columnFill: "auto" }}
+>
                 {items.map((item, i) => (
                   <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
                     <ImageCard
