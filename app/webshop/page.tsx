@@ -88,16 +88,18 @@ async function getArtItems(): Promise<MediaItem[]> {
   const filenames = keys.map(extractFilename);
   const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
-  // Check if sync is needed (some artworks missing products)
-  const missingProducts = filenames.filter(f => !artworkToProduct.has(f));
-  
-  // Run sync in background - don't block page load
-  if (missingProducts.length > 0) {
-    console.log(`[Webshop] ${missingProducts.length} artworks missing products, triggering background sync...`);
-    syncArtworksToStripe().catch(err => {
-      console.error("[Webshop] Background sync error:", err);
-    });
-  }
+  // Run full sync in background - creates missing products, archives orphans/duplicates
+  // This ensures S3 and Stripe are always in sync
+  syncArtworksToStripe().then((result) => {
+    if (result.created > 0 || result.archived > 0 || result.errors.length > 0) {
+      console.log(`[Webshop] Sync complete: created=${result.created}, archived=${result.archived}, errors=${result.errors.length}`);
+      if (result.errors.length > 0) {
+        console.error("[Webshop] Sync errors:", result.errors);
+      }
+    }
+  }).catch(err => {
+    console.error("[Webshop] Background sync error:", err);
+  });
 
   const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));
 
