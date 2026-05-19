@@ -114,7 +114,6 @@ body {
   transition-duration: 900ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform, filter;
 }
 
 /* When JS successfully initializes, hide elements until they scroll into view */
@@ -126,12 +125,10 @@ body {
 [data-reveal].is-visible {
   --reveal-y: 0px;
   --reveal-scale: 1;
-  opacity: 1;
-  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0)
-    translateY(var(--reveal-y))
-    scale(var(--reveal-scale));
+  opacity: 1 !important; /* Force visibility, can't be overridden */
+  transform: none !important; /* Clear all transforms */
   filter: none;
-  transition: none; /* Stop all transitions once visible */
+  transition: none !important; /* Stop all transitions once visible */
 }
 
 @media (prefers-reduced-motion: reduce) {
