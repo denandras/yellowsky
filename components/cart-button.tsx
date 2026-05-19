@@ -2,7 +2,7 @@
 
 import { IconShoppingBag } from "@/components/icons";
 import { useCart } from "@/lib/cart-context";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type CartButtonProps = {
   onClick: () => void;
@@ -15,16 +15,16 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
   const { getItemCount } = useCart();
   const count = getItemCount();
   const [isAnimating, setIsAnimating] = useState(false);
-  const [prevCount, setPrevCount] = useState(count);
+  const prevCountRef = useRef(count);
 
   useEffect(() => {
-    if (count > prevCount && prevCount >= 0) {
+    if (count > prevCountRef.current) {
       setIsAnimating(true);
       const timer = setTimeout(() => setIsAnimating(false), 500);
       return () => clearTimeout(timer);
     }
-    setPrevCount(count);
-  }, [count, prevCount]);
+    prevCountRef.current = count;
+  }, [count]);
 
   return (
     <button
