@@ -15,16 +15,22 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
   const { getItemCount } = useCart();
   const count = getItemCount();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
   const prevCountRef = useRef(count);
 
   useEffect(() => {
+    if (!hasLoaded) {
+      setHasLoaded(true);
+      prevCountRef.current = count;
+      return;
+    }
     if (count > prevCountRef.current) {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 500);
+      const timer = setTimeout(() => setIsAnimating(false), 400);
       return () => clearTimeout(timer);
     }
     prevCountRef.current = count;
-  }, [count]);
+  }, [count, hasLoaded]);
 
   return (
     <button
@@ -37,7 +43,7 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
       {count > 0 && (
         <span
           className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ${
-            isAnimating ? "animate-[popIn_0.5s_ease-out]" : ""
+            isAnimating ? "animate-[popIn_0.4s_ease-out]" : ""
           }`}
         >
           {count > 9 ? "9+" : count}
@@ -45,13 +51,13 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
       )}
       {isAnimating && (
         <span
-          className="pointer-events-none absolute flex items-center justify-center rounded-full bg-primary text-sm font-bold text-white"
+          className="pointer-events-none absolute flex items-center justify-center rounded-full bg-primary text-xs font-bold text-white"
           style={{
-            width: "28px",
-            height: "28px",
-            right: "-6px",
-            top: "-6px",
-            animation: "popCircle 0.5s ease-out forwards",
+            width: "22px",
+            height: "22px",
+            right: "-4px",
+            top: "-4px",
+            animation: "popCircle 0.4s ease-out forwards",
           }}
         >
           {count > 9 ? "9+" : count}
