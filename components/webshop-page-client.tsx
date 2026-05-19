@@ -246,7 +246,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           }
         }
       },
-      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.01, rootMargin: "50px" }, // More lenient - trigger early
     );
 
     nodes.forEach((node) => observer.observe(node));
