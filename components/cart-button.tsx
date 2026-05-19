@@ -20,7 +20,7 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
   useEffect(() => {
     if (count > prevCount && prevCount >= 0) {
       setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 600);
+      const timer = setTimeout(() => setIsAnimating(false), 500);
       return () => clearTimeout(timer);
     }
     setPrevCount(count);
@@ -37,7 +37,7 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
       {count > 0 && (
         <span
           className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white ${
-            isAnimating ? "animate-[popIn_0.6s_ease-out]" : ""
+            isAnimating ? "animate-[popIn_0.5s_ease-out]" : ""
           }`}
         >
           {count > 9 ? "9+" : count}
@@ -45,9 +45,13 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
       )}
       {isAnimating && (
         <span
-          className="pointer-events-none absolute -right-1 -top-1 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-white opacity-0"
+          className="pointer-events-none absolute flex items-center justify-center rounded-full bg-primary text-sm font-bold text-white"
           style={{
-            animation: "popCircle 0.6s ease-out forwards",
+            width: "28px",
+            height: "28px",
+            right: "-6px",
+            top: "-6px",
+            animation: "popCircle 0.5s ease-out forwards",
           }}
         >
           {count > 9 ? "9+" : count}
