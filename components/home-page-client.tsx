@@ -177,7 +177,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
           {/* Fade from white to page background with first paragraph on top */}
           <div className="relative h-28 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }}>
-            <div className="absolute inset-x-0 top-0 px-6 pt-4" data-reveal
+            <div className="absolute inset-x-0 top-0 px-6" data-reveal
               style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
               <div className="mx-auto max-w-2xl">
                 {labels.storyParagraphs[0] && (
