@@ -133,11 +133,14 @@ function ImageCard({
         )}
       </div>
 
-      {/* Overlay from bottom of card */}
-      {isActive && item.hasProduct && item.prices && (
+      {/* Overlay from bottom of card - slide up animation */}
+      {item.hasProduct && item.prices && item.prices.length > 0 && (
         <div
           ref={menuRef}
-          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg">
+          className={`absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg transition-all duration-300 ease-out ${
+            isActive ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+          }`}
+        >
           {/* Title */}
           <h3 className="font-display text-sm font-medium text-text-dark mb-3">
             {item.title}
