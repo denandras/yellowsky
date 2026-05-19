@@ -97,7 +97,7 @@ export default function CartDrawer({
                       <p className="text-xs text-text-muted">{item.size}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, (item.quantity ?? 1) - 1)}
@@ -105,7 +105,7 @@ export default function CartDrawer({
                         >
                           −
                         </button>
-                        <span className="w-8 text-center text-sm">{item.quantity ?? 1}</span>
+                        <span className="w-6 text-center text-sm">{item.quantity ?? 1}</span>
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, (item.quantity ?? 1) + 1)}
