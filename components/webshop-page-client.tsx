@@ -224,11 +224,22 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
 
+    // Reset all reveal elements to initial state before re-observing
+    // This ensures elements are visible during the observer setup
+    nodes.forEach((node) => {
+      // Don't reset if already visible (prevents flicker on re-renders)
+      if (!node.classList.contains("is-visible")) {
+        node.style.opacity = "0.001";
+      }
+    });
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
+            // Ensure opacity is set to 1 when visible
+            (entry.target as HTMLElement).style.opacity = "1";
             observer.unobserve(entry.target);
           }
         }
