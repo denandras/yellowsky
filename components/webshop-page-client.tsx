@@ -119,15 +119,11 @@ function ImageCard({
             className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 transition-all hover:bg-primary/20"
             aria-label={labels.buyPrint}
           >
-            {isActive ? (
-              <IconX className="size-4 text-text-dark" />
-            ) : (
-              <IconShoppingBag className="size-4 text-text-dark" />
-            )}
+            <IconShoppingBag className="size-4 text-text-dark" />
           </button>
         )}
         {!item.hasProduct && (
-          <p className="text-xs text-text-muted mt-1">
+          <p className="text-xs text-text-muted">
             Coming soon
           </p>
         )}
@@ -141,10 +137,20 @@ function ImageCard({
             isActive ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
           }`}
         >
-          {/* Title */}
-          <h3 className="font-display text-sm font-medium text-text-dark mb-3">
-            {item.title}
-          </h3>
+          {/* Title with close button */}
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h3 className="font-display text-sm font-medium text-text-dark">
+              {item.title}
+            </h3>
+            <button
+              type="button"
+              onClick={() => setActiveItem(null)}
+              className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 transition-all hover:bg-neutral-200"
+              aria-label="Close"
+            >
+              <IconX className="size-3.5 text-text-dark" />
+            </button>
+          </div>
           {/* Size buttons */}
           <div className="flex flex-wrap gap-2 mb-3">
             {item.prices
