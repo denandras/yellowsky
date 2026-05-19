@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/lib/cart-context";
-import { IconShoppingBag, IconX } from "@/components/icons";
+import { IconShoppingBag, IconX, IconTrash } from "@/components/icons";
 import { useState } from "react";
 
 type CartDrawerProps = {
@@ -12,6 +12,7 @@ type CartDrawerProps = {
     title: string;
     empty: string;
     remove: string;
+    clearCart: string;
     checkout: string;
     total: string;
     loading: string;
@@ -36,7 +37,7 @@ export default function CartDrawer({
   labels,
   loading,
 }: CartDrawerProps) {
-  const { items, removeItem, updateQuantity, getTotal } = useCart();
+  const { items, removeItem, updateQuantity, clearCart, getTotal } = useCart();
 
   return (
     <>
@@ -120,9 +121,10 @@ export default function CartDrawer({
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}
-                          className="text-xs text-text-muted hover:text-text-dark"
+                          className="flex size-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-neutral-100 hover:text-text-dark"
+                          aria-label={labels.remove}
                         >
-                          {labels.remove}
+                          <IconTrash className="size-3.5" />
                         </button>
                       </div>
                     </div>
@@ -142,14 +144,24 @@ export default function CartDrawer({
                 {formatPrice(getTotal(), items[0]?.currency || "EUR")}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={onCheckout}
-              disabled={loading}
-              className="w-full rounded-xl bg-primary py-3 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
-            >
-              {loading ? labels.loading : labels.checkout}
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => clearCart()}
+                className="flex items-center justify-center gap-2 rounded-xl border border-neutral-border px-4 py-3 text-sm font-display text-text-muted transition-colors hover:bg-neutral-50 hover:text-text-dark"
+                aria-label={labels.clearCart}
+              >
+                <IconTrash className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={onCheckout}
+                disabled={loading}
+                className="flex-1 rounded-xl bg-primary py-3 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
+              >
+                {loading ? labels.loading : labels.checkout}
+              </button>
+            </div>
           </div>
         )}
       </div>
