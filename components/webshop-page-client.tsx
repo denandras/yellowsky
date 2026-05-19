@@ -427,9 +427,9 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           {hasConfig && items.length > 0 && (
             <section className="pb-10">
               {/* Masonry-style grid using columns */}
-              <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
+              <div className="columns-1 gap-4 md:columns-2 lg:columns-3">
                 {items.map((item, i) => (
-                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties}>
+                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
                     <ImageCard
                       item={item}
                       index={i}
