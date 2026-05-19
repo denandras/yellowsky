@@ -175,41 +175,26 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </div>
           </div>
 
-          {/* Fade from white to page background with first two paragraphs on top */}
-          <div className="relative h-80 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }}>
-            <div className="px-6 pt-4" data-reveal
-              style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
-              <div className="mx-auto max-w-2xl space-y-6">
-                {labels.storyParagraphs[0] && (
-                  <p className="text-base leading-relaxed text-text-muted">
-                    {labels.storyParagraphs[0]}
-                  </p>
-                )}
-                {labels.storyParagraphs[1] && (
-                  <p className="text-base leading-relaxed text-text-muted"
-                    data-reveal
-                    style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
-                    {labels.storyParagraphs[1]}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* Rest of story */}
-        <section className="px-6 pb-6">
-          <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
-            {labels.storyParagraphs.slice(2).map((paragraph, idx) => (
-              <p
-                key={`story-${idx + 2}`}
-                className="text-base leading-relaxed text-text-muted"
-                data-reveal
-                style={{ "--reveal-delay": `${260 + idx * 80}ms` } as React.CSSProperties}
-              >
-                {paragraph}
-              </p>
-            ))}
+        {/* Story - all paragraphs with consistent spacing */}
+        <section className="relative">
+          {/* Gradient background behind first two paragraphs */}
+          <div className="absolute inset-x-0 top-0 h-80 w-full pointer-events-none" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
+          
+          <div className="relative px-6 pt-4 pb-6">
+            <div className="mx-auto max-w-2xl space-y-6" data-reveal>
+              {labels.storyParagraphs.map((paragraph, idx) => (
+                <p
+                  key={`story-${idx}`}
+                  className="text-base leading-relaxed text-text-muted"
+                  data-reveal
+                  style={{ "--reveal-delay": `${100 + idx * 80}ms` } as React.CSSProperties}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </div>
         </section>
 
