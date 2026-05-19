@@ -175,19 +175,30 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </div>
           </div>
 
-          {/* Fade from white to page background */}
-          <div className="h-16 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
+          {/* Fade from white to page background with first paragraph on top */}
+          <div className="relative h-28 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }}>
+            <div className="absolute inset-x-0 top-0 px-6 pt-4" data-reveal
+              style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
+              <div className="mx-auto max-w-2xl">
+                {labels.storyParagraphs[0] && (
+                  <p className="text-base leading-relaxed text-text-muted">
+                    {labels.storyParagraphs[0]}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Story */}
+        {/* Rest of story */}
         <section className="px-6 pb-6">
           <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
-            {labels.storyParagraphs.map((paragraph, idx) => (
+            {labels.storyParagraphs.slice(1).map((paragraph, idx) => (
               <p
-                key={`story-${idx}`}
+                key={`story-${idx + 1}`}
                 className="text-base leading-relaxed text-text-muted"
                 data-reveal
-                style={{ "--reveal-delay": `${100 + idx * 80}ms` } as React.CSSProperties}
+                style={{ "--reveal-delay": `${180 + idx * 80}ms` } as React.CSSProperties}
               >
                 {paragraph}
               </p>
