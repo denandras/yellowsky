@@ -233,11 +233,15 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
+      // Only handle clicks when menu is open
+      if (!activeItem) return;
+      
       const target = e.target as HTMLElement;
       // Don't close if clicking the toggle button
       if (target.closest('[data-cart-toggle]')) return;
       // Don't close if clicking inside the overlay
       if (menuRef.current && menuRef.current.contains(target)) return;
+      
       setActiveItem(null);
     };
     document.addEventListener("mousedown", handleClickOutside);
