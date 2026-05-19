@@ -118,13 +118,19 @@ export async function GET(request: NextRequest) {
     (p) => !artworkNames.has(p.name)
   );
   // Find products that match artwork names but might have duplicates
-  const nameMatchCounts = new Map<string, number>();
-  for (const p of yellowskyByName) {
-    nameMatchCounts.set(p.name, (nameMatchCounts.get(p.name) || 0) + 1);
+  const allYellowskyProducts = [...yellowskyByMetadata, ...yellowskyByName];
+  const nameMatchCounts = new Map<string, Stripe.Product[]>();
+  for (const p of allYellowskyProducts) {
+    const existing = nameMatchCounts.get(p.name) || [];
+    nameMatchCounts.set(p.name, [...existing, p]);
   }
-  const duplicateProducts = yellowskyByName.filter(
-    (p) => (nameMatchCounts.get(p.name) || 0) > 1
-  );
+  const duplicateProducts: Stripe.Product[] = [];
+  for (const [, products] of nameMatchCounts) {
+    if (products.length > 1) {
+      // All but the first are duplicates
+      duplicateProducts.push(...products.slice(1));
+    }
+  }
 
   // Find products in S3 but not in Stripe
   const productsByName = new Map<string, Stripe.Product>();
