@@ -27,3 +27,9 @@ npm run dev
 
 - [andrasdenes.com](https://andrasdenes.com) — Main website
 - [#yellowskychallenge](https://instagram.com/explore/tags/yellowskychallenge) — Instagram hashtag
+
+## TODO
+
+- [ ] Canvas preview - artwork preview on canvas element before purchase
+- [ ] SEO - meta tags, Open Graph, structured data for artwork pages
+- [ ] Marketing - social sharing, email notifications, promotional campaigns
