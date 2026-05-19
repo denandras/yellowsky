@@ -4,15 +4,26 @@
 
 ### GET /api/admin/sync-products
 Lists all artworks from the `_web` folder and their Stripe product status.
+Reports orphaned products (products in Stripe but not in S3).
 
 **Response:**
 ```json
 {
-  "total": 21,
-  "existing": 1,
-  "missing": 20,
+  "s3": { "total": 22 },
+  "stripe": {
+    "totalProducts": 25,
+    "yellowskyProducts": 22,
+    "active": 22,
+    "inactive": 0
+  },
+  "sync": {
+    "inSync": 22,
+    "missingProducts": 0,
+    "orphanedProducts": 0
+  },
   "items": [...],
-  "missingItems": [...]
+  "missingProducts": [...],
+  "orphanedProducts": [...]
 }
 ```
 
@@ -63,6 +74,46 @@ Creates Stripe products for artworks that don't have products yet.
     }
   ],
   "remaining": 10
+}
+```
+
+### DELETE /api/admin/sync-products
+Archives (sets active: false) Stripe products that no longer have corresponding artworks in S3.
+
+**Body (JSON):**
+```json
+{
+  "dryRun": true,          // Set to false to actually archive
+  "productIds": ["prod_xxx"] // Optional: specific IDs to archive (if not set, archives all orphaned)
+}
+```
+
+**Dry run response:**
+```json
+{
+  "message": "Dry run - no products archived",
+  "dryRun": true,
+  "wouldArchive": 2,
+  "orphanedProducts": [
+    {
+      "id": "prod_xxx",
+      "name": "Old Artwork",
+      "active": true,
+      "created": 1234567890
+    }
+  ],
+  "hint": "Set dryRun: false to actually archive products"
+}
+```
+
+**Actual archive response:**
+```json
+{
+  "message": "Archived 2 products",
+  "archived": [
+    { "id": "prod_xxx", "name": "Old Artwork", "wasActive": true }
+  ],
+  "remaining": 0
 }
 ```
 
