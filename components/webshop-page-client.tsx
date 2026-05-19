@@ -138,6 +138,10 @@ function ImageCard({
         <div
           ref={menuRef}
           className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg">
+          {/* Title */}
+          <h3 className="font-display text-sm font-medium text-text-dark mb-3">
+            {item.title}
+          </h3>
           {/* Size buttons */}
           <div className="flex flex-wrap gap-2 mb-3">
             {item.prices
