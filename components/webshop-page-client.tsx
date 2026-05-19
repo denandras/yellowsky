@@ -92,22 +92,22 @@ function ImageCard({
           </div>
         )}
 
-        {/* Image - natural aspect ratio with placeholder */}
-        <div className="relative w-full">
-          {/* Placeholder while loading */}
-          {!imageLoaded && !imageError && (
-            <div className="w-full aspect-[210/297] bg-neutral-50" />
-          )}
+        {/* Image - natural aspect ratio */}
+        <div className="relative w-full min-h-[200px]">
           <img
             src={item.viewUrl}
             alt={item.title}
-            className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0 absolute inset-0"}`}
+            className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
             loading={index < 4 ? "eager" : "lazy"}
             fetchPriority={index < 4 ? "high" : "low"}
             decoding={index < 4 ? "sync" : "async"}
             onLoad={() => setImageLoaded(true)}
             onError={handleImageError}
           />
+          {/* Loading shimmer */}
+          {!imageLoaded && !imageError && (
+            <div className="absolute inset-0 bg-neutral-50 animate-pulse" />
+          )}
         </div>
 
         {/* Basket button in corner - only for purchasable items */}
