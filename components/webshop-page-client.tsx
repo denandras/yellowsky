@@ -429,14 +429,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
               {/* Masonry-style grid using columns */}
               <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
                 {items.map((item, i) => (
-                  <div
-                    key={item.id}
-                    data-reveal
-                    className={i < 3 ? "reveal-instant" : undefined}
-                    style={{
-                      "--reveal-delay": `${80 + i * 40}ms`,
-                    } as React.CSSProperties}
-                  >
+                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties}>
                     <ImageCard
                       item={item}
                       index={i}
