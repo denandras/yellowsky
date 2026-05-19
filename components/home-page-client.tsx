@@ -176,13 +176,20 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Fade from white to page background with first paragraph on top */}
-          <div className="relative h-48 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }}>
+          <div className="relative h-52 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }}>
             <div className="absolute inset-x-0 top-0 px-6 pt-4" data-reveal
               style={{ "--reveal-delay": "100ms" } as React.CSSProperties}>
-              <div className="mx-auto max-w-2xl">
+              <div className="mx-auto max-w-2xl space-y-6">
                 {labels.storyParagraphs[0] && (
                   <p className="text-base leading-relaxed text-text-muted">
                     {labels.storyParagraphs[0]}
+                  </p>
+                )}
+                {labels.storyParagraphs[1] && (
+                  <p className="text-base leading-relaxed text-text-muted"
+                    data-reveal
+                    style={{ "--reveal-delay": "180ms" } as React.CSSProperties}>
+                    {labels.storyParagraphs[1]}
                   </p>
                 )}
               </div>
@@ -193,12 +200,12 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         {/* Rest of story */}
         <section className="px-6 pb-6">
           <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
-            {labels.storyParagraphs.slice(1).map((paragraph, idx) => (
+            {labels.storyParagraphs.slice(2).map((paragraph, idx) => (
               <p
-                key={`story-${idx + 1}`}
+                key={`story-${idx + 2}`}
                 className="text-base leading-relaxed text-text-muted"
                 data-reveal
-                style={{ "--reveal-delay": `${180 + idx * 80}ms` } as React.CSSProperties}
+                style={{ "--reveal-delay": `${260 + idx * 80}ms` } as React.CSSProperties}
               >
                 {paragraph}
               </p>
