@@ -46,6 +46,7 @@ function ImageCard({
   labels,
   isActive,
   setActiveItem,
+  closeItem,
   selectedPrice,
   setSelectedPrice,
   loading,
@@ -61,6 +62,7 @@ function ImageCard({
   };
   isActive: boolean;
   setActiveItem: (id: string | null) => void;
+  closeItem: () => void;
   selectedPrice: Record<string, string>;
   setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   loading: Record<string, boolean>;
@@ -144,7 +146,7 @@ function ImageCard({
             </h3>
             <button
               type="button"
-              onClick={() => setActiveItem(null)}
+              onClick={closeItem}
               className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 transition-all hover:bg-neutral-200"
               aria-label="Close"
             >
@@ -248,12 +250,27 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       const target = e.target as HTMLElement;
       // Close if clicking outside any overlay or toggle button
       if (!target.closest('[data-cart-toggle]') && !target.closest('[data-overlay]')) {
+        // Clear selected size for the item being closed
+        setSelectedPrice(prev => {
+          const { [activeItem]: _, ...rest } = prev;
+          return rest;
+        });
         setActiveItem(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeItem]);
+
+  const closeItem = () => {
+    if (!activeItem) return;
+    // Clear selected size for the item being closed
+    setSelectedPrice(prev => {
+      const { [activeItem]: _, ...rest } = prev;
+      return rest;
+    });
+    setActiveItem(null);
+  };
 
   const handleAddToCart = (item: MediaItem) => {
     const priceId = selectedPrice[item.id];
@@ -274,6 +291,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       viewUrl: item.viewUrl,
     });
 
+    // Reset the selected size for this item and close menu
+    setSelectedPrice(prev => {
+      const { [item.id]: _, ...rest } = prev;
+      return rest;
+    });
     setActiveItem(null);
   };
 
@@ -399,6 +421,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                       labels={labels}
                       isActive={activeItem === item.id}
                       setActiveItem={setActiveItem}
+                      closeItem={closeItem}
                       selectedPrice={selectedPrice}
                       setSelectedPrice={setSelectedPrice}
                       loading={loading}

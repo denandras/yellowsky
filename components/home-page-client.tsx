@@ -88,6 +88,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
 
+    // Reset all reveal elements to initial state (for language switches)
+    nodes.forEach((node) => {
+      node.classList.remove("is-visible");
+    });
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -108,7 +113,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
       window.cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, []);
+  }, [language]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
@@ -182,7 +187,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           {/* Gradient background behind first two paragraphs */}
           <div className="absolute inset-x-0 top-0 h-80 w-full pointer-events-none" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
           
-          <div className="relative px-6 pt-4 pb-6">
+          <div className="relative px-6 pt-8 pb-6 md:pt-16">
             <div className="mx-auto max-w-2xl space-y-6" data-reveal>
               {labels.storyParagraphs.map((paragraph, idx) => (
                 <p
