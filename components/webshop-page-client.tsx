@@ -160,12 +160,15 @@ function ImageCard({
                   key={price.id}
                   type="button"
                   onClick={() => {
+                    // Use functional update to get latest state
                     setSelectedPrice(prev => {
-                      if (prev[item.id] === price.id) {
-                        // Deselect if clicking the same size
+                      const currentlySelected = prev[item.id];
+                      // Deselect if clicking the currently selected size
+                      if (currentlySelected === price.id) {
                         const { [item.id]: _, ...rest } = prev;
                         return rest;
                       }
+                      // Otherwise select this size
                       return { ...prev, [item.id]: price.id };
                     });
                   }}
