@@ -213,3 +213,11 @@ For development, you can test locally:
 ```bash
 curl http://localhost:3000/api/admin/sync-products
 ```
+
+---
+
+## TODO
+
+- [ ] Canvas preview - artwork preview on canvas element before purchase
+- [ ] SEO - meta tags, Open Graph, structured data for artwork pages
+- [ ] Marketing - social sharing, email notifications, promotional campaigns
