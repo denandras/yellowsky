@@ -101,7 +101,7 @@ function ImageCard({
           <img
             src={item.viewUrl}
             alt={item.title}
-            className={`w-full aspect-[210/297] object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0 absolute inset-0"}`}
+            className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0 absolute inset-0"}`}
             loading={index < 4 ? "eager" : "lazy"}
             fetchPriority={index < 4 ? "high" : "low"}
             decoding={index < 4 ? "sync" : "async"}
@@ -426,10 +426,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
           {hasConfig && items.length > 0 && (
             <section className="pb-10">
-              {/* Grid with consistent card heights */}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* Masonry-style grid using columns */}
+              <div className="columns-1 gap-4 md:columns-2 lg:columns-3">
                 {items.map((item, i) => (
-                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties}>
+                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
                     <ImageCard
                       item={item}
                       index={i}
