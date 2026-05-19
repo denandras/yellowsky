@@ -227,12 +227,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
 
-    // Reset all reveal elements to initial state before re-observing
-    // This ensures elements are visible during the observer setup
+    // Mark elements as ready for reveal animation (triggers CSS to hide them)
+    // Elements start visible (CSS default) and only get hidden after JS confirms
+    // it can properly observe them - prevents stuck invisible elements
     nodes.forEach((node) => {
-      // Don't reset if already visible (prevents flicker on re-renders)
       if (!node.classList.contains("is-visible")) {
-        node.style.opacity = "0.001";
+        node.classList.add("reveal-ready");
       }
     });
 
@@ -241,8 +241,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         for (const entry of entries) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
-            // Ensure opacity is set to 1 when visible
-            (entry.target as HTMLElement).style.opacity = "1";
+            entry.target.classList.remove("reveal-ready");
             observer.unobserve(entry.target);
           }
         }
