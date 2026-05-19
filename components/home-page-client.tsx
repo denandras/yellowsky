@@ -144,10 +144,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Title text below image */}
-          <div className="bg-white px-6 py-1">
+          <div className="bg-white px-6 py-2 md:py-1">
             <h1
               key={`title-${language}`}
-              className="font-display mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+              className="font-display mb-1.5 md:mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
               data-reveal
               style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
             >
@@ -176,7 +176,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Bottom gradient: white to page color */}
-          <div className="h-12 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
+          <div className="h-20 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
         </section>
 
         {/* Story */}
