@@ -143,8 +143,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             )}
           </div>
 
-          {/* Title text inside gradient */}
-          <div className="px-6 pt-2 pb-12 md:pb-20" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }}>
+          {/* Title text */}
+          <div className="bg-white px-6 pt-2 pb-1">
             <h1
               key={`title-${language}`}
               className="font-display mb-1.5 md:mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
@@ -175,8 +175,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </div>
           </div>
 
-          {/* Bottom gradient: white to page color */}
-          <div className="h-12 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
+          {/* Fade from white to page background */}
+          <div className="h-24 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
         </section>
 
         {/* Story */}

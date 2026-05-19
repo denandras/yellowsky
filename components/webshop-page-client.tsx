@@ -50,7 +50,6 @@ function ImageCard({
   setSelectedPrice,
   loading,
   handleAddToCart,
-  menuRef,
 }: {
   item: MediaItem;
   index: number;
@@ -66,12 +65,12 @@ function ImageCard({
   setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   loading: Record<string, boolean>;
   handleAddToCart: (item: MediaItem) => void;
-  menuRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const hasSelectedSize = !!selectedPrice[item.id];
   const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   const handleImageError = () => {
     console.error(`Failed to load image: ${item.viewUrl}`);
@@ -132,7 +131,8 @@ function ImageCard({
       {/* Overlay from bottom of card - slide up animation */}
       {item.hasProduct && item.prices && item.prices.length > 0 && (
         <div
-          ref={menuRef}
+          ref={overlayRef}
+          data-overlay
           className={`absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg transition-all duration-300 ease-out ${
             isActive ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
           }`}
@@ -204,7 +204,6 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   // Reveal animation on scroll
   useEffect(() => {
@@ -230,19 +229,15 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
 
 
-  // Close menu when clicking outside
+  // Close menu when clicking outside any card
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      // Only handle clicks when menu is open
       if (!activeItem) return;
-      
       const target = e.target as HTMLElement;
-      // Don't close if clicking the toggle button
-      if (target.closest('[data-cart-toggle]')) return;
-      // Don't close if clicking inside the overlay
-      if (menuRef.current && menuRef.current.contains(target)) return;
-      
-      setActiveItem(null);
+      // Close if clicking outside any overlay or toggle button
+      if (!target.closest('[data-cart-toggle]') && !target.closest('[data-overlay]')) {
+        setActiveItem(null);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -396,7 +391,6 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                       setSelectedPrice={setSelectedPrice}
                       loading={loading}
                       handleAddToCart={handleAddToCart}
-                      menuRef={menuRef}
                     />
                   </div>
                 ))}
