@@ -121,7 +121,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Top gradient: page color to white */}
-          <div className="h-1 w-full md:h-2" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
+          <div className="h-8 w-full" style={{ background: 'linear-gradient(to bottom, #fafafa 0%, #ffffff 100%)' }} />
 
           {/* Image */}
           <div className="relative w-full bg-white" style={{ minHeight: 'clamp(200px, 40vh, 500px)' }}>
@@ -176,7 +176,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
 
           {/* Bottom gradient: white to page color */}
-          <div className="h-2 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
+          <div className="h-12 w-full" style={{ background: 'linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)' }} />
         </section>
 
         {/* Story */}

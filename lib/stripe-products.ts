@@ -57,32 +57,41 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
     }
   }
 
-  // Then, fetch all prices in parallel (avoid N+1)
-  const pricePromises = rawProducts.map(async (product) => {
-    const prices = await stripe!.prices.list({
-      product: product.id,
-      active: true,
-      limit: 100,
-    });
-    return {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      images: product.images,
-      active: product.active,
-      metadata: product.metadata,
-      prices: prices.data.map((price) => ({
-        id: price.id,
-        productId: product.id,
-        nickname: price.nickname,
-        unitAmount: price.unit_amount,
-        currency: price.currency,
-        active: price.active,
-      })),
-    };
-  });
+  // Then, fetch all prices in parallel (avoid N+1) with concurrency limit
+  const concurrencyLimit = 5;
+  const results: StripeProduct[] = [];
+  
+  for (let i = 0; i < rawProducts.length; i += concurrencyLimit) {
+    const batch = rawProducts.slice(i, i + concurrencyLimit);
+    const batchResults = await Promise.all(
+      batch.map(async (product) => {
+        const prices = await stripe!.prices.list({
+          product: product.id,
+          active: true,
+          limit: 100,
+        });
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          images: product.images,
+          active: product.active,
+          metadata: product.metadata,
+          prices: prices.data.map((price) => ({
+            id: price.id,
+            productId: product.id,
+            nickname: price.nickname,
+            unitAmount: price.unit_amount,
+            currency: price.currency,
+            active: price.active,
+          })),
+        };
+      })
+    );
+    results.push(...batchResults);
+  }
 
-  return Promise.all(pricePromises);
+  return results;
 }
 
 /**
