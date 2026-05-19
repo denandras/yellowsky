@@ -206,6 +206,28 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Reveal animation on scroll
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!nodes.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    nodes.forEach((node) => observer.observe(node));
+
+    return () => observer.disconnect();
+  }, [items]);
+
 
 
   // Close menu when clicking outside (but not on the toggle button)
@@ -343,7 +365,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         </header>
 
         <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
-          <section className="pt-6 pb-10">
+          <section className="pt-6 pb-10" data-reveal>
             <div>
               <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
                 {labels.subtitle}
@@ -359,19 +381,20 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
               {/* Masonry-style grid using columns */}
               <div className="columns-1 gap-4 space-y-4 md:columns-2 lg:columns-3">
                 {items.map((item, i) => (
-                  <ImageCard
-                    key={item.id}
-                    item={item}
-                    index={i}
-                    labels={labels}
-                    isActive={activeItem === item.id}
-                    setActiveItem={setActiveItem}
-                    selectedPrice={selectedPrice}
-                    setSelectedPrice={setSelectedPrice}
-                    loading={loading}
-                    handleAddToCart={handleAddToCart}
-                    menuRef={menuRef}
-                  />
+                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties}>
+                    <ImageCard
+                      item={item}
+                      index={i}
+                      labels={labels}
+                      isActive={activeItem === item.id}
+                      setActiveItem={setActiveItem}
+                      selectedPrice={selectedPrice}
+                      setSelectedPrice={setSelectedPrice}
+                      loading={loading}
+                      handleAddToCart={handleAddToCart}
+                      menuRef={menuRef}
+                    />
+                  </div>
                 ))}
               </div>
             </section>
