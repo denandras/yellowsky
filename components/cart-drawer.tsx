@@ -118,14 +118,6 @@ export default function CartDrawer({
                         <p className="font-display text-sm font-semibold text-primary">
                           {formatPrice(item.price * (item.quantity ?? 1), item.currency)}
                         </p>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.id)}
-                          className="flex size-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-neutral-100 hover:text-text-dark"
-                          aria-label={labels.remove}
-                        >
-                          <IconTrash className="size-3.5" />
-                        </button>
                       </div>
                     </div>
                   </div>
