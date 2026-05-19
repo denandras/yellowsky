@@ -160,13 +160,11 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     s3: {
       total: artworkNames.size,
-      artworkNames: [...artworkNames].sort(),
     },
     stripe: {
       totalProducts: allProducts.length,
       yellowskyByMetadata: yellowskyByMetadata.length,
       yellowskyByName: yellowskyByName.length,
-      yellowskyByMetadataNames: yellowskyByMetadata.map((p) => p.name).sort(),
       active: yellowskyProducts.filter((p) => p.active).length,
       inactive: yellowskyProducts.filter((p) => !p.active).length,
     },
@@ -355,10 +353,12 @@ export async function POST(request: NextRequest) {
 /**
  * DELETE /api/admin/sync-products
  * Archives Stripe products that no longer have corresponding artworks in S3
+ * OR archives duplicate products (keeps first, archives rest)
  *
  * Body (optional):
  * - dryRun: boolean - If true, only reports what would be archived (default: true)
- * - productIds: string[] - Specific product IDs to archive (optional, if not set archives all orphaned)
+ * - action: 'orphaned' | 'duplicates' | 'all' - What to archive (default: 'orphaned')
+ * - productIds: string[] - Specific product IDs to archive (optional)
  */
 export async function DELETE(request: NextRequest) {
   // Auth check
@@ -438,51 +438,101 @@ export async function DELETE(request: NextRequest) {
     startingAfter = products.data[products.data.length - 1]?.id;
   }
 
-  // Find yellowsky products that are orphaned
-  const yellowskyProducts = allProducts.filter(
-    (p) => p.metadata.source === "yellowsky" || artworkNames.has(p.name)
+  // Separate yellowsky products by metadata vs name match
+  const yellowskyByMetadata = allProducts.filter(
+    (p) => p.metadata.source === "yellowsky"
+  );
+  const yellowskyByName = allProducts.filter(
+    (p) => artworkNames.has(p.name) && p.metadata.source !== "yellowsky"
   );
 
-  const orphanedProducts = yellowskyProducts.filter(
+  // Find orphaned products (have yellowsky metadata but no matching artwork)
+  const orphanedProducts = yellowskyByMetadata.filter(
     (p) => !artworkNames.has(p.name)
   );
 
-  // If specific IDs provided, filter to those only
-  const toArchive = specificProductIds
-    ? orphanedProducts.filter((p) => specificProductIds.includes(p.id))
-    : orphanedProducts;
+  // Find duplicate products (same name, keep first one)
+  const allYellowskyProducts = [...yellowskyByMetadata, ...yellowskyByName];
+  const nameMatchCounts = new Map<string, Stripe.Product[]>();
+  for (const p of allYellowskyProducts) {
+    const existing = nameMatchCounts.get(p.name) || [];
+    nameMatchCounts.set(p.name, [...existing, p]);
+  }
+  const duplicateProducts: Stripe.Product[] = [];
+  for (const [, products] of nameMatchCounts) {
+    if (products.length > 1) {
+      // Sort by creation date, keep first, archive rest
+      products.sort((a, b) => a.created - b.created);
+      duplicateProducts.push(...products.slice(1));
+    }
+  }
+
+  // Determine what to archive based on action parameter
+  const action = (body.action as 'orphaned' | 'duplicates' | 'all') || 'orphaned';
+  let toArchive: Stripe.Product[] = [];
+
+  if (specificProductIds) {
+    // If specific IDs provided, use those
+    const allTargetProducts = [...orphanedProducts, ...duplicateProducts];
+    toArchive = allTargetProducts.filter((p) => specificProductIds.includes(p.id));
+  } else if (action === 'orphaned') {
+    toArchive = orphanedProducts;
+  } else if (action === 'duplicates') {
+    toArchive = duplicateProducts;
+  } else if (action === 'all') {
+    toArchive = [...orphanedProducts, ...duplicateProducts];
+  }
 
   if (dryRun) {
     return NextResponse.json({
       message: "Dry run - no products archived",
       dryRun: true,
+      action,
       wouldArchive: toArchive.length,
-      orphanedProducts: toArchive.map((p) => ({
+      orphanedProducts: orphanedProducts.map((p) => ({
+        id: p.id,
+        name: p.name,
+        active: p.active,
+        created: p.created,
+        hasMetadata: true,
+      })),
+      duplicateProducts: duplicateProducts.map((p) => ({
         id: p.id,
         name: p.name,
         active: p.active,
         created: p.created,
       })),
+      toArchive: toArchive.map((p) => ({
+        id: p.id,
+        name: p.name,
+        reason: orphanedProducts.includes(p) ? 'orphaned' : 'duplicate',
+      })),
       hint: "Set dryRun: false to actually archive products",
     });
   }
 
-  // Archive (set active: false) each orphaned product
-  const archived: Array<{ id: string; name: string; wasActive: boolean }> = [];
+  // Archive (set active: false) each product
+  const archived: Array<{ id: string; name: string; reason: string; wasActive: boolean }> = [];
 
   for (const product of toArchive) {
     const wasActive = product.active;
+    const reason = orphanedProducts.includes(product) ? 'orphaned' : 'duplicate';
     await stripe.products.update(product.id, { active: false });
     archived.push({
       id: product.id,
       name: product.name,
+      reason,
       wasActive,
     });
   }
 
   return NextResponse.json({
     message: `Archived ${archived.length} products`,
+    action,
     archived,
-    remaining: orphanedProducts.length - archived.length,
+    remaining: {
+      orphaned: orphanedProducts.length - archived.filter(a => a.reason === 'orphaned').length,
+      duplicates: duplicateProducts.length - archived.filter(a => a.reason === 'duplicate').length,
+    },
   });
 }
