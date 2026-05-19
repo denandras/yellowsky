@@ -59,6 +59,7 @@ function ImageCard({
     loading: string;
     freeShipping: string;
     addToCart: string;
+    comingSoon: string;
   };
   isActive: boolean;
   setActiveItem: (id: string | null) => void;
@@ -81,7 +82,7 @@ function ImageCard({
   };
 
   return (
-    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white relative">
+    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white relative group">
       {/* Image container */}
       <div className="relative">
         {/* Error state */}
@@ -108,25 +109,27 @@ function ImageCard({
             onError={handleImageError}
           />
         </div>
-      </div>
 
-      {/* Basket button row */}
-      <div className="flex items-center justify-end gap-2 p-3">
-        {item.hasProduct && item.prices && item.prices.length > 0 && (
+        {/* Basket button in corner - only for purchasable items */}
+        {item.hasProduct && item.prices && item.prices.length > 0 && !imageError && (
           <button
             type="button"
             data-cart-toggle
             onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 transition-all hover:bg-primary/20"
+            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105"
             aria-label={labels.buyPrint}
           >
             <IconShoppingBag className="size-4 text-text-dark" />
           </button>
         )}
-        {!item.hasProduct && (
-          <p className="text-xs text-text-muted">
-            Coming soon
-          </p>
+
+        {/* Coming soon badge */}
+        {!item.hasProduct && imageLoaded && !imageError && (
+          <div className="absolute bottom-3 right-3 rounded-full bg-white/90 backdrop-blur-sm shadow-md px-3 py-1.5">
+            <p className="text-xs text-text-muted">
+              {labels.comingSoon}
+            </p>
+          </div>
         )}
       </div>
 
@@ -319,7 +322,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: cartItems.map(item => ({ priceId: item.priceId, quantity: 1 })),
+          items: cartItems.map(item => ({ priceId: item.priceId, quantity: item.quantity })),
         }),
       });
 

@@ -36,7 +36,7 @@ export default function CartDrawer({
   labels,
   loading,
 }: CartDrawerProps) {
-  const { items, removeItem, getTotal } = useCart();
+  const { items, removeItem, updateQuantity, getTotal } = useCart();
 
   return (
     <>
@@ -96,16 +96,35 @@ export default function CartDrawer({
                       <p className="text-xs text-text-muted">{item.size}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <p className="font-display text-sm font-semibold text-primary">
-                        {formatPrice(item.price, item.currency)}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.id)}
-                        className="text-xs text-text-muted hover:text-text-dark"
-                      >
-                        {labels.remove}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, (item.quantity ?? 1) - 1)}
+                          className="flex size-6 items-center justify-center rounded-md border border-neutral-border text-sm hover:bg-neutral-100"
+                        >
+                          −
+                        </button>
+                        <span className="w-8 text-center text-sm">{item.quantity ?? 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, (item.quantity ?? 1) + 1)}
+                          className="flex size-6 items-center justify-center rounded-md border border-neutral-border text-sm hover:bg-neutral-100"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <p className="font-display text-sm font-semibold text-primary">
+                          {formatPrice(item.price * (item.quantity ?? 1), item.currency)}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.id)}
+                          className="text-xs text-text-muted hover:text-text-dark"
+                        >
+                          {labels.remove}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </li>

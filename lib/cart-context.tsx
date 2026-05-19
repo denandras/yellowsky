@@ -12,12 +12,14 @@ export type CartItem = {
   price: number;
   currency: string;
   viewUrl: string;
+  quantity?: number;
 };
 
 type CartContextType = {
   items: CartItem[];
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   getTotal: () => number;
   getItemCount: () => number;
@@ -55,9 +57,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = (item: CartItem) => {
     setItems((prev) => {
       // Check if item already exists (same product + size)
-      const existing = prev.find((i) => i.id === item.id);
-      if (existing) return prev;
-      return [...prev, item];
+      const existingIndex = prev.findIndex((i) => i.id === item.id);
+      if (existingIndex >= 0) {
+        // Increment quantity
+        const updated = [...prev];
+        const existingQty = updated[existingIndex].quantity ?? 1;
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: existingQty + 1,
+        };
+        return updated;
+      }
+      return [...prev, { ...item, quantity: item.quantity ?? 1 }];
     });
   };
 
@@ -70,10 +81,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + item.price, 0);
+    return items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0);
   };
 
-  const getItemCount = () => items.length;
+  const getItemCount = () => items.reduce((sum, item) => sum + (item.quantity ?? 1), 0);
+
+  const updateQuantity = (id: string, quantity: number) => {
+    if (quantity <= 0) {
+      setItems((prev) => prev.filter((item) => item.id !== id));
+    } else {
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+      );
+    }
+  };
 
   return (
     <CartContext.Provider
@@ -81,6 +102,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items,
         addItem,
         removeItem,
+        updateQuantity,
         clearCart,
         getTotal,
         getItemCount,
