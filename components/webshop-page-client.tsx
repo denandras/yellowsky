@@ -230,19 +230,19 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
 
 
-  // Close menu when clicking outside (but not on the toggle button)
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Don't close if clicking the toggle button itself
+      // Don't close if clicking the toggle button
       if (target.closest('[data-cart-toggle]')) return;
-      if (menuRef.current && !menuRef.current.contains(target)) {
-        setActiveItem(null);
-      }
+      // Don't close if clicking inside the overlay
+      if (menuRef.current && menuRef.current.contains(target)) return;
+      setActiveItem(null);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [activeItem]);
 
   const handleAddToCart = (item: MediaItem) => {
     const priceId = selectedPrice[item.id];
