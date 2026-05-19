@@ -222,7 +222,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Reveal animation on scroll
+  // Reveal animation on scroll - runs once on mount
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
@@ -252,7 +252,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     nodes.forEach((node) => observer.observe(node));
 
     return () => observer.disconnect();
-  }, [items]);
+  }, []); // Empty deps - only run once on mount
 
 
 

@@ -122,6 +122,7 @@ body {
   opacity: 0.001;
 }
 
+/* Once visible, stay visible - no more transitions */
 [data-reveal].is-visible {
   --reveal-y: 0px;
   --reveal-scale: 1;
@@ -130,6 +131,7 @@ body {
     translateY(var(--reveal-y))
     scale(var(--reveal-scale));
   filter: none;
+  transition: none; /* Stop all transitions once visible */
 }
 
 @media (prefers-reduced-motion: reduce) {
