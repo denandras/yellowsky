@@ -109,13 +109,8 @@ function ImageCard({
         </div>
       </div>
 
-      {/* Title row with basket button */}
-      <div className="flex items-center justify-between gap-2 p-3"
-003e
-        <h3 className="font-display text-sm font-medium text-text-dark"
-003e
-          {item.title}
-        </h3>
+      {/* Basket button row */}
+      <div className="flex items-center justify-end gap-2 p-3">
         {item.hasProduct && item.prices && item.prices.length > 0 && (
           <button
             type="button"
@@ -142,8 +137,7 @@ function ImageCard({
       {isActive && item.hasProduct && item.prices && (
         <div
           ref={menuRef}
-          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg"
-        >
+          className="absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg">
           {/* Size buttons */}
           <div className="flex flex-wrap gap-2 mb-3">
             {item.prices
@@ -176,8 +170,7 @@ function ImageCard({
             type="button"
             onClick={() => handleAddToCart(item)}
             disabled={loading[item.id] || !hasSelectedSize}
-            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
             {loading[item.id] ? labels.loading : labels.addToCart}
           </button>
 
