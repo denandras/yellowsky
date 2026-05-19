@@ -100,9 +100,9 @@ function ImageCard({
             src={item.viewUrl}
             alt={item.title}
             className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0 absolute inset-0"}`}
-            loading={index < 6 ? "eager" : "lazy"}
-            fetchPriority={index < 6 ? "high" : "low"}
-            decoding={index < 6 ? "sync" : "async"}
+            loading={index < 4 ? "eager" : "lazy"}
+            fetchPriority={index < 4 ? "high" : "low"}
+            decoding={index < 4 ? "sync" : "async"}
             onLoad={() => setImageLoaded(true)}
             onError={handleImageError}
           />

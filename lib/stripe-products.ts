@@ -36,7 +36,8 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
   const stripe = getStripe();
   if (!stripe) return [];
 
-  const products: StripeProduct[] = [];
+  // First, fetch all products
+  const rawProducts: Stripe.Product[] = [];
   let hasMore = true;
   let startingAfter: string | undefined;
 
@@ -48,31 +49,7 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
       ...(startingAfter ? { starting_after: startingAfter } : {}),
     });
 
-    for (const product of response.data) {
-      // Fetch all prices for this product
-      const prices = await stripe.prices.list({
-        product: product.id,
-        active: true,
-        limit: 100,
-      });
-
-      products.push({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        images: product.images,
-        active: product.active,
-        metadata: product.metadata,
-        prices: prices.data.map((price) => ({
-          id: price.id,
-          productId: product.id,
-          nickname: price.nickname,
-          unitAmount: price.unit_amount,
-          currency: price.currency,
-          active: price.active,
-        })),
-      });
-    }
+    rawProducts.push(...response.data);
 
     hasMore = response.has_more;
     if (response.data.length > 0) {
@@ -80,7 +57,32 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
     }
   }
 
-  return products;
+  // Then, fetch all prices in parallel (avoid N+1)
+  const pricePromises = rawProducts.map(async (product) => {
+    const prices = await stripe!.prices.list({
+      product: product.id,
+      active: true,
+      limit: 100,
+    });
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      images: product.images,
+      active: product.active,
+      metadata: product.metadata,
+      prices: prices.data.map((price) => ({
+        id: price.id,
+        productId: product.id,
+        nickname: price.nickname,
+        unitAmount: price.unit_amount,
+        currency: price.currency,
+        active: price.active,
+      })),
+    };
+  });
+
+  return Promise.all(pricePromises);
 }
 
 /**

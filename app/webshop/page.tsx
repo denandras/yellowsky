@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   description: "Purchase yellow sketches and prints by András Dénes.",
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 60; // Cache for 60 seconds
+// Revalidate every 5 minutes - ISR caching
+export const revalidate = 300;
 
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
 

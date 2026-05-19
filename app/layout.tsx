@@ -46,11 +46,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://s3.tb1.denandras.cloud" />
+        <link rel="dns-prefetch" href="https://s3.tb1.denandras.cloud" />
         <link rel="prefetch" href="/" />
         <link rel="prefetch" href="/webshop" />
         <link rel="prefetch" href="/contact" />
         <link rel="prefetch" href="/legal" />
-        <link rel="preload" as="image" href="/blur-placeholder.jpg" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} antialiased`}>
         <CartProvider>
