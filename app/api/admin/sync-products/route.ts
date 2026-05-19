@@ -104,14 +104,26 @@ export async function GET(request: NextRequest) {
     startingAfter = products.data[products.data.length - 1]?.id;
   }
 
-  // Separate into yellowsky products and others
-  const yellowskyProducts = allProducts.filter(
-    (p) => p.metadata.source === "yellowsky" || artworkNames.has(p.name)
+  // Separate into yellowsky products (by metadata or name match) and others
+  const yellowskyByMetadata = allProducts.filter(
+    (p) => p.metadata.source === "yellowsky"
   );
+  const yellowskyByName = allProducts.filter(
+    (p) => artworkNames.has(p.name) && p.metadata.source !== "yellowsky"
+  );
+  const yellowskyProducts = [...yellowskyByMetadata, ...yellowskyByName];
 
-  // Find orphaned products (in Stripe but not in S3)
-  const orphanedProducts = yellowskyProducts.filter(
+  // Find orphaned products (have yellowsky metadata but no matching artwork)
+  const orphanedByMetadata = yellowskyByMetadata.filter(
     (p) => !artworkNames.has(p.name)
+  );
+  // Find products that match artwork names but might have duplicates
+  const nameMatchCounts = new Map<string, number>();
+  for (const p of yellowskyByName) {
+    nameMatchCounts.set(p.name, (nameMatchCounts.get(p.name) || 0) + 1);
+  }
+  const duplicateProducts = yellowskyByName.filter(
+    (p) => (nameMatchCounts.get(p.name) || 0) > 1
   );
 
   // Find products in S3 but not in Stripe
@@ -145,22 +157,30 @@ export async function GET(request: NextRequest) {
     },
     stripe: {
       totalProducts: allProducts.length,
-      yellowskyProducts: yellowskyProducts.length,
+      yellowskyByMetadata: yellowskyByMetadata.length,
+      yellowskyByName: yellowskyByName.length,
       active: yellowskyProducts.filter((p) => p.active).length,
       inactive: yellowskyProducts.filter((p) => !p.active).length,
     },
     sync: {
       inSync: items.filter((i) => i.hasProduct && i.active).length,
       missingProducts: missingProducts.length,
-      orphanedProducts: orphanedProducts.length,
+      orphanedProducts: orphanedByMetadata.length,
+      duplicateProducts: duplicateProducts.length,
     },
     items,
     missingProducts: missingProducts.map((name) => ({ name })),
-    orphanedProducts: orphanedProducts.map((p) => ({
+    orphanedProducts: orphanedByMetadata.map((p) => ({
       id: p.id,
       name: p.name,
       active: p.active,
       created: p.created,
+      hasMetadata: true,
+    })),
+    duplicateProducts: duplicateProducts.map((p) => ({
+      id: p.id,
+      name: p.name,
+      active: p.active,
     })),
   });
 }
