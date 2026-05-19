@@ -78,29 +78,35 @@ Creates Stripe products for artworks that don't have products yet.
 ```
 
 ### DELETE /api/admin/sync-products
-Archives (sets active: false) Stripe products that no longer have corresponding artworks in S3.
+Archives (sets active: false) Stripe products that are orphaned or duplicate.
 
 **Body (JSON):**
 ```json
 {
   "dryRun": true,          // Set to false to actually archive
-  "productIds": ["prod_xxx"] // Optional: specific IDs to archive (if not set, archives all orphaned)
+  "action": "orphaned",   // 'orphaned' (default), 'duplicates', or 'all'
+  "productIds": ["prod_xxx"] // Optional: specific IDs to archive
 }
 ```
+
+**Actions:**
+- `orphaned` - Products with `source: yellowsky` metadata but no matching S3 artwork
+- `duplicates` - Products with duplicate names (keeps oldest, archives rest)
+- `all` - Archive both orphaned and duplicates
 
 **Dry run response:**
 ```json
 {
   "message": "Dry run - no products archived",
   "dryRun": true,
+  "action": "duplicates",
   "wouldArchive": 2,
-  "orphanedProducts": [
-    {
-      "id": "prod_xxx",
-      "name": "Old Artwork",
-      "active": true,
-      "created": 1234567890
-    }
+  "orphanedProducts": [],
+  "duplicateProducts": [
+    { "id": "prod_xxx", "name": "Old Artwork", "active": true, "created": 1234567890 }
+  ],
+  "toArchive": [
+    { "id": "prod_xxx", "name": "Old Artwork", "reason": "duplicate" }
   ],
   "hint": "Set dryRun: false to actually archive products"
 }
@@ -110,10 +116,11 @@ Archives (sets active: false) Stripe products that no longer have corresponding 
 ```json
 {
   "message": "Archived 2 products",
+  "action": "duplicates",
   "archived": [
-    { "id": "prod_xxx", "name": "Old Artwork", "wasActive": true }
+    { "id": "prod_xxx", "name": "Old Artwork", "reason": "duplicate", "wasActive": true }
   ],
-  "remaining": 0
+  "remaining": { "orphaned": 0, "duplicates": 0 }
 }
 ```
 
