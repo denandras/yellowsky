@@ -103,32 +103,37 @@ body {
 }
 
 [data-reveal] {
-  --reveal-y: 18px;
-  --reveal-scale: 0.996;
-  opacity: 1; /* Visible by default - JS will set up reveal if observer works */
-  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0)
-    translateY(var(--reveal-y))
-    scale(var(--reveal-scale));
-  filter: blur(2px);
+  /* Start with no offset - only apply when reveal-ready */
+  --reveal-y: 0px;
+  --reveal-scale: 1;
+  opacity: 1;
+  transform: none;
+  filter: none;
   transition-property: opacity, transform, filter;
   transition-duration: 900ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
-/* When JS successfully initializes, hide elements until they scroll into view */
+/* When JS successfully initializes, apply the reveal offset and hide */
 [data-reveal].reveal-ready {
+  --reveal-y: 18px;
+  --reveal-scale: 0.996;
   opacity: 0.001;
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0)
+    translateY(var(--reveal-y))
+    scale(var(--reveal-scale));
+  filter: blur(2px);
 }
 
-/* Once visible, stay visible - no more transitions */
+/* Once visible, animate to final state */
 [data-reveal].is-visible {
   --reveal-y: 0px;
   --reveal-scale: 1;
-  opacity: 1 !important; /* Force visibility, can't be overridden */
-  transform: none !important; /* Clear all transforms */
-  filter: none;
-  transition: none !important; /* Stop all transitions once visible */
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
