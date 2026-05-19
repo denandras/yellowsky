@@ -180,7 +180,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </section>
 
         {/* Story */}
-        <section className="px-6 pt-2 pb-6">
+        <section className="px-6 pb-6">
           <div key={`story-${language}`} className="mx-auto max-w-2xl space-y-6" data-reveal>
             {labels.storyParagraphs.map((paragraph, idx) => (
               <p

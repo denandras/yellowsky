@@ -159,7 +159,16 @@ function ImageCard({
                 <button
                   key={price.id}
                   type="button"
-                  onClick={() => setSelectedPrice(prev => ({ ...prev, [item.id]: price.id }))}
+                  onClick={() => {
+                    setSelectedPrice(prev => {
+                      if (prev[item.id] === price.id) {
+                        // Deselect if clicking the same size
+                        const { [item.id]: _, ...rest } = prev;
+                        return rest;
+                      }
+                      return { ...prev, [item.id]: price.id };
+                    });
+                  }}
                   className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${
                     selectedPrice[item.id] === price.id
                       ? "border-primary bg-primary/10 font-medium text-primary"
