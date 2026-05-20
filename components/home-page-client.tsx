@@ -37,7 +37,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   };
 
   const storyParagraphsHu = [
-    <>A koronavírus alatt kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
+    <>2020-ban, a koronavírus idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -51,7 +51,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   ];
 
   const storyParagraphsEn = [
-    <>I began sketching during covid times because I had to study at home all day and during the lockdown, I could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
+    <>In 2020, during the covid lockdown, I began sketching because I had to study at home all day and could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
       <button
         type="button"
         onClick={openInstagram}
