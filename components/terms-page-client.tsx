@@ -14,172 +14,212 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
   const labels = language === "hu"
     ? {
         title: "Általános Szerződési Feltételek",
-        lastUpdated: "Utolsó frissítés: 2026. május",
-        intro: "A Yellowsky webshopban történő vásárlással elfogadod ezeket az általános szerződési feltételeket. Kérjük, figyelmesen olvasd el.",
+        lastUpdated: "Hatályos: 2026. május 20-tól",
+        intro: "Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) a yellowsky.andrasdenes.com webáruházban történő vásárlásra vonatkoznak. A megrendeléssel a Felhasználó elfogadja jelen ÁSZF rendelkezéseit.",
+        definitions: {
+          title: "I. Fogalmi meghatározások",
+          items: [
+            "Szolgáltató: a webáruházat üzemeltető Dénes András egyéni vállalkozó (Budapest, Magyarország)",
+            "Felhasználó: az a természetes személy, aki a webáruházban terméket rendel",
+            "Fogyasztó: a Polgári Törvénykönyv szerinti fogyasztó, az a Felhasználó, aki a terméket nem szakmai tevékenységéhez kapcsolódóan vásárolja",
+            "Webáruház: a Szolgáltató által üzemeltetett online értékesítési felület",
+            "Termék: a webáruházban kínált giclée minőségű művészeti nyomat",
+            "Szerződés: a Felhasználó és a Szolgáltató között létrejött adásvételi szerződés",
+          ],
+        },
         parties: {
-          title: "1. Szerződő felek",
-          seller: "Eladó:",
-          sellerName: "Dénes András független művész",
-          sellerAddress: "Budapest, Magyarország",
-          sellerEmail: "denandras@gmail.com",
-          buyer: "Vevő:",
-          buyerText: "A vásárló, aki a webshopban rendelést helyez el.",
+          title: "II. Szerződő felek",
+          provider: "Szolgáltató:",
+          providerName: "Dénes András",
+          providerType: "magánszemély, független művész",
+          providerAddress: "Székhely: Budapest, Magyarország",
+          providerEmail: "E-mail: contact@andrasdenes.com",
+          user: "Felhasználó:",
+          userText: "A vásárló, aki a webáruházban rendelést helyez el.",
         },
         products: {
-          title: "2. Termékek",
-          text: "A webshopban giclée minőségű művészeti nyomatok kaphatók. A termékek a megrendeléskor megadott méretben és anyagban készülnek. A képek a weboldalon tájékoztató jellegűek; a tényleges színek eltérhetnek a képernyő beállításaitól függően.",
+          title: "III. A termékek ismertetése",
+          text: "A webáruházban giclée minőségű művészeti nyomatok kaphatók. A termékek a megrendeléskor megadott méretben és anyagban készülnek, egyedi gyártásúak.",
+          images: "A weboldalon található képek tájékoztató jellegűek; a tényleges színek a képernyő beállításaitól függően eltérhetnek.",
         },
         ordering: {
-          title: "3. Megrendelés",
+          title: "IV. A megrendelés folyamata",
           steps: [
-            "Válaszd ki a kívánt nyomatot és méretet",
-            "Add hozzá a kosárhoz",
-            "Add meg a szállítási adatokat",
-            "Fizess Stripe-on keresztül (biztonságos fizetés)",
-            "Erősítést kapsz emailben",
+            "A Felhasználó kiválasztja a kívánt nyomatot és méretet",
+            "A terméket a kosárba helyezi",
+            "Megadja a számlázási és szállítási adatokat",
+            "A fizetést a Stripe biztonságos fizetési rendszerén keresztül teljesíti",
+            "A Sikeres fizetést követően a Szolgáltató visszaigazoló e-mailt küld",
           ],
-          contract: "A szerződés a sikeres fizetés után jön létre.",
+          contract: "A szerződés a megrendelés Szolgáltató általi visszaigazolásával (sikeres fizetés esetén automatikus visszaigazolás) jön létre.",
+          language: "A szerződés nyelve magyar, a szerződés írásban megkötésének minősül, és a Szolgáltató az iktatott megrendelést 5 évig megőrzi.",
         },
         pricing: {
-          title: "4. Árak és fizetés",
-          text: "Az árak magyar forintban (HUF) vagy euróban (EUR) vannak megadva, az árfolyamoktól függően. Az árak tartalmazzák az általános forgalmi adót (ÁFA). A fizetés a Stripe biztonságos fizetési rendszerén keresztül történik.",
-          cards: "Elfogadott fizetési módok: Visa, Mastercard, American Express, és más bankkártyák.",
-          currency: "A fizetés a kiválasztott pénznemben történik.",
+          title: "V. Árak és fizetés",
+          currency: "A termékek árai magyar forintban (HUF) vagy euróban (EUR) vannak feltüntetve.",
+          vat: "Az árak az általános forgalmi adót (ÁFA) tartalmazzák.",
+          payment: "A fizetés a Stripe biztonságos fizetési rendszerén keresztül történik.",
+          cards: "Elfogadott fizetési módok: Visa, Mastercard, American Express és egyéb bankkártyák.",
+          confirmation: "A sikeres fizetést követően a Felhasználó elektronikus visszaigazolást kap.",
         },
         shipping: {
-          title: "5. Szállítás",
-          worldwide: "Ingyenes szállítás világszerte.",
-          timeframe: "Várható szállítási idő: 7-14 munkanap (véglegesítés és nyomtatás után).",
-          tracking: "A megrendelés állapotáról emailben értesítünk.",
-          damage: "Ha a csomag sérülten érkezik, kérjük, fotózd le és értesíts minket 48 órán belül.",
+          title: "VI. Szállítás",
+          worldwide: "A Szolgáltató világszerte ingyenes szállítást biztosít.",
+          timeframe: "A várható szállítási idő 7-14 munkanap a rendelés visszaigazolásától számítva (nyomtatás és csomagolás után).",
+          tracking: "A Szolgáltató e-mailben értesíti a Felhasználót a megrendelés állapotáról.",
+          damage: "Ha a csomag sérülten érkezik, a Felhasználó köteles a sérülésről fotót készíteni és a Szolgáltatót 48 órán belül értesíteni.",
         },
         returns: {
-          title: "6. Elállási és visszáru jog",
-          eu: "Az Európai Unió fogyasztóvédelmi törvényei szerint 14 napon belül elállhatsz a szerződéstől.",
-          conditions: [
+          title: "VII. Elállási és visszáru joga",
+          intro: "A Fogyasztót a 45/2014. (II. 26.) Korm. rendelet alapján elállási jog illeti meg.",
+          right: "A Fogyasztó a szerződés megkötésének napjától számított 14 napon belül jogosult indokolás nélkül elállni a szerződéstől.",
+          conditions: "Az elállási jog gyakorlásának feltételei:",
+          conditionList: [
             "A terméket eredeti, sértetlen állapotban kell visszaadni",
-            "A visszáru költségét a vevő viseli",
-            "A vételárat a termék visszaérkezése után 14 napon belül visszatérítjük",
+            "A visszáru költsége a Fogyasztót terheli",
+            "A Szolgáltató a termék visszaérkezését követően legfeljebb 14 napon belül visszatéríti a vételárat",
           ],
-          exceptions: "A következő esetekben nincs elállási jog:",
+          exceptions: "Az elállási jog nem illeti meg a Fogyasztót:",
           exceptionList: [
-            "Egyedi, személyre szabott termékek",
-            "Zárt csomagolású hang-, videó- vagy szoftvertermékek, ha a csomagolást felbontottad",
+            "olyan termék esetében, amely a Fogyasztó utasítása szerint készült, vagy amelyet kifejezetten a Fogyasztó számára állítottak elő (egyedi nyomatok)",
+            "zárt csomagolású hang-, videó- vagy szoftvertermék esetében, ha a csomagolást a Fogyasztó felbontotta",
           ],
         },
         warranty: {
-          title: "7. Garancia és minőség",
-          text: "Minden nyomatot giclée minőségben, archív papíron készítünk. A nyomatok megfelelő tárolás mellett évtizedekig megőrzik színüket és minőségüket.",
-          defects: "Gyártási hiba esetén kérjük, értesíts minket és küldd vissza a terméket. A hibás terméket ingyen kicseréljük vagy visszatérítjük az árát.",
+          title: "VIII. Jótállás és minőség",
+          text: "Minden nyomatot giclée minőségben, archív minőségű papíron készítünk. A nyomatok megfelelő tárolás mellett évtizedekig megőrzik színüket és minőségüket.",
+          defects: "Gyártási hiba esetén a Szolgáltató a hibás terméket ingyen kicseréli vagy visszatéríti a vételárat.",
         },
         intellectual: {
-          title: "8. Szellemi tulajdon",
-          text: "A weboldalon és a termékeken található valamennyi művészet, fotó, szöveg és design András Dénes szellemi tulajdona. A vásárlás nem ad jogot a művek másolására, terjesztésére vagy kereskedelmi célú felhasználására.",
+          title: "IX. Szellemi tulajdon",
+          text: "A weboldalon és a termékeken található valamennyi műalkotás, fotó, szöveg és design a szerző (Dénes András) szellemi tulajdonát képezi. A vásárlás nem ad jogot a művek másolására, terjesztésére vagy kereskedelmi célú felhasználására.",
         },
         liability: {
-          title: "9. Felelősség korlátozása",
-          text: "Az eladó felelőssége korlátozott a szándékos vagy súlyos gondatlanságból eredő károkra. Az eladó nem felel azokért a károkért, amelyek a termék rendeltetésszerű használatából erednek.",
+          title: "X. Felelősségi szabályok",
+          text: "A Szolgáltató a szerződéses kötelezettségeit a szakmai gondosság követelményeinek megfelelően köteles teljesíteni.",
+          limitation: "A Szolgáltató felelőssége korlátozott a szándékos vagy súlyos gondatlanságból eredő károkra. A Szolgáltató nem felel azokért a károkért, amelyek a termék rendeltetésszerű használatából erednek.",
         },
         governing: {
-          title: "10. Alkalmazandó jog és joghatóság",
-          text: "Ezekre a feltételekre a magyar jog vonatkozik. Vitás esetekben a magyar bíróságok hatáskörrel rendelkeznek, kivéve, ha a vonatkozó jogszabályok másként rendelkezik.",
+          title: "XI. Joghatóság és alkalmazandó jog",
+          text: "Jelen ÁSZF-re, valamint a szerződéses jogviszonyra a magyar jog hatályos szabályai irányadóak.",
+          disputes: "A szerződésből eredő viták eldöntésére a magyar bíróságok hatáskörrel és illetékességgel rendelkeznek, a hatályos jogszabályok szerint.",
           eu: "Az Európai Bizottság online vitarendezési platformja elérhető: https://ec.europa.eu/consumers/odr/",
         },
         changes: {
-          title: "11. Módosítások",
-          text: "Az eladó fenntartja a jogot ezeknek a feltételeknek a módosítására. A módosítások a weboldalon történő közzététel lépnek hatályba. A vásárláskor érvényben lévő feltételek vonatkoznak a megrendelésre.",
+          title: "XII. Az ÁSZF módosítása",
+          text: "A Szolgáltató fenntartja a jogot jelen ÁSZF módosítására. A módosítások a weboldalon történő közzétételt követően lépnek hatályba. A vásárláskor érvényes ÁSZF rendelkezései vonatkoznak a megrendelésre.",
         },
         contact: {
-          title: "12. Kapcsolat",
-          text: "Kérdésekkel kapcsolatban lépj kapcsolatba:",
+          title: "XIII. Kapcsolat",
+          text: "Az ÁSZF-fel vagy a megrendeléssel kapcsolatos kérdésekben az alábbi elérhetőségeken lehet kapcsolatba lépni a Szolgáltatóval:",
           email: "contact@andrasdenes.com",
-          response: "Válaszolunk 48 órán belül.",
+          response: "A Szolgáltató a megkeresést 48 órán belül megválaszolja.",
         },
         backToHome: "← Vissza a főoldalra",
-        privacy: "Adatvédelmi Irányelvek",
+        privacy: "Adatvédelmi Tájékoztató",
       }
     : {
         title: "Terms of Service",
-        lastUpdated: "Last updated: May 2026",
-        intro: "By purchasing from the Yellowsky webshop, you agree to these terms and conditions. Please read them carefully.",
+        lastUpdated: "Effective: May 20, 2026",
+        intro: "These Terms of Service (\"Terms\") apply to purchases from the Yellowsky webshop. By placing an order, you agree to these Terms.",
+        definitions: {
+          title: "I. Definitions",
+          items: [
+            "Provider: Dénes András, independent artist operating the webshop (Budapest, Hungary)",
+            "User: any natural person placing an order in the webshop",
+            "Consumer: a User purchasing products for personal, non-professional use",
+            "Webshop: the online sales platform operated by the Provider",
+            "Product: giclée quality art prints offered in the webshop",
+            "Contract: the purchase agreement between User and Provider",
+          ],
+        },
         parties: {
-          title: "1. Parties",
-          seller: "Seller:",
-          sellerName: "András Dénes, independent artist",
-          sellerAddress: "Budapest, Hungary",
-          sellerEmail: "denandras@gmail.com",
-          buyer: "Buyer:",
-          buyerText: "The customer placing an order through the webshop.",
+          title: "II. Parties",
+          provider: "Provider:",
+          providerName: "András Dénes",
+          providerType: "independent artist",
+          providerAddress: "Location: Budapest, Hungary",
+          providerEmail: "Email: contact@andrasdenes.com",
+          user: "User:",
+          userText: "The customer placing an order through the webshop.",
         },
         products: {
-          title: "2. Products",
-          text: "The webshop offers giclée quality art prints. Products are made to order in the specified size and material. Images on the website are illustrative; actual colors may vary depending on screen settings.",
+          title: "III. Products",
+          text: "The webshop offers giclée quality art prints. Products are made to order in the specified size and material.",
+          images: "Images on the website are illustrative; actual colors may vary depending on screen settings.",
         },
         ordering: {
-          title: "3. Ordering",
+          title: "IV. Ordering Process",
           steps: [
-            "Select the desired print and size",
-            "Add to cart",
-            "Provide shipping information",
-            "Pay via Stripe (secure payment)",
-            "Receive confirmation email",
+            "User selects the desired print and size",
+            "Adds the product to cart",
+            "Provides billing and shipping information",
+            "Completes payment via Stripe secure payment system",
+            "Provider sends order confirmation email upon successful payment",
           ],
-          contract: "The contract is formed after successful payment.",
+          contract: "The contract is formed when the Provider confirms the order (automatic confirmation upon successful payment).",
+          language: "The contract language is English. The contract is considered concluded in writing and the Provider retains order records for 5 years.",
         },
         pricing: {
-          title: "4. Pricing & Payment",
-          text: "Prices are displayed in Hungarian Forint (HUF) or Euros (EUR) depending on exchange rates. Prices include VAT. Payment is processed securely through Stripe.",
-          cards: "Accepted payment methods: Visa, Mastercard, American Express, and other major cards.",
-          currency: "Payment is made in the selected currency.",
+          title: "V. Pricing & Payment",
+          currency: "Prices are displayed in Hungarian Forint (HUF) or Euros (EUR).",
+          vat: "Prices include value-added tax (VAT).",
+          payment: "Payment is processed through the Stripe secure payment system.",
+          cards: "Accepted payment methods: Visa, Mastercard, American Express and other bank cards.",
+          confirmation: "Upon successful payment, the User receives electronic confirmation.",
         },
         shipping: {
-          title: "5. Shipping",
-          worldwide: "Free worldwide shipping.",
-          timeframe: "Estimated delivery: 7-14 business days (after finalization and printing).",
-          tracking: "You will receive email updates on your order status.",
-          damage: "If your package arrives damaged, please photograph it and notify us within 48 hours.",
+          title: "VI. Shipping",
+          worldwide: "The Provider offers free worldwide shipping.",
+          timeframe: "Estimated delivery is 7-14 business days from order confirmation (after printing and packaging).",
+          tracking: "The Provider notifies the User via email about order status updates.",
+          damage: "If the package arrives damaged, the User must photograph the damage and notify the Provider within 48 hours.",
         },
         returns: {
-          title: "6. Returns & Cancellations",
-          eu: "Under EU consumer protection laws, you have 14 days to withdraw from the contract.",
-          conditions: [
+          title: "VII. Right of Withdrawal",
+          intro: "Under EU consumer protection law, Consumers have the right of withdrawal.",
+          right: "The Consumer is entitled to withdraw from the contract within 14 days from the date of conclusion without giving any reason.",
+          conditions: "Conditions for exercising the right of withdrawal:",
+          conditionList: [
             "The product must be returned in its original, undamaged condition",
-            "Return shipping costs are borne by the buyer",
-            "Refunds are processed within 14 days of receiving the returned item",
+            "Return shipping costs are borne by the Consumer",
+            "The Provider will refund the purchase price within 14 days of receiving the returned item",
           ],
-          exceptions: "No right of withdrawal exists for:",
+          exceptions: "The right of withdrawal does not apply to:",
           exceptionList: [
-            "Custom, personalized products",
-            "Sealed audio, video, or software products if the seal is broken",
+            "Products made to the Consumer's specifications or clearly personalized (custom prints)",
+            "Sealed audio, video, or software products if the seal has been broken by the Consumer",
           ],
         },
         warranty: {
-          title: "7. Warranty & Quality",
+          title: "VIII. Warranty & Quality",
           text: "All prints are made in giclée quality on archival paper. With proper storage, prints retain their color and quality for decades.",
-          defects: "In case of manufacturing defects, please contact us and return the item. Defective products will be replaced free of charge or refunded.",
+          defects: "In case of manufacturing defects, the Provider will replace the defective product free of charge or refund the purchase price.",
         },
         intellectual: {
-          title: "8. Intellectual Property",
-          text: "All artwork, photos, text, and design on the website and products are the intellectual property of András Dénes. Purchase does not grant rights to copy, distribute, or commercially use the works.",
+          title: "IX. Intellectual Property",
+          text: "All artwork, photos, text, and design on the website and products are the intellectual property of the author (András Dénes). Purchase does not grant rights to copy, distribute, or commercially use the works.",
         },
         liability: {
-          title: "9. Limitation of Liability",
-          text: "The seller's liability is limited to damages arising from intent or gross negligence. The seller is not liable for damages resulting from proper use of the product.",
+          title: "X. Limitation of Liability",
+          text: "The Provider is obligated to fulfill contractual obligations with professional care.",
+          limitation: "The Provider's liability is limited to damages arising from intent or gross negligence. The Provider is not liable for damages resulting from proper use of the product.",
         },
         governing: {
-          title: "10. Governing Law & Jurisdiction",
-          text: "These terms are governed by Hungarian law. Disputes are subject to the jurisdiction of Hungarian courts, unless applicable law provides otherwise.",
+          title: "XI. Governing Law & Jurisdiction",
+          text: "These Terms and the contractual relationship are governed by Hungarian law.",
+          disputes: "Disputes arising from the contract are subject to the jurisdiction of Hungarian courts in accordance with applicable law.",
           eu: "The European Commission's online dispute resolution platform is available at: https://ec.europa.eu/consumers/odr/",
         },
         changes: {
-          title: "11. Changes",
-          text: "The seller reserves the right to modify these terms. Changes take effect upon publication on the website. The terms in effect at the time of purchase apply to the order.",
+          title: "XII. Changes to Terms",
+          text: "The Provider reserves the right to modify these Terms. Changes take effect upon publication on the website. The Terms in effect at the time of purchase apply to the order.",
         },
         contact: {
-          title: "12. Contact",
-          text: "For questions, contact:",
-          email: "denandras@gmail.com",
-          response: "We respond within 48 hours.",
+          title: "XIII. Contact",
+          text: "For questions about these Terms or orders, contact:",
+          email: "contact@andrasdenes.com",
+          response: "The Provider responds to inquiries within 48 hours.",
         },
         backToHome: "← Back to Home",
         privacy: "Privacy Policy",
@@ -212,13 +252,22 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
 
             <section>
               <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+                {labels.definitions.title}
+              </h2>
+              <ul className="list-inside list-disc space-y-1 text-sm">
+                {labels.definitions.items.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
                 {labels.parties.title}
               </h2>
-              <div className="space-y-2 text-sm">
-                <p><strong>{labels.parties.seller}</strong> {labels.parties.sellerName}</p>
-                <p>{labels.parties.sellerAddress}</p>
-                <p>{labels.parties.sellerEmail}</p>
-                <p className="mt-3"><strong>{labels.parties.buyer}</strong> {labels.parties.buyerText}</p>
+              <div className="space-y-1 text-sm">
+                <p><strong>{labels.parties.provider}</strong> {labels.parties.providerName}, {labels.parties.providerType}</p>
+                <p>{labels.parties.providerAddress}</p>
+                <p>{labels.parties.providerEmail}</p>
+                <p className="mt-3"><strong>{labels.parties.user}</strong> {labels.parties.userText}</p>
               </div>
             </section>
 
@@ -227,23 +276,27 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
                 {labels.products.title}
               </h2>
               <p className="leading-relaxed">{labels.products.text}</p>
+              <p className="mt-2 text-sm">{labels.products.images}</p>
             </section>
 
             <section>
               <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
                 {labels.ordering.title}
               </h2>
-              <ol className="list-inside list-decimal space-y-1 text-sm">
+              <ol className="list-inside list-decimal space-y-1 text-sm mb-3">
                 {labels.ordering.steps.map((step, i) => <li key={i}>{step}</li>)}
               </ol>
-              <p className="mt-3 leading-relaxed">{labels.ordering.contract}</p>
+              <p className="leading-relaxed">{labels.ordering.contract}</p>
+              <p className="mt-2 text-sm">{labels.ordering.language}</p>
             </section>
 
             <section>
               <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
                 {labels.pricing.title}
               </h2>
-              <p className="leading-relaxed">{labels.pricing.text}</p>
+              <p className="leading-relaxed">{labels.pricing.currency}</p>
+              <p className="mt-2 text-sm">{labels.pricing.vat}</p>
+              <p className="mt-2 text-sm">{labels.pricing.payment}</p>
               <p className="mt-2 text-sm">{labels.pricing.cards}</p>
             </section>
 
@@ -261,9 +314,11 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
               <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
                 {labels.returns.title}
               </h2>
-              <p className="leading-relaxed mb-2">{labels.returns.eu}</p>
+              <p className="leading-relaxed mb-2">{labels.returns.intro}</p>
+              <p className="leading-relaxed mb-2">{labels.returns.right}</p>
+              <p className="font-medium mb-1">{labels.returns.conditions}</p>
               <ul className="list-inside list-disc space-y-1 text-sm mb-3">
-                {labels.returns.conditions.map((item, i) => <li key={i}>{item}</li>)}
+                {labels.returns.conditionList.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
               <p className="font-medium mb-1">{labels.returns.exceptions}</p>
               <ul className="list-inside list-disc space-y-1 text-sm">
@@ -291,6 +346,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
                 {labels.liability.title}
               </h2>
               <p className="leading-relaxed">{labels.liability.text}</p>
+              <p className="mt-2 leading-relaxed">{labels.liability.limitation}</p>
             </section>
 
             <section>
@@ -298,6 +354,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
                 {labels.governing.title}
               </h2>
               <p className="leading-relaxed">{labels.governing.text}</p>
+              <p className="mt-2 text-sm">{labels.governing.disputes}</p>
               <p className="mt-2 text-sm">{labels.governing.eu}</p>
             </section>
 

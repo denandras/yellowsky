@@ -13,221 +13,233 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
 
   const labels = language === "hu"
     ? {
-        title: "Adatvédelmi Irányelvek",
-        lastUpdated: "Utolsó frissítés: 2026. május",
-        intro: "Ez az adatvédelmi irányelv elmagyarázza, hogyan gyűjtöm és használom a személyes adataidat a Yellowsky weboldalon.",
+        title: "Adatvédelmi Tájékoztató",
+        lastUpdated: "Hatályos: 2026. május 20-tól",
+        intro: "Jelen Adatvédelmi Tájékoztató (a továbbiakban: Tájékoztató) a yellowsky.andrasdenes.com weboldal (a továbbiakban: Weboldal) látogatói és a Webáruház vásárlói személyes adatainak kezelésére vonatkozik. A Tájékoztató megfelel az Európai Parlament és a Tanács 2016/679. rendeletének (Általános Adatvédelmi Rendelet, GDPR) és a magyar adatvédelmi jogszabályoknak.",
         controller: {
-          title: "1. Adatkezelő",
-          text: "Ez a weboldalt Dénes András, Budapesten élő független művész működteti.",
-          contact: "Kapcsolat:",
+          title: "I. Adatkezelő",
+          text: "A Weboldalt és a Webáruházat Dénes András magánszemély, független művész üzemelteti (a továbbiakban: Adatkezelő).",
+          contact: "Elérhetőség:",
+          email: "contact@andrasdenes.com",
+          location: "Budapest, Magyarország",
         },
         data: {
-          title: "2. Milyen adatokat gyűjtök",
+          title: "II. A kezelt személyes adatok köre",
+          intro: "Az Adatkezelő a következő személyes adatokat kezeli:",
           collected: [
-            "Név és email cím – amikor kapcsolatfelvételi űrlapot küldesz be",
-            "Szállítási cím – amikor rendelést helyezel el a webshopban",
-            "Fizetési információk – a rendelés teljesítéséhez (közvetlenül nem tárolom, lásd a harmadik felek részt)",
-            "Böngészési adatok – anonim analitikai adatok a weboldal használatáról",
+            "Név, e-mail cím és telefonszám – kapcsolatfelvételi űrlap beküldésekor",
+            "Név, e-mail cím, számlázási cím és szállítási cím – a Webáruházban történő vásárláskor",
+            "IP-cím, böngésző típusa – a Weboldal látogatásakor (automatikusan generált adatok)",
           ],
           notCollected: [
-            "Jelszavak vagy bejelentkezési adatok (nincs felhasználói fiók rendszer)",
-            "Érzékeny személyes adatok (egészség, vallás, politikai nézetek stb.)",
-            "Fizetési kártya adatok (ezeket a Stripe kezeli, nem én)",
+            "Fizetési kártya adatok – ezeket a Stripe fizetési szolgáltató kezeli",
+            "Jelszavak – nincs felhasználói fiók rendszer",
+            "Érzékeny személyes adatok – egészségi állapot, vallási meggyőződés, politikai nézetek stb.",
           ],
         },
         legalBasis: {
-          title: "3. Jogi alap adataid kezeléséhez",
-          text: "A GDPR 6. cikke szerint az adataidat a következő jogi alapokon kezelem:",
+          title: "III. Az adatkezelés jogalapja",
+          text: "Az Adatkezelő a GDPR 6. cikke szerint az alábbi jogalapokon kezeli a személyes adatokat:",
           items: [
-            "Szerződés teljesítése – a megrendelésed teljesítéséhez szükséges adatok (név, email, szállítási cím)",
-            "Jogos érdek – a weboldal működtetése, biztonsága és fejlesztése",
-            "Hozzájárulás – amikor önként kapcsolatba lépsz velem",
+            "a) szerződés teljesítése (GDPR 6. cikk (1) bekezdés b) pont) – a megrendelés teljesítéséhez szükséges adatok",
+            "b) jogos érdek (GDPR 6. cikk (1) bekezdés f) pont) – a Weboldal működtetése, biztonsága és fejlesztése",
+            "c) hozzájárulás (GDPR 6. cikk (1) bekezdés a) pont) – önkéntes kapcsolatfelvétel esetén",
           ],
         },
         purpose: {
-          title: "4. Hogyan használom az adataidat",
+          title: "IV. Az adatkezelés célja",
           items: [
             "Megrendelések feldolgozása és teljesítése",
+            "Számla kiállítása a számviteli előírásoknak megfelelően",
             "Kapcsolatfelvételi kérelmek megválaszolása",
-            "Rendelés állapotáról történő tájékoztatás",
+            "Weboldal biztonságának fenntartása",
             "Weboldal teljesítményének elemzése és fejlesztése",
             "Jogi kötelezettségek teljesítése",
           ],
         },
         retention: {
-          title: "5. Adatmegőrzés",
-          text: "Az adataidat csak addig őrizzük meg, ameddig szükséges:",
+          title: "V. Az adatok tárolásának időtartama",
+          text: "Az Adatkezelő a személyes adatokat csak a szükséges ideig tárolja:",
           items: [
-            "Rendelési adatok: 5 év a számviteli előírások szerint",
-            "Kapcsolatfelvételi üzenetek: 1 év",
+            "Rendelési adatok: 5 év a számviteli törvény (2000. évi C. törvény) szerint",
+            "Kapcsolatfelvételi üzenetek: 1 év a megválaszolást követően",
+            "Weboldal naplók: 30 nap",
             "Analitikai adatok: 2 év",
-            "Megrendelések: a rendelés teljesítése után törlésre kerülnek",
           ],
+          deletion: "Az adatkezelési cél megvalósulását követően az Adatkezelő törli az adatokat.",
         },
         thirdParty: {
-          title: "6. Harmadik felek és adattovábbítás",
-          text: "Néhány szolgáltatást harmadik felek biztosítanak, akik saját adatvédelmi irányelvekkel rendelkeznek:",
+          title: "VI. Adattovábbítás és harmadik felek",
+          text: "Az Adatkezelő a következő harmadik feleknek továbbíthatja a személyes adatokat:",
           services: [
-            { name: "Stripe", purpose: "Fizetés feldolgozása", policy: "https://stripe.com/privacy" },
-            { name: "Vercel", purpose: "Weboldal tárhely", policy: "https://vercel.com/legal/privacy-policy" },
-            { name: "Cloudflare", purpose: "CDN és biztonság", policy: "https://www.cloudflare.com/privacypolicy/" },
+            { name: "Stripe Inc.", purpose: "Fizetés feldolgozása", location: "Amerikai Egyesült Államok (EU-EGP adatátviteli megállapodás alapján)", policy: "https://stripe.com/privacy" },
+            { name: "Vercel Inc.", purpose: "Weboldal tárhelyszolgáltatás", location: "Amerikai Egyesült Államok", policy: "https://vercel.com/legal/privacy-policy" },
+            { name: "Cloudflare Inc.", purpose: "CDN és biztonsági szolgáltatások", location: "Amerikai Egyesült Államok", policy: "https://www.cloudflare.com/privacypolicy/" },
           ],
-          note: "Nem adom el, bérlem ki vagy osztom meg a személyes adataidat harmadik felekkel, kivéve a fent említett szolgáltatásokat a rendelés teljesítéséhez.",
+          note: "Az Adatkezelő nem adja át, adja el vagy bérli ki a személyes adatokat más harmadik félnek, kivéve a fent említett szolgáltatókat a szolgáltatás nyújtása érdekében.",
         },
         rights: {
-          title: "7. GDPR jogaid",
-          text: "Az Általános Adatvédelmi Rendelet alapján a következő jogokkal rendelkezel:",
+          title: "VII. Az érintett jogai",
+          text: "A GDPR alapján az érintett (a személyes adatok tulajdonosa) az alábbi jogokkal rendelkezik:",
           items: [
-            "Hozzáférési jog – másolatot kérhetsz a személyes adataidról",
-            "Helyesbítési jog – kérheted pontatlan adatok javítását",
-            "Törlési jog – kérheted az adataid törlését („elfelejtéshez való jog”)",
-            "Feldolgozás korlátozásának joga – korlátozhatod az adataid használatát",
-            "Adathordozhatóság joga – gép által olvasható formátumban kaphatod meg az adataidat",
-            "Hozzájárulás visszavonása – bármikor visszavonhatod hozzájárulásodat",
-            "Panasztétel – panaszt tehetek a magyar Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH)",
+            "Hozzáférési jog (GDPR 15. cikk) – tájékoztatást kérhet a kezelt adatokról",
+            "Helyesbítési jog (GDPR 16. cikk) – kérheti pontatlan adatok javítását",
+            "Törlési jog (GDPR 17. cikk) – kérheti az adatok törlését („elfelejtéshez való jog”)",
+            "Feldolgozás korlátozásának joga (GDPR 18. cikk)",
+            "Adathordozhatóság joga (GDPR 20. cikk) – gép által olvasható formátumban kaphatja meg az adatait",
+            "Hozzájárulás visszavonásának joga – bármikor visszavonhatja hozzájárulását",
+            "Tiltakozási jog (GDPR 21. cikk) – tiltakozhat az adatkezelés ellen",
           ],
-          contact: "Ezen jogok érvényesítéséhez lépj kapcsolatba velem:",
-          authority: "NAIH elérhetőség: 1055 Budapest, Falk Miksa utca 9-11., https://www.naih.hu",
+          complaint: "Panasztétel joga:",
+          authority: "Az érintett panaszt tehet a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH):",
+          authorityAddress: "1363 Budapest, Pf. 9. | Tel: +36-1-391-1400 | E-mail: ugyfelszolgalat@naih.hu | Web: www.naih.hu",
         },
         security: {
-          title: "8. Adatbiztonság",
-          text: "Megfelelő intézkedéseket teszek az adataid védelmében:",
+          title: "VIII. Adatbiztonság",
+          text: "Az Adatkezelő megfelelő technikai és szervezési intézkedéseket tesz a személyes adatok védelme érdekében:",
           items: [
             "HTTPS titkosítás minden kapcsolaton",
-            "Biztonságos tárhely és infrastruktúra",
+            "Biztonságos tárhelyszolgáltató (Vercel)",
             "Hozzáférés korlátozása a személyes adatokhoz",
             "Rendszeres biztonsági frissítések",
           ],
-          disclaimer: "Azonban az interneten keresztüli adatátvitel sosem 100%-ban biztonságos.",
+          disclaimer: "Azonban az interneten keresztüli adatátvitel sosem garantálható 100%-os biztonsággal.",
         },
         cookies: {
-          title: "9. Sütik (Cookies)",
-          text: "Ez a weboldal minimális sütiket használ:",
+          title: "IX. Sütik (Cookies)",
+          text: "A Weboldal sütiket használ a következő célokra:",
           items: [
             "Munkamenet sütik – a nyelvi beállítások megőrzéséhez",
             "Analitikai sütik – anonim statisztikákhoz (letiltható)",
           ],
-          control: "A böngésző beállításaiban letilthatod a sütiket, de ez korlátozhatja a weboldal funkcionalitását.",
+          control: "A böngésző beállításaiban letilthatja a sütiket, de ez korlátozhatja a Weboldal funkcionalitását.",
+          more: "Részletes információ a sütikről a böngésző súgójában található.",
         },
         changes: {
-          title: "10. Változások",
-          text: "Időszakonként frissíthetem ezt az irányelvet. A jelentős változtatások fent lesznek jelölve a frissítés dátumával. Javasolt rendszeresen áttekinteni ezt az oldalt.",
+          title: "X. A Tájékoztató módosítása",
+          text: "Az Adatkezeló fenntartja a jogot jelen Tájékoztató módosítására. A módosítások a Weboldalon történő közzététellel lépnek hatályba. Javasolt rendszeresen felkeresni a Weboldalt a frissítések megtekintéséhez.",
         },
         contact: {
-          title: "11. Kapcsolat",
-          text: "Kérdésekkel kapcsolatban ezen irányelvekről vagy a személyes adataidról, lépj kapcsolatba:",
+          title: "XI. Kapcsolat",
+          text: "Az adatkezeléssel kapcsolatos kérdésekben az alábbi elérhetőségeken lehet kapcsolatba lépni az Adatkezelővel:",
           email: "contact@andrasdenes.com",
-          location: "Budapest, Hungary",
+          response: "Az Adatkezelő a megkeresést 30 napon belül megválaszolja.",
         },
         backToHome: "← Vissza a főoldalra",
         terms: "Általános Szerződési Feltételek",
       }
     : {
         title: "Privacy Policy",
-        lastUpdated: "Last updated: May 2026",
-        intro: "This privacy policy explains how I collect and use your personal data on the Yellowsky website.",
+        lastUpdated: "Effective: May 20, 2026",
+        intro: "This Privacy Policy applies to visitors of the yellowsky.andrasdenes.com website (hereinafter: \"Website\") and customers of the Webshop, regarding the processing of their personal data. This Policy complies with Regulation (EU) 2016/679 of the European Parliament and of the Council (General Data Protection Regulation, GDPR) and Hungarian data protection laws.",
         controller: {
-          title: "1. Data Controller",
-          text: "This website is operated by András Dénes, an independent artist based in Budapest, Hungary.",
+          title: "I. Data Controller",
+          text: "The Website and Webshop are operated by András Dénes, independent artist (hereinafter: \"Data Controller\").",
           contact: "Contact:",
+          email: "contact@andrasdenes.com",
+          location: "Budapest, Hungary",
         },
         data: {
-          title: "2. What Data I Collect",
+          title: "II. Personal Data Processed",
+          intro: "The Data Controller processes the following personal data:",
           collected: [
-            "Name and email address – when you submit the contact form",
-            "Shipping address – when you place an order in the webshop",
-            "Payment information – to fulfill your order (I don't store this directly, see third-party services)",
-            "Browsing data – anonymous analytics about website usage",
+            "Name, email address, and phone number – when submitting the contact form",
+            "Name, email address, billing address, and shipping address – when purchasing from the Webshop",
+            "IP address, browser type – automatically generated during Website visits",
           ],
           notCollected: [
-            "Passwords or login credentials (no user account system)",
-            "Sensitive personal data (health, religion, political views, etc.)",
-            "Payment card details (handled by Stripe, not me)",
+            "Payment card details – these are processed by Stripe payment provider",
+            "Passwords – there is no user account system",
+            "Sensitive personal data – health status, religious beliefs, political views, etc.",
           ],
         },
         legalBasis: {
-          title: "3. Legal Basis for Processing",
-          text: "Under GDPR Article 6, I process your data based on the following legal grounds:",
+          title: "III. Legal Basis for Data Processing",
+          text: "The Data Controller processes personal data based on the following legal grounds under GDPR Article 6:",
           items: [
-            "Contract performance – data necessary to fulfill your order (name, email, shipping address)",
-            "Legitimate interest – operating and improving the website, security",
-            "Consent – when you voluntarily contact me",
+            "a) Contract performance (GDPR Art. 6(1)(b)) – data necessary for order fulfillment",
+            "b) Legitimate interest (GDPR Art. 6(1)(f)) – Website operation, security, and improvement",
+            "c) Consent (GDPR Art. 6(1)(a)) – voluntary contact inquiries",
           ],
         },
         purpose: {
-          title: "4. How I Use Your Data",
+          title: "IV. Purpose of Data Processing",
           items: [
-            "Processing and fulfilling your orders",
-            "Responding to your contact inquiries",
-            "Communicating about your order status",
-            "Analyzing and improving website performance",
+            "Processing and fulfilling orders",
+            "Issuing invoices in accordance with accounting regulations",
+            "Responding to contact inquiries",
+            "Maintaining Website security",
+            "Analyzing and improving Website performance",
             "Complying with legal obligations",
           ],
         },
         retention: {
-          title: "5. Data Retention",
-          text: "I keep your data only as long as necessary:",
+          title: "V. Data Retention Period",
+          text: "The Data Controller stores personal data only for the necessary duration:",
           items: [
-            "Order data: 5 years per accounting regulations",
-            "Contact form submissions: 1 year",
+            "Order data: 5 years per the Accounting Act (Act C of 2000)",
+            "Contact messages: 1 year after response",
+            "Website logs: 30 days",
             "Analytics data: 2 years",
-            "After order fulfillment: deleted",
           ],
+          deletion: "Upon completion of the data processing purpose, the Data Controller deletes the data.",
         },
         thirdParty: {
-          title: "6. Third-Party Services & Data Transfers",
-          text: "Some services are provided by third parties who have their own privacy policies:",
+          title: "VI. Data Transfers and Third Parties",
+          text: "The Data Controller may transfer personal data to the following third parties:",
           services: [
-            { name: "Stripe", purpose: "Payment processing", policy: "https://stripe.com/privacy" },
-            { name: "Vercel", purpose: "Website hosting", policy: "https://vercel.com/legal/privacy-policy" },
-            { name: "Cloudflare", purpose: "CDN and security", policy: "https://www.cloudflare.com/privacypolicy/" },
+            { name: "Stripe Inc.", purpose: "Payment processing", location: "United States (under EU-US Data Privacy Framework)", policy: "https://stripe.com/privacy" },
+            { name: "Vercel Inc.", purpose: "Website hosting", location: "United States", policy: "https://vercel.com/legal/privacy-policy" },
+            { name: "Cloudflare Inc.", purpose: "CDN and security services", location: "United States", policy: "https://www.cloudflare.com/privacypolicy/" },
           ],
-          note: "I do not sell, rent, or share your personal data with third parties beyond these services necessary for order fulfillment.",
+          note: "The Data Controller does not transfer, sell, or rent personal data to other third parties except for the above-mentioned service providers.",
         },
         rights: {
-          title: "7. Your GDPR Rights",
-          text: "Under the General Data Protection Regulation, you have the following rights:",
+          title: "VII. Rights of the Data Subject",
+          text: "Under GDPR, the data subject (owner of personal data) has the following rights:",
           items: [
-            "Right of access – request a copy of your personal data",
-            "Right to rectification – correct inaccurate data",
-            "Right to erasure – request deletion of your data (\"right to be forgotten\")",
-            "Right to restrict processing – limit how your data is used",
-            "Right to data portability – receive your data in a machine-readable format",
-            "Right to withdraw consent – withdraw your consent at any time",
-            "Right to complain – lodge a complaint with the Hungarian National Authority for Data Protection and Freedom of Information (NAIH)",
+            "Right of access (GDPR Art. 15) – request information about processed data",
+            "Right to rectification (GDPR Art. 16) – request correction of inaccurate data",
+            "Right to erasure (GDPR Art. 17) – request deletion of data (\"right to be forgotten\")",
+            "Right to restrict processing (GDPR Art. 18)",
+            "Right to data portability (GDPR Art. 20) – receive data in machine-readable format",
+            "Right to withdraw consent – withdraw consent at any time",
+            "Right to object (GDPR Art. 21) – object to data processing",
           ],
-          contact: "To exercise these rights, contact me:",
-          authority: "NAIH contact: 1055 Budapest, Falk Miksa utca 9-11., https://www.naih.hu",
+          complaint: "Right to lodge a complaint:",
+          authority: "The data subject may lodge a complaint with the National Authority for Data Protection and Freedom of Information (NAIH):",
+          authorityAddress: "1363 Budapest, Pf. 9. | Tel: +36-1-391-1400 | Email: ugyfelszolgalat@naih.hu | Web: www.naih.hu",
         },
         security: {
-          title: "8. Data Security",
-          text: "I take appropriate measures to protect your data:",
+          title: "VIII. Data Security",
+          text: "The Data Controller takes appropriate technical and organizational measures to protect personal data:",
           items: [
             "HTTPS encryption on all connections",
-            "Secure hosting and infrastructure",
+            "Secure hosting provider (Vercel)",
             "Limited access to personal data",
             "Regular security updates",
           ],
-          disclaimer: "However, no method of transmission over the Internet is 100% secure.",
+          disclaimer: "However, data transmission over the Internet can never be guaranteed 100% secure.",
         },
         cookies: {
-          title: "9. Cookies",
-          text: "This website uses minimal cookies:",
+          title: "IX. Cookies",
+          text: "The Website uses cookies for the following purposes:",
           items: [
-            "Session cookies – to remember your language preferences",
+            "Session cookies – to remember language preferences",
             "Analytics cookies – for anonymous statistics (can be disabled)",
           ],
-          control: "You can disable cookies in your browser settings, but this may limit website functionality.",
+          control: "You can disable cookies in your browser settings, but this may limit Website functionality.",
+          more: "Detailed information about cookies is available in your browser's help section.",
         },
         changes: {
-          title: "10. Changes to This Policy",
-          text: "I may update this policy periodically. Significant changes will be noted with an updated revision date above. I recommend reviewing this page regularly.",
+          title: "X. Changes to This Policy",
+          text: "The Data Controller reserves the right to modify this Policy. Changes take effect upon publication on the Website. It is recommended to check the Website regularly for updates.",
         },
         contact: {
-          title: "11. Contact",
-          text: "For questions about this policy or your personal data, contact:",
+          title: "XI. Contact",
+          text: "For questions regarding data processing, contact the Data Controller:",
           email: "contact@andrasdenes.com",
-          location: "Budapest, Hungary",
+          response: "The Data Controller responds to inquiries within 30 days.",
         },
         backToHome: "← Back to Home",
         terms: "Terms of Service",
@@ -263,14 +275,15 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
                 {labels.controller.title}
               </h2>
               <p className="leading-relaxed">{labels.controller.text}</p>
-              <p className="mt-2 text-sm"><strong>{labels.controller.contact}</strong> {labels.contact.email}</p>
+              <p className="mt-2 text-sm"><strong>{labels.controller.contact}</strong> {labels.controller.email}</p>
+              <p className="text-sm">{labels.controller.location}</p>
             </section>
 
             <section>
               <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
                 {labels.data.title}
               </h2>
-              <p className="font-medium mb-2">{language === "hu" ? "Gyűjtött adatok:" : "Data collected:"}</p>
+              <p className="font-medium mb-2">{labels.data.intro}</p>
               <ul className="list-inside list-disc space-y-1 text-sm mb-4">
                 {labels.data.collected.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
@@ -307,6 +320,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
               <ul className="list-inside list-disc space-y-1 text-sm">
                 {labels.retention.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
+              <p className="mt-3 leading-relaxed text-sm">{labels.retention.deletion}</p>
             </section>
 
             <section>
@@ -318,11 +332,15 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
                 {labels.thirdParty.services.map((service, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <strong className="text-primary">{service.name}:</strong>
-                    <span>{service.purpose} – </span>
-                    <a href={service.policy} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:opacity-80">
-                      {language === "hu" ? "Adatvédelmi irányelv" : "Privacy Policy"}
-                    </a>
+                    <span>{service.purpose} – <em>{service.location}</em></span>
                   </div>
+                ))}
+              </div>
+              <div className="mt-3 space-y-1">
+                {labels.thirdParty.services.map((service, i) => (
+                  <a key={i} href={service.policy} target="_blank" rel="noopener noreferrer" className="block text-sm text-primary underline hover:opacity-80">
+                    {language === "hu" ? `${service.name} adatvédelmi irányelvek` : `${service.name} Privacy Policy`}
+                  </a>
                 ))}
               </div>
               <p className="mt-3 leading-relaxed text-sm">{labels.thirdParty.note}</p>
@@ -336,10 +354,9 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
               <ul className="list-inside list-disc space-y-1 text-sm">
                 {labels.rights.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="mt-3 leading-relaxed">
-                {labels.rights.contact} <a href="mailto:denandras@gmail.com" className="text-primary underline">denandras@gmail.com</a>
-              </p>
-              <p className="mt-2 text-sm text-neutral-500">{labels.rights.authority}</p>
+              <p className="mt-4 font-medium">{labels.rights.complaint}</p>
+              <p className="text-sm">{labels.rights.authority}</p>
+              <p className="text-sm">{labels.rights.authorityAddress}</p>
             </section>
 
             <section>
@@ -376,10 +393,8 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
                 {labels.contact.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.contact.text}</p>
-              <ul className="space-y-1 text-sm">
-                <li><strong>Email:</strong> {labels.contact.email}</li>
-                <li><strong>{language === "hu" ? "Helyszín" : "Location"}:</strong> {labels.contact.location}</li>
-              </ul>
+              <p className="text-sm"><strong>Email:</strong> {labels.contact.email}</p>
+              <p className="text-sm">{labels.contact.response}</p>
             </section>
           </section>
 
