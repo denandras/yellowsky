@@ -131,7 +131,14 @@ function ImageCard({
           </div>
 
           <div className="flex gap-2 mb-3">
-            {item.prices.map((price) => {
+            {[...item.prices].sort((a, b) => {
+              // A4 first, then A3, then alphabetical for any other sizes
+              const order = { 'A4': 1, 'A3': 2 };
+              const aOrder = order[a.nickname as keyof typeof order] ?? 99;
+              const bOrder = order[b.nickname as keyof typeof order] ?? 99;
+              if (aOrder !== bOrder) return aOrder - bOrder;
+              return (a.nickname || '').localeCompare(b.nickname || '');
+            }).map((price) => {
               const isSelected = selectedPrice[item.id] === price.id;
               const isLoading = cartLoading[item.id] && isSelected;
               return (
