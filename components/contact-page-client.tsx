@@ -223,8 +223,17 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
 
       <BottomNav active="contact" />
 
-      <footer className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 bg-background-light/80 backdrop-blur-md">
-        <div className="flex justify-center gap-4 py-2 text-[10px] text-text-muted/60">
+      <footer className="bg-background-light py-12 pb-32 text-center">
+        <div className="mb-9 flex justify-center">
+          <BrandMark size={32} />
+        </div>
+        <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
+          © {new Date().getFullYear()} András Dénes
+        </p>
+        <p className="mb-4 text-[10px] text-text-muted/60">
+          {language === "hu" ? "Yellowsky • Vázlatok Budapestről" : "Yellowsky • Sketches from Budapest"}
+        </p>
+        <div className="flex justify-center gap-4 text-[10px] text-text-muted/60">
           <Link href="/privacy" className="hover:text-primary transition-colors">
             {language === "hu" ? "Adatvédelem" : "Privacy"}
           </Link>
