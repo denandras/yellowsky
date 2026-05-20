@@ -7,6 +7,7 @@ import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language
 import { fetchStripeProducts, mapArtworksToProducts } from "@/lib/stripe-products";
 import { syncArtworksToStripe } from "@/lib/sync-artworks";
 import WebshopPageClient from "@/components/webshop-page-client";
+import JsonLd from "@/components/json-ld";
 
 type MediaItem = {
   id: string;
@@ -20,8 +21,14 @@ type MediaItem = {
 };
 
 export const metadata: Metadata = {
-  title: "Webshop | Yellowsky",
-  description: "Purchase yellow sketches and prints by András Dénes.",
+  title: "Webshop – Buy Giclée Prints",
+  description: "Browse and purchase museum-quality giclée prints of András Dénes' yellow sketches. Free worldwide shipping. A4 and A3 sizes available.",
+  openGraph: {
+    title: "Webshop – Buy Giclée Prints | Yellowsky",
+    description: "Browse and purchase museum-quality giclée prints of yellow sketches. Free worldwide shipping. A4 and A3 sizes available.",
+    url: "https://yellowsky.andrasdenes.com/webshop",
+    type: "website",
+  },
 };
 
 // Revalidate every 5 minutes - ISR caching
@@ -158,5 +165,26 @@ export default async function WebshopPage() {
   const hasConfig = !!getS4Config() && !!getS4ArtPrefix();
   const hasStripe = artItems.length > 0;
 
-  return <WebshopPageClient items={artItems} hasConfig={hasConfig && hasStripe} initialLanguage={initialLanguage} />;
+  // Get first artwork with product for structured data
+  const firstProduct = artItems.find(item => item.hasProduct && item.prices && item.prices.length > 0);
+
+  return (
+    <>
+      <JsonLd type="breadcrumb" />
+      {firstProduct && (
+        <JsonLd
+          type="product"
+          productData={{
+            name: firstProduct.productName || firstProduct.title,
+            description: `Giclée print of "${firstProduct.productName || firstProduct.title}" - yellow sketch by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
+            image: `https://yellowsky.andrasdenes.com${firstProduct.viewUrl}`,
+            priceA4: firstProduct.prices?.find(p => p.nickname === "A4")?.unitAmount,
+            priceA3: firstProduct.prices?.find(p => p.nickname === "A3")?.unitAmount,
+            currency: firstProduct.prices?.[0]?.currency,
+          }}
+        />
+      )}
+      <WebshopPageClient items={artItems} hasConfig={hasConfig && hasStripe} initialLanguage={initialLanguage} />
+    </>
+  );
 }

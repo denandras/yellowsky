@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import ContactPageClient from "@/components/contact-page-client";
 import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with András Dénes for inquiries about yellow sketches, giclée prints, or collaborations. Email and Instagram contact available.",
+  openGraph: {
+    title: "Contact | Yellowsky",
+    description: "Get in touch for inquiries about prints or collaborations.",
+    url: "https://yellowsky.andrasdenes.com/contact",
+    type: "website",
+  },
+};
 
 export default async function ContactPage() {
   const cookieStore = await cookies();
