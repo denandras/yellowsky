@@ -123,3 +123,11 @@ export function IconTrash(props: IconProps) {
     </IconBase>
   );
 }
+
+export function IconHeart(props: IconProps) {
+  return (
+    <IconBase {...props}>
+      <path d="M12 21C8.5 16.5 4 14 4 9a5 5 0 0 1 10 0 5 5 0 0 1 10 0c0 5-4.5 7.5-8 12" fill="currentColor" stroke="none" />
+    </IconBase>
+  );
+}

@@ -5,14 +5,25 @@ import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import { IconShoppingBag } from "@/components/icons";
+import CommunityGallery from "@/components/community-gallery";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useState } from "react";
 
-type HomePageClientProps = {
-  initialLanguage: SiteLanguage;
+type CommunityPost = {
+  id: string;
+  image: string;
+  author: string;
+  likes: number;
+  caption?: string;
+  link?: string;
 };
 
-export default function HomePageClient({ initialLanguage }: HomePageClientProps) {
+type HomePageClientProps = {
+  initialLanguage: SiteLanguage;
+  communityPosts?: CommunityPost[];
+};
+
+export default function HomePageClient({ initialLanguage, communityPosts = [] }: HomePageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -226,6 +237,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </a>
           </div>
         </section>
+
+        {/* Community Gallery - only show if posts exist */}
+        {communityPosts.length > 0 && (
+          <CommunityGallery posts={communityPosts} language={language} />
+        )}
       </main>
 
       <BottomNav active="home" />

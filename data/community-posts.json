@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "image": "/community/post1.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 234,
+    "caption": "Where it all began 🎨",
+    "link": "https://instagram.com/p/example1"
+  },
+  {
+    "id": "2",
+    "image": "/community/post2.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 189,
+    "caption": "Morning sketches",
+    "link": "https://instagram.com/p/example3"
+  },
+  {
+    "id": "3",
+    "image": "/community/post3.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 312,
+    "caption": "Architecture in yellow",
+    "link": "https://instagram.com/p/example3"
+  }
+]
