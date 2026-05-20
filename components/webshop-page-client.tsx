@@ -202,6 +202,18 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         </main>
 
         <BottomNav active="webshop" />
+
+        <footer className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 bg-background-light/80 backdrop-blur-md">
+          <div className="flex justify-center gap-4 py-2 text-[10px] text-text-muted/60">
+            <Link href="/privacy" className="hover:text-primary transition-colors">
+              {language === "hu" ? "Adatvédelem" : "Privacy"}
+            </Link>
+            <span>•</span>
+            <Link href="/terms" className="hover:text-primary transition-colors">
+              {language === "hu" ? "ÁSZF" : "Terms"}
+            </Link>
+          </div>
+        </footer>
       </div>
     </>
   );

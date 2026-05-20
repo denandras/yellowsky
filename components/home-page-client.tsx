@@ -8,6 +8,7 @@ import { IconShoppingBag } from "@/components/icons";
 import CommunityGallery from "@/components/community-gallery";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type CommunityPost = {
   id: string;
@@ -253,9 +254,18 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
           © {currentYear} András Dénes
         </p>
-        <p className="text-[10px] text-text-muted/60">
+        <p className="mb-4 text-[10px] text-text-muted/60">
           {labels.footerTagline}
         </p>
+        <div className="flex justify-center gap-4 text-[10px] text-text-muted/60">
+          <Link href="/privacy" className="hover:text-primary transition-colors">
+            {language === "hu" ? "Adatvédelem" : "Privacy"}
+          </Link>
+          <span>•</span>
+          <Link href="/terms" className="hover:text-primary transition-colors">
+            {language === "hu" ? "ÁSZF" : "Terms"}
+          </Link>
+        </div>
       </footer>
     </div>
   );
