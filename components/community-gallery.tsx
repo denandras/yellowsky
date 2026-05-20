@@ -74,7 +74,15 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
                     <span className="text-sm font-semibold">{post.likes}</span>
                   </div>
                 </div>
-                <p className="text-xs font-medium text-white/80">@abstract.sketcher</p>
+                <a
+                  href={`https://instagram.com/${post.author.replace("@", "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs font-medium text-white/80 hover:text-white transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {post.author}
+                </a>
               </div>
             </a>
           ))}
