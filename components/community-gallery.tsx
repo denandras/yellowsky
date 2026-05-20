@@ -95,7 +95,7 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
             rel="noreferrer"
             className="text-sm text-text-muted underline decoration-text-muted/30 underline-offset-2 transition-colors hover:text-primary"
           >
-            {labels.viewOnInstagram} →
+            {language === "hu" ? "További művek Instagramon →" : "More on Instagram →"}
           </a>
         </div>
       </div>
