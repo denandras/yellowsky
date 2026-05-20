@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/hero.jpg",
         width: 1200,
         height: 630,
         alt: "Yellowsky – Yellow Sketches by András Dénes",
@@ -51,8 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Yellowsky | Yellow Sketches & Giclée Prints",
     description: "Discover and purchase original yellow sketches and giclée prints – free worldwide shipping.",
-    images: ["/og-image.jpg"],
-    creator: "@yellowskyart",
+    images: ["/hero.jpg"],
   },
   alternates: {
     canonical: "https://yellowsky.andrasdenes.com",
