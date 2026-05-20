@@ -97,17 +97,13 @@ function ImageCard({
           <img
             src={item.viewUrl}
             alt={item.title}
-            className={`w-full object-cover transition-all duration-500 ease-out hover:scale-[1.02] ${imageLoaded && !imageError ? "opacity-100" : "opacity-0"}`}
+            className="w-full object-cover transition-transform duration-300 ease-out hover:scale-[1.02]"
             loading={index < 4 ? "eager" : "lazy"}
             fetchPriority={index < 4 ? "high" : "low"}
             decoding={index < 4 ? "sync" : "async"}
             onLoad={() => setImageLoaded(true)}
             onError={handleImageError}
           />
-          {/* Loading shimmer */}
-          {!imageLoaded && !imageError && (
-            <div className="absolute inset-0 bg-neutral-50 animate-pulse" />
-          )}
         </div>
 
         {/* Basket button in corner - only for purchasable items */}
@@ -236,7 +232,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           }
         }
       },
-      { threshold: 0.01, rootMargin: "50px" },
+      { threshold: 0.15, rootMargin: "0px" },
     );
 
     nodes.forEach((node) => observer.observe(node));
@@ -417,10 +413,9 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           {hasConfig && items.length > 0 && (
             <section className="pb-10">
               {/* Masonry-style grid using columns */}
-              <div className="columns-1 gap-4 md:columns-2 lg:columns-3" style={{ columnFill: "auto" }}
->
+              <div className="columns-1 gap-4 md:columns-2 lg:columns-3" style={{ columnFill: "auto" }}>
                 {items.map((item, i) => (
-                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${80 + i * 40}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
+                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${120 + i * 120}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
                     <ImageCard
                       item={item}
                       index={i}
