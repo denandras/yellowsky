@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart-context";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 
 type MediaItem = {
   id: string;
@@ -40,6 +40,57 @@ function formatPrice(price: { unitAmount?: number; currency: string }): string {
   return formatter.format(amount);
 }
 
+/**
+ * Custom hook to calculate optimal column count based on viewport width
+ * Matches Tailwind breakpoints: sm(640), md(768), lg(1024), xl(1280)
+ */
+function useColumnCount(containerRef: React.RefObject<HTMLDivElement | null>) {
+  const [columnCount, setColumnCount] = useState(1);
+
+  useEffect(() => {
+    const updateColumns = () => {
+      if (!containerRef.current) return;
+      const width = containerRef.current.offsetWidth;
+      
+      if (width >= 1280) setColumnCount(4);
+      else if (width >= 1024) setColumnCount(3);
+      else if (width >= 768) setColumnCount(2);
+      else setColumnCount(1);
+    };
+
+    updateColumns();
+
+    const resizeObserver = new ResizeObserver(updateColumns);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [containerRef]);
+
+  return columnCount;
+}
+
+/**
+ * Distribute items across columns for proper masonry layout
+ * Each column gets items distributed to balance heights
+ */
+function useMasonryColumns(items: MediaItem[], columnCount: number) {
+  return useMemo(() => {
+    const columns: MediaItem[][] = Array.from({ length: columnCount }, () => []);
+    
+    // Distribute items evenly across columns
+    items.forEach((item, index) => {
+      columns[index % columnCount].push(item);
+    });
+    
+    return columns;
+  }, [items, columnCount]);
+}
+
+/**
+ * Progressive image card with lazy loading and fade-in
+ */
 function ImageCard({
   item,
   index,
@@ -71,20 +122,62 @@ function ImageCard({
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const hasSelectedSize = !!selectedPrice[item.id];
-  const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleImageError = () => {
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    const node = cardRef.current;
+    if (!node) return;
+
+    // First items (above the fold) should load immediately
+    if (index < 6) {
+      setIsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "200px", threshold: 0.1 }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [index]);
+
+  const handleImageError = useCallback(() => {
     console.error(`Failed to load image: ${item.viewUrl}`);
     setImageError(true);
     setImageLoaded(true);
-  };
+  }, [item.viewUrl]);
+
+  const hasSelectedSize = !!selectedPrice[item.id];
+  const selectedPriceObj = item.prices?.find(p => p.id === selectedPrice[item.id]);
 
   return (
-    <div className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white relative group">
+    <div
+      ref={cardRef}
+      data-reveal
+      style={{ "--reveal-delay": `${Math.min(index * 80, 800)}ms` } as React.CSSProperties}
+      className="break-inside-avoid overflow-hidden rounded-xl border border-neutral-border bg-white relative group"
+    >
       {/* Image container */}
-      <div className="relative">
+      <div className="relative min-h-[200px]">
+        {/* Skeleton placeholder - shown while loading or before in view */}
+        {(!isInView || !imageLoaded) && !imageError && (
+          <div className="absolute inset-0 aspect-[4/3] bg-neutral-100 animate-pulse">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+          </div>
+        )}
+
         {/* Error state */}
         {imageError && (
           <div className="w-full aspect-[4/3] bg-neutral-100 flex items-center justify-center">
@@ -92,22 +185,23 @@ function ImageCard({
           </div>
         )}
 
-        {/* Image - natural aspect ratio */}
-        <div className="relative w-full min-h-[200px]">
+        {/* Actual image - only load when in view */}
+        {isInView && !imageError && (
           <img
             src={item.viewUrl}
             alt={item.title}
-            className="w-full object-cover transition-transform duration-300 ease-out hover:scale-[1.02]"
-            loading={index < 4 ? "eager" : "lazy"}
-            fetchPriority={index < 4 ? "high" : "low"}
-            decoding={index < 4 ? "sync" : "async"}
+            className={`w-full object-cover transition-all duration-500 ease-out ${
+              imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
+            }`}
+            loading="lazy"
+            decoding="async"
             onLoad={() => setImageLoaded(true)}
             onError={handleImageError}
           />
-        </div>
+        )}
 
-        {/* Basket button in corner - only for purchasable items */}
-        {item.hasProduct && item.prices && item.prices.length > 0 && !imageError && (
+        {/* Basket button - only for purchasable items */}
+        {item.hasProduct && item.prices && item.prices.length > 0 && !imageError && imageLoaded && (
           <button
             type="button"
             data-cart-toggle
@@ -129,10 +223,9 @@ function ImageCard({
         )}
       </div>
 
-      {/* Overlay from bottom of card - slide up animation */}
+      {/* Overlay - slide up animation */}
       {item.hasProduct && item.prices && item.prices.length > 0 && (
         <div
-          ref={overlayRef}
           data-overlay
           className={`absolute inset-x-0 bottom-0 bg-white/95 backdrop-blur-md p-4 shadow-lg transition-all duration-300 ease-out ${
             isActive ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
@@ -152,6 +245,7 @@ function ImageCard({
               <IconX className="size-3.5 text-text-dark" />
             </button>
           </div>
+
           {/* Size buttons */}
           <div className="flex flex-wrap gap-2 mb-3">
             {item.prices
@@ -161,15 +255,12 @@ function ImageCard({
                   key={price.id}
                   type="button"
                   onClick={() => {
-                    // Use functional update to get latest state
                     setSelectedPrice(prev => {
                       const currentlySelected = prev[item.id];
-                      // Deselect if clicking the currently selected size
                       if (currentlySelected === price.id) {
                         const { [item.id]: _, ...rest } = prev;
                         return rest;
                       }
-                      // Otherwise select this size
                       return { ...prev, [item.id]: price.id };
                     });
                   }}
@@ -196,7 +287,8 @@ function ImageCard({
             type="button"
             onClick={() => handleAddToCart(item)}
             disabled={loading[item.id] || !hasSelectedSize}
-            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-full rounded-xl bg-primary py-2.5 text-center font-display font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {loading[item.id] ? labels.loading : labels.addToCart}
           </button>
 
@@ -209,6 +301,60 @@ function ImageCard({
   );
 }
 
+/**
+ * Single column in the masonry grid
+ * Items flow vertically without breaking across columns
+ */
+function MasonryColumn({
+  items,
+  labels,
+  activeItem,
+  setActiveItem,
+  closeItem,
+  selectedPrice,
+  setSelectedPrice,
+  loading,
+  handleAddToCart,
+  startIndex,
+}: {
+  items: MediaItem[];
+  labels: {
+    buyPrint: string;
+    loading: string;
+    freeShipping: string;
+    addToCart: string;
+    comingSoon: string;
+  };
+  activeItem: string | null;
+  setActiveItem: (id: string | null) => void;
+  closeItem: () => void;
+  selectedPrice: Record<string, string>;
+  setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  loading: Record<string, boolean>;
+  handleAddToCart: (item: MediaItem) => void;
+  startIndex: number;
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      {items.map((item, i) => (
+        <ImageCard
+          key={item.id}
+          item={item}
+          index={startIndex + i}
+          labels={labels}
+          isActive={activeItem === item.id}
+          setActiveItem={setActiveItem}
+          closeItem={closeItem}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          loading={loading}
+          handleAddToCart={handleAddToCart}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
   const { addItem, items: cartItems } = useCart();
@@ -217,6 +363,13 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate column count based on viewport
+  const columnCount = useColumnCount(containerRef);
+
+  // Distribute items across columns
+  const columns = useMasonryColumns(items, columnCount);
 
   // Reveal animation on scroll
   useEffect(() => {
@@ -232,24 +385,20 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           }
         }
       },
-      { threshold: 0.15, rootMargin: "0px" },
+      { threshold: 0.1, rootMargin: "0px" }
     );
 
     nodes.forEach((node) => observer.observe(node));
 
     return () => observer.disconnect();
-  }, []);
+  }, [items, columnCount]); // Re-run when items or columns change
 
-
-
-  // Close menu when clicking outside any card
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (!activeItem) return;
       const target = e.target as HTMLElement;
-      // Close if clicking outside any overlay or toggle button
       if (!target.closest('[data-cart-toggle]') && !target.closest('[data-overlay]')) {
-        // Clear selected size for the item being closed
         setSelectedPrice(prev => {
           const { [activeItem]: _, ...rest } = prev;
           return rest;
@@ -261,17 +410,16 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activeItem]);
 
-  const closeItem = () => {
+  const closeItem = useCallback(() => {
     if (!activeItem) return;
-    // Clear selected size for the item being closed
     setSelectedPrice(prev => {
       const { [activeItem]: _, ...rest } = prev;
       return rest;
     });
     setActiveItem(null);
-  };
+  }, [activeItem]);
 
-  const handleAddToCart = (item: MediaItem) => {
+  const handleAddToCart = useCallback((item: MediaItem) => {
     const priceId = selectedPrice[item.id];
     if (!priceId || !item.prices) return;
 
@@ -290,13 +438,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       viewUrl: item.viewUrl,
     });
 
-    // Reset the selected size for this item and close menu
     setSelectedPrice(prev => {
       const { [item.id]: _, ...rest } = prev;
       return rest;
     });
     setActiveItem(null);
-  };
+  }, [selectedPrice, addItem]);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
@@ -376,6 +523,14 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         },
       };
 
+  // Calculate start index for each column for staggered animation
+  let globalIndex = 0;
+  const columnsWithStartIndex = columns.map((colItems) => {
+    const start = globalIndex;
+    globalIndex += colItems.length;
+    return { items: colItems, startIndex: start };
+  });
+
   return (
     <>
       <CartDrawer
@@ -398,7 +553,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           </div>
         </header>
 
-        <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
+        <main ref={containerRef} className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
           <section className="pt-6 pb-10" data-reveal>
             <div>
               <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
@@ -412,23 +567,22 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
           {hasConfig && items.length > 0 && (
             <section className="pb-10">
-              {/* Masonry-style grid using columns */}
-              <div className="columns-1 gap-4 md:columns-2 lg:columns-3" style={{ columnFill: "auto" }}>
-                {items.map((item, i) => (
-                  <div key={item.id} data-reveal style={{ "--reveal-delay": `${120 + i * 120}ms` } as React.CSSProperties} className="mb-4 break-inside-avoid">
-                    <ImageCard
-                      item={item}
-                      index={i}
-                      labels={labels}
-                      isActive={activeItem === item.id}
-                      setActiveItem={setActiveItem}
-                      closeItem={closeItem}
-                      selectedPrice={selectedPrice}
-                      setSelectedPrice={setSelectedPrice}
-                      loading={loading}
-                      handleAddToCart={handleAddToCart}
-                    />
-                  </div>
+              {/* True masonry grid with responsive columns */}
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {columnsWithStartIndex.map(({ items: colItems, startIndex }, colIndex) => (
+                  <MasonryColumn
+                    key={colIndex}
+                    items={colItems}
+                    labels={labels}
+                    activeItem={activeItem}
+                    setActiveItem={setActiveItem}
+                    closeItem={closeItem}
+                    selectedPrice={selectedPrice}
+                    setSelectedPrice={setSelectedPrice}
+                    loading={loading}
+                    handleAddToCart={handleAddToCart}
+                    startIndex={startIndex}
+                  />
                 ))}
               </div>
             </section>
