@@ -100,7 +100,7 @@ function ImageCard({
             type="button"
             data-cart-toggle
             onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105 opacity-0 group-hover:opacity-100"
+            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105 md:opacity-0 md:group-hover:opacity-100"
             aria-label={labels.buyPrint}
           >
             <IconShoppingBag className="size-4 text-text-dark" />
