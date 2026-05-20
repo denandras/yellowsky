@@ -87,7 +87,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Jótállás",
-          text: "A giclée nyomatokat archív minőségű papíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) hosszú ideig megőrzik minőségüket.",
+          text: "A giclée nyomatokat archív minőségű papíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) akár 80 évig is megőrzik minőségüket.",
           defects: "Gyártási hiba vagy szállítási sérülés esetén a Szolgáltató a terméket ingyen kicseréli vagy visszatéríti a vételárat, a hibás termék visszaküldése mellett.",
         },
         intellectual: {
@@ -193,7 +193,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Warranty",
-          text: "Giclée prints are made on archival quality paper. With proper storage (protected from direct sunlight and moisture), prints maintain their quality for a long time.",
+          text: "Giclée prints are made on archival quality paper. With proper storage (protected from direct sunlight and moisture), prints can retain their quality for up to 80 years.",
           defects: "In case of manufacturing defects or shipping damage, the Provider will replace the product free of charge or refund the purchase price, upon return of the defective item.",
         },
         intellectual: {
