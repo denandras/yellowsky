@@ -90,7 +90,7 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
 
         <div className="mt-4 text-center">
           <a
-            href="https://instagram.com/abstract.sketcher"
+            href="https://www.instagram.com/explore/tags/yellowskychallenge"
             target="_blank"
             rel="noreferrer"
             className="text-sm text-text-muted underline decoration-text-muted/30 underline-offset-2 transition-colors hover:text-primary"
