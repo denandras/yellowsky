@@ -108,7 +108,32 @@ async function getArtItems(): Promise<MediaItem[]> {
     console.error("[Webshop] Background sync error:", err);
   });
 
-  const sortedKeys = [...keys].sort((a, b) => b.localeCompare(a));
+  // Sort by year first, then by artwork number (numeric)
+  // Filenames like "2020.105 Amsterdam.png" need numeric sort, not alphabetic
+  const sortedKeys = [...keys].sort((a, b) => {
+    const filenameA = extractFilename(a);
+    const filenameB = extractFilename(b);
+    
+    const matchA = filenameA.match(/^(\d{4})\.(\d+)/);
+    const matchB = filenameB.match(/^(\d{4})\.(\d+)/);
+    
+    if (!matchA || !matchB) {
+      // Fallback to alphabetic sort for non-standard filenames
+      return b.localeCompare(a);
+    }
+    
+    const yearA = parseInt(matchA[1], 10);
+    const yearB = parseInt(matchB[1], 10);
+    
+    if (yearA !== yearB) {
+      return yearB - yearA; // Newer year first
+    }
+    
+    const numA = parseInt(matchA[2], 10);
+    const numB = parseInt(matchB[2], 10);
+    
+    return numB - numA; // Higher number = newer artwork
+  });
 
   // Show all artworks, with prices when products exist
   const allItems: MediaItem[] = [];
