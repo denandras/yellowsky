@@ -19,7 +19,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         parties: {
           title: "1. Szerződő felek",
           seller: "Eladó:",
-          sellerName: "András Dénes független művész",
+          sellerName: "Dénes András független művész",
           sellerAddress: "Budapest, Magyarország",
           sellerEmail: "denandras@gmail.com",
           buyer: "Vevő:",
@@ -92,7 +92,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         contact: {
           title: "12. Kapcsolat",
           text: "Kérdésekkel kapcsolatban lépj kapcsolatba:",
-          email: "denandras@gmail.com",
+          email: "contact@andrasdenes.com",
           response: "Válaszolunk 48 órán belül.",
         },
         backToHome: "← Vissza a főoldalra",

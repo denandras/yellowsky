@@ -18,7 +18,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
         intro: "Ez az adatvédelmi irányelv elmagyarázza, hogyan gyűjtöm és használom a személyes adataidat a Yellowsky weboldalon.",
         controller: {
           title: "1. Adatkezelő",
-          text: "A weboldalt András Dénes, Budapesten élő független művész működteti.",
+          text: "Ez a weboldalt Dénes András, Budapesten élő független művész működteti.",
           contact: "Kapcsolat:",
         },
         data: {
@@ -116,7 +116,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
         contact: {
           title: "11. Kapcsolat",
           text: "Kérdésekkel kapcsolatban ezen irányelvekről vagy a személyes adataidról, lépj kapcsolatba:",
-          email: "denandras@gmail.com",
+          email: "contact@andrasdenes.com",
           location: "Budapest, Hungary",
         },
         backToHome: "← Vissza a főoldalra",
@@ -226,7 +226,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
         contact: {
           title: "11. Contact",
           text: "For questions about this policy or your personal data, contact:",
-          email: "denandras@gmail.com",
+          email: "contact@andrasdenes.com",
           location: "Budapest, Hungary",
         },
         backToHome: "← Back to Home",
