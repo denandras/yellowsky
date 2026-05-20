@@ -5,7 +5,7 @@
     "author": "@abstract.sketcher",
     "likes": 234,
     "caption": "Where it all began 🎨",
-    "link": "https://instagram.com/p/example1"
+    "link": "https://www.instagram.com/p/B-UcRF8JO34/"
   },
   {
     "id": "2",
@@ -13,7 +13,7 @@
     "author": "@abstract.sketcher",
     "likes": 189,
     "caption": "Morning sketches",
-    "link": "https://instagram.com/p/example3"
+    "link": "https://www.instagram.com/p/CBV-vBHD2qc/"
   },
   {
     "id": "3",
@@ -21,6 +21,30 @@
     "author": "@abstract.sketcher",
     "likes": 312,
     "caption": "Architecture in yellow",
-    "link": "https://instagram.com/p/example3"
+    "link": "https://www.instagram.com/p/CB2LyhYj7-e/"
+  },
+  {
+    "id": "4",
+    "image": "/community/post4.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 156,
+    "caption": "New work",
+    "link": "https://www.instagram.com/p/DF1AYDbi6Oy/"
+  },
+  {
+    "id": "5",
+    "image": "/community/post5.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 278,
+    "caption": "Creative flow",
+    "link": "https://www.instagram.com/p/CALz4zqntNR/"
+  },
+  {
+    "id": "6",
+    "image": "/community/post6.jpg",
+    "author": "@abstract.sketcher",
+    "likes": 145,
+    "caption": "Yellow moments",
+    "link": "https://www.instagram.com/p/CAvvOAkHMCI/"
   }
 ]
