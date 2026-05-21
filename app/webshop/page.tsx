@@ -5,7 +5,6 @@ import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from "@/lib/s4-confi
 import { createMediaAccessToken } from "@/lib/media-access-token";
 import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 import { fetchStripeProducts, mapArtworksToProducts } from "@/lib/stripe-products";
-import { syncArtworksToStripe } from "@/lib/sync-artworks";
 import WebshopPageClient from "@/components/webshop-page-client";
 import JsonLd from "@/components/json-ld";
 
@@ -95,18 +94,8 @@ async function getArtItems(): Promise<MediaItem[]> {
   const filenames = keys.map(extractFilename);
   const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
-  // Run full sync in background - creates missing, reactivates archived, archives orphans/duplicates
-  // This ensures S3 and Stripe are always in sync
-  syncArtworksToStripe().then((result) => {
-    if (result.created > 0 || result.archived > 0 || result.reactivated > 0 || result.errors.length > 0) {
-      console.log(`[Webshop] Sync complete: created=${result.created}, archived=${result.archived}, reactivated=${result.reactivated}, errors=${result.errors.length}`);
-      if (result.errors.length > 0) {
-        console.error("[Webshop] Sync errors:", result.errors);
-      }
-    }
-  }).catch(err => {
-    console.error("[Webshop] Background sync error:", err);
-  });
+  // Sync is handled by systemd timer (yellowsky-sync.timer) every 10 minutes
+  // No need to run on every page load
 
   // Sort by year first, then by artwork number (numeric)
   // Filenames like "2020.105 Amsterdam.png" need numeric sort, not alphabetic
