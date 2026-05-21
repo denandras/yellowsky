@@ -49,7 +49,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   };
 
   const storyParagraphsHu = [
-    <>2020-ban, a koronavírus idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
+    <>2020-ban, a COVID-zárás alatt kezdtem el sárga építészeti vázlatokat készíteni. A távoktatásban töltött bezártság alatt úgy éreztem, teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de hamarosan kihívássá vált – elindítottam a{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -57,13 +57,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       >
         #yellowskychallenge
       </button>
-      -t.</>,
+      -t, amihez sokan csatlakoztak.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
   ];
 
   const storyParagraphsEn = [
-    <>In 2020, during the covid lockdown, I began sketching because I had to study at home all day and could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
+    <>In 2020, during the COVID lockdown, I began creating yellow architectural sketches. Studying from home all day, I needed a creative outlet. What started as experimentation soon became a challenge – I launched the{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -71,7 +71,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       >
         #yellowskychallenge
       </button>
-      .</>,
+      , and many artists joined the journey.</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
     "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
   ];
@@ -248,6 +248,27 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       <BottomNav active="home" />
 
       <footer className="bg-background-light py-12 pb-32 text-center">
+        {/* Trust signals */}
+        <div className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
+          <span className="flex items-center gap-1.5">
+            <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {language === "hu" ? "Ingyenes szállítás világszerte" : "Free worldwide shipping"}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            {language === "hu" ? "Biztonságos fizetés Stripe-pal" : "Secure checkout via Stripe"}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {language === "hu" ? "5-7 munkanapon belül" : "Ships in 5-7 business days"}
+          </span>
+        </div>
         <div className="mb-9 flex justify-center">
           <BrandMark size={32} />
         </div>
