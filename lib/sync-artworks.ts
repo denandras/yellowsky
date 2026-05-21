@@ -39,13 +39,13 @@ export async function syncArtworksToStripe(
 ): Promise<SyncResult> {
   const secretKey = getStripeSecretKey();
   if (!secretKey) {
-    return { created: 0, archived: 0, skipped: 0, errors: [{ name: "config", error: "Stripe not configured" }] };
+    return { created: 0, archived: 0, reactivated: 0, skipped: 0, errors: [{ name: "config", error: "Stripe not configured" }] };
   }
 
   const cfg = getS4Config();
   const artPrefix = getS4ArtPrefix();
   if (!cfg || !artPrefix) {
-    return { created: 0, archived: 0, skipped: 0, errors: [{ name: "config", error: "S3 not configured" }] };
+    return { created: 0, archived: 0, reactivated: 0, skipped: 0, errors: [{ name: "config", error: "S3 not configured" }] };
   }
 
   const stripe = new Stripe(secretKey, {
