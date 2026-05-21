@@ -49,7 +49,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   };
 
   const storyParagraphsHu = [
-    <>2020-ban, a koronavírus idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
+    <>2020-ban, a COVID idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem; úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -58,7 +58,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         #yellowskychallenge
       </button>
       -t.</>,
-    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
+    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor az előadóművészetre kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
   ];
 
