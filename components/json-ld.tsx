@@ -38,7 +38,7 @@ export default function JsonLd({ type, language = "en", productData }: JsonLdPro
     name: "Yellowsky",
     url: baseUrl,
     description: language === "hu" 
-      ? "Sárga vázlatok és giclée nyomatok Dénes Andrástól" 
+      ? "Sárga grafikák és giclée nyomatok Dénes Andrástól" 
       : "Yellow sketches and giclée prints by András Dénes",
     publisher: {
       "@type": "Person",

@@ -49,7 +49,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   };
 
   const storyParagraphsHu = [
-    <>2020-ban, a COVID-zárás alatt kezdtem el sárga építészeti vázlatokat készíteni. A távoktatásban töltött bezártság alatt úgy éreztem, teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de hamarosan kihívássá vált – elindítottam a{" "}
+    <>2020-ban, a COVID-zárás alatt kezdtem el sárga építészeti grafikákat készíteni. A távoktatásban töltött bezártság alatt úgy éreztem, teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de hamarosan kihívássá vált – elindítottam a{" "}
       <button
         type="button"
         onClick={openInstagram}
