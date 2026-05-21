@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate every 5 minutes - ISR caching
-export const revalidate = 300;
+// Revalidate every 2 minutes - ISR caching (faster refresh for product availability)
+export const revalidate = 120;
 
 const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
 
