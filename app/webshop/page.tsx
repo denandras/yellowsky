@@ -11,6 +11,7 @@ import JsonLd from "@/components/json-ld";
 type MediaItem = {
   id: string;
   title: string;
+  alt: string;
   viewUrl: string;
   downloadUrl: string;
   productId?: string;
@@ -42,6 +43,27 @@ function isImageKey(key: string) {
 
 function extractFilename(key: string): string {
   return key.split("/").pop() ?? key;
+}
+
+/**
+ * Generate alt text from filename.
+ * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — giclée print on hemp paper"
+ */
+function generateAltText(filename: string): string {
+  // Remove extension
+  const title = filename.replace(/\.[^.]+$/, "");
+  
+  // Extract year (first 4 digits)
+  const yearMatch = title.match(/^(\d{4})/);
+  const year = yearMatch ? yearMatch[1] : "";
+  
+  // Extract subject (everything after "YEAR.NUMBER ")
+  const subjectMatch = title.match(/^\d{4}\.\d+\s+(.+)$/);
+  const subject = subjectMatch ? subjectMatch[1] : title;
+  
+  // Build alt text
+  const yearPart = year ? `, ${year}` : "";
+  return `Architectural sketch of ${subject}${yearPart} — giclée print on hemp paper`;
 }
 
 async function getArtItems(): Promise<MediaItem[]> {
@@ -146,10 +168,12 @@ async function getArtItems(): Promise<MediaItem[]> {
 
     // Extract title from filename (remove extension)
     const title = filename.replace(/\.[^.]+$/, "");
+    const alt = generateAltText(filename);
 
     allItems.push({
       id: hasProduct ? product.id : `art-${allItems.length}`,
       title: hasProduct ? product.name : title,
+      alt,
       viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
       downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
       hasProduct,
@@ -190,7 +214,7 @@ export default async function WebshopPage() {
           type="product"
           productData={{
             name: firstProduct.productName || firstProduct.title,
-            description: `Giclée print of "${firstProduct.productName || firstProduct.title}" - yellow sketch by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
+            description: `Giclée print on hemp paper — "${firstProduct.productName || firstProduct.title}" by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
             image: `https://yellowsky.andrasdenes.com${firstProduct.viewUrl}`,
             priceA4: firstProduct.prices?.find(p => p.nickname === "A4")?.unitAmount,
             priceA3: firstProduct.prices?.find(p => p.nickname === "A3")?.unitAmount,

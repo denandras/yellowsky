@@ -6,6 +6,7 @@ import { IconShoppingBag, IconX } from "@/components/icons";
 type MediaItem = {
   id: string;
   title: string;
+  alt: string;
   viewUrl: string;
   downloadUrl: string;
   productId?: string;
@@ -84,7 +85,7 @@ function ImageCard({
       <div className="relative">
         <img
           src={item.viewUrl}
-          alt={item.title}
+          alt={item.alt}
           className="w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
