@@ -21,6 +21,7 @@ function extractProductName(filename: string): string {
 export type SyncResult = {
   created: number;
   archived: number;
+  reactivated: number;
   skipped: number;
   errors: Array<{ name: string; error: string }>;
 };
@@ -104,6 +105,7 @@ export async function syncArtworksToStripe(
   const result: SyncResult = {
     created: 0,
     archived: 0,
+    reactivated: 0,
     skipped: artworks.length - existingNames.size > limit ? limit : Math.max(0, artworks.length - existingNames.size),
     errors: [],
   };
@@ -150,7 +152,7 @@ export async function syncArtworksToStripe(
   // Archive orphaned and duplicate products
   const artworkNames = new Set(artworks.map((a) => a.name));
 
-  // Get ALL products (not just active) to find orphans and duplicates
+  // Get ALL products (not just active) to find orphans, duplicates, and reactivatable
   const allProducts: Stripe.Product[] = [];
   let hasMore = true;
   let startingAfter: string | undefined;
@@ -163,6 +165,22 @@ export async function syncArtworksToStripe(
     allProducts.push(...batch.data);
     hasMore = batch.has_more;
     startingAfter = batch.data[batch.data.length - 1]?.id;
+  }
+
+  // Find inactive products that match artwork names (reactivatable)
+  // Only reactivate if there's no active product with the same name
+  const inactiveProducts = allProducts.filter(
+    (p) => !p.active && artworkNames.has(p.name) && !existingNames.has(p.name)
+  );
+
+  for (const product of inactiveProducts) {
+    try {
+      await stripe.products.update(product.id, { active: true });
+      result.reactivated++;
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      result.errors.push({ name: product.name, error });
+    }
   }
 
   // Find yellowsky products (by metadata or name match)

@@ -95,11 +95,11 @@ async function getArtItems(): Promise<MediaItem[]> {
   const filenames = keys.map(extractFilename);
   const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
 
-  // Run full sync in background - creates missing products, archives orphans/duplicates
+  // Run full sync in background - creates missing, reactivates archived, archives orphans/duplicates
   // This ensures S3 and Stripe are always in sync
   syncArtworksToStripe().then((result) => {
-    if (result.created > 0 || result.archived > 0 || result.errors.length > 0) {
-      console.log(`[Webshop] Sync complete: created=${result.created}, archived=${result.archived}, errors=${result.errors.length}`);
+    if (result.created > 0 || result.archived > 0 || result.reactivated > 0 || result.errors.length > 0) {
+      console.log(`[Webshop] Sync complete: created=${result.created}, archived=${result.archived}, reactivated=${result.reactivated}, errors=${result.errors.length}`);
       if (result.errors.length > 0) {
         console.error("[Webshop] Sync errors:", result.errors);
       }
