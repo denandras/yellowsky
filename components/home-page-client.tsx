@@ -49,7 +49,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   };
 
   const storyParagraphsHu = [
-    <>2020-ban, a COVID-zárás alatt kezdtem el sárga építészeti grafikákat készíteni. A távoktatásban töltött bezártság alatt úgy éreztem, teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de hamarosan kihívássá vált – elindítottam a{" "}
+    <>2020-ban, a koronavírus idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem. Úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -57,13 +57,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       >
         #yellowskychallenge
       </button>
-      -t, amihez sokan csatlakoztak.</>,
+      -t.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor a harsonázásra kellett koncentrálnom, de néha akkor is rajzoltam valamit.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
   ];
 
   const storyParagraphsEn = [
-    <>In 2020, during the COVID lockdown, I began creating yellow architectural sketches. Studying from home all day, I needed a creative outlet. What started as experimentation soon became a challenge – I launched the{" "}
+    <>In 2020, during the covid lockdown, I began sketching because I had to study at home all day and could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
       <button
         type="button"
         onClick={openInstagram}
@@ -71,7 +71,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       >
         #yellowskychallenge
       </button>
-      , and many artists joined the journey.</>,
+      .</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
     "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
   ];
