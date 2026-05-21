@@ -536,3 +536,131 @@ export async function DELETE(request: NextRequest) {
     },
   });
 }
+
+/**
+ * PATCH /api/admin/sync-products
+ * Reactivates archived products that have matching artworks in S3
+ *
+ * Body (optional):
+ * - dryRun: boolean - If true, only reports what would be reactivated (default: true)
+ * - productIds: string[] - Specific product IDs to reactivate (optional)
+ */
+export async function PATCH(request: NextRequest) {
+  // Auth check
+  const auth = validateAdminAuth(request);
+  if (!auth.valid) {
+    return NextResponse.json({ error: auth.error }, { status: 401 });
+  }
+
+  const secretKey = getStripeSecretKey();
+  if (!secretKey) {
+    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+  }
+
+  const cfg = getS4Config();
+  const artPrefix = getS4ArtPrefix();
+  if (!cfg || !artPrefix) {
+    return NextResponse.json({ error: "S3 not configured" }, { status: 500 });
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const dryRun = body.dryRun !== false; // Default to true for safety
+  const specificProductIds = body.productIds as string[] | undefined;
+
+  const stripe = new Stripe(secretKey, {
+    apiVersion: "2026-04-22.dahlia",
+  });
+
+  // List artworks from S3
+  const s3 = new S3Client({
+    endpoint: cfg.endpoint,
+    region: cfg.region,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: cfg.accessKeyId,
+      secretAccessKey: cfg.secretAccessKey,
+    },
+  });
+
+  const artworkKeys: string[] = [];
+  let token: string | undefined;
+
+  do {
+    const list = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: cfg.bucket,
+        Prefix: artPrefix,
+        ContinuationToken: token,
+        MaxKeys: 500,
+      }),
+    );
+
+    for (const obj of list.Contents ?? []) {
+      if (!obj.Key) continue;
+      if (!isImageKey(obj.Key)) continue;
+      artworkKeys.push(obj.Key);
+    }
+
+    token = list.IsTruncated ? list.NextContinuationToken : undefined;
+  } while (token);
+
+  const artworkNames = new Set(
+    artworkKeys.map((key) => extractProductName(extractFilename(key)))
+  );
+
+  // List ALL Stripe products (both active and inactive)
+  const allProducts: Stripe.Product[] = [];
+  let hasMore = true;
+  let startingAfter: string | undefined;
+
+  while (hasMore) {
+    const products = await stripe.products.list({
+      limit: 100,
+      starting_after: startingAfter,
+    });
+    allProducts.push(...products.data);
+    hasMore = products.has_more;
+    startingAfter = products.data[products.data.length - 1]?.id;
+  }
+
+  // Find inactive products that have matching artworks
+  const yellowskyProducts = allProducts.filter(
+    (p) => p.metadata.source === "yellowsky" || artworkNames.has(p.name)
+  );
+  const toReactivate = yellowskyProducts.filter(
+    (p) => !p.active && artworkNames.has(p.name)
+  );
+
+  // Filter by specific IDs if provided
+  const targetProducts = specificProductIds
+    ? toReactivate.filter((p) => specificProductIds.includes(p.id))
+    : toReactivate;
+
+  if (dryRun) {
+    return NextResponse.json({
+      message: "Dry run - no products reactivated",
+      dryRun: true,
+      wouldReactivate: targetProducts.length,
+      products: targetProducts.map((p) => ({
+        id: p.id,
+        name: p.name,
+        active: p.active,
+        created: p.created,
+      })),
+      hint: "Set dryRun: false to actually reactivate products",
+    });
+  }
+
+  // Reactivate products
+  const reactivated: Array<{ id: string; name: string }> = [];
+
+  for (const product of targetProducts) {
+    await stripe.products.update(product.id, { active: true });
+    reactivated.push({ id: product.id, name: product.name });
+  }
+
+  return NextResponse.json({
+    message: `Reactivated ${reactivated.length} products`,
+    reactivated,
+  });
+}

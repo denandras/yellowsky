@@ -130,19 +130,23 @@ export function matchProductToArtwork(
 /**
  * Creates a mapping of artwork filenames to Stripe products.
  * Only includes artworks that have matching active Stripe products.
+ * Prefers active products when duplicates exist.
  */
 export function mapArtworksToProducts(
   artworkFilenames: string[],
   products: StripeProduct[]
 ): Map<string, StripeProduct> {
   const map = new Map<string, StripeProduct>();
+  const usedFiles = new Set<string>();
 
+  // First pass: add all active products
   for (const product of products) {
     if (!product.active) continue;
 
     const matchedFile = matchProductToArtwork(product.name, artworkFilenames);
-    if (matchedFile) {
+    if (matchedFile && !usedFiles.has(matchedFile)) {
       map.set(matchedFile, product);
+      usedFiles.add(matchedFile);
     }
   }
 
