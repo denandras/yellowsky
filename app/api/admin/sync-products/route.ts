@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { getStripeSecretKey } from "@/lib/stripe-config";
 import { getS4Config, getS4ArtPrefix } from "@/lib/s4-config";
 import { validateAdminAuth } from "@/lib/auth-utils";
+import { syncArtworksToStripe } from "@/lib/sync-artworks";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 export const dynamic = "force-dynamic";
@@ -193,13 +194,11 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/admin/sync-products
- * Creates Stripe products for artworks without products
+ * Runs full sync: creates missing products, reactivates archived, archives orphans/duplicates
  *
  * Body (optional):
- * - dryRun: boolean - If true, only reports what would be created (default: true)
- * - priceA4: number - Price for A4 size in HUF fillér (default: 1600000 = 16,000 HUF)
- * - priceA3: number - Price for A3 size in HUF fillér (default: 2400000 = 24,000 HUF)
- * - limit: number - Max products to create (default: 10)
+ * - dryRun: boolean - If true, only reports what would happen (default: false)
+ * - limit: number - Max products to create (default: 50)
  */
 export async function POST(request: NextRequest) {
   // Auth check
@@ -208,145 +207,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: 401 });
   }
 
-  const secretKey = getStripeSecretKey();
-  if (!secretKey) {
-    return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
-  }
-
-  const cfg = getS4Config();
-  const artPrefix = getS4ArtPrefix();
-  if (!cfg || !artPrefix) {
-    return NextResponse.json({ error: "S3 not configured" }, { status: 500 });
-  }
-
   const body = await request.json().catch(() => ({}));
-  const dryRun = body.dryRun !== false; // Default to true for safety
-  const priceA4 = body.priceA4 ?? 1600000; // 16,000 HUF in fillér
-  const priceA3 = body.priceA3 ?? 2400000; // 24,000 HUF in fillér
-  const limit = body.limit ?? 10;
-
-  const stripe = new Stripe(secretKey, {
-    apiVersion: "2026-04-22.dahlia",
-  });
-
-  // List artworks from S3
-  const s3 = new S3Client({
-    endpoint: cfg.endpoint,
-    region: cfg.region,
-    forcePathStyle: true,
-    credentials: {
-      accessKeyId: cfg.accessKeyId,
-      secretAccessKey: cfg.secretAccessKey,
-    },
-  });
-
-  const artworkKeys: string[] = [];
-  let token: string | undefined;
-
-  do {
-    const list = await s3.send(
-      new ListObjectsV2Command({
-        Bucket: cfg.bucket,
-        Prefix: artPrefix,
-        ContinuationToken: token,
-        MaxKeys: 500,
-      }),
-    );
-
-    for (const obj of list.Contents ?? []) {
-      if (!obj.Key) continue;
-      if (!isImageKey(obj.Key)) continue;
-      artworkKeys.push(obj.Key);
-    }
-
-    token = list.IsTruncated ? list.NextContinuationToken : undefined;
-  } while (token);
-
-  const artworks = artworkKeys
-    .sort((a, b) => b.localeCompare(a))
-    .map((key) => ({
-      key,
-      filename: extractFilename(key),
-      name: extractProductName(extractFilename(key)),
-    }));
-
-  // List existing Stripe products
-  const products = await stripe.products.list({ active: true, limit: 100 });
-  const existingNames = new Set(products.data.map((p) => p.name));
-
-  // Find artworks without products
-  const toCreate = artworks
-    .filter((artwork) => !existingNames.has(artwork.name))
-    .slice(0, limit);
+  const dryRun = body.dryRun === true; // Default to false (actually sync)
+  const limit = body.limit ?? 50;
 
   if (dryRun) {
+    // Run sync but report what would happen (no changes)
+    const result = await syncArtworksToStripe(1600000, 2400000, 0); // limit 0 = dry run
     return NextResponse.json({
-      message: "Dry run - no products created",
+      message: "Dry run - no changes made",
       dryRun: true,
-      wouldCreate: toCreate.length,
-      artworks: toCreate.map((a) => ({
-        name: a.name,
-        filename: a.filename,
-        prices: [
-          { nickname: "A4", amount: priceA4 / 100, currency: "HUF" },
-          { nickname: "A3", amount: priceA3 / 100, currency: "HUF" },
-        ],
-      })),
-      hint: "Set dryRun: false to actually create products",
+      ...result,
     });
   }
 
-  // Create products
-  const created: Array<{
-    name: string;
-    productId: string;
-    prices: Array<{ id: string; nickname: string; amount: number }>;
-  }> = [];
-
-  for (const artwork of toCreate) {
-    // Create product
-    const product = await stripe.products.create({
-      name: artwork.name,
-      description: `Yellow sketch by András Dénes — ${artwork.name}`,
-      type: "good",
-      shippable: true,
-      images: [], // Would need to upload or provide URLs
-      metadata: {
-        source: "yellowsky",
-        filename: artwork.filename,
-      },
-    });
-
-    // Create A4 price
-    const a4Price = await stripe.prices.create({
-      product: product.id,
-      unit_amount: priceA4,
-      currency: "huf",
-      nickname: "A4",
-    });
-
-    // Create A3 price
-    const a3Price = await stripe.prices.create({
-      product: product.id,
-      unit_amount: priceA3,
-      currency: "huf",
-      nickname: "A3",
-    });
-
-    created.push({
-      name: artwork.name,
-      productId: product.id,
-      prices: [
-        { id: a4Price.id, nickname: "A4", amount: priceA4 / 100 },
-        { id: a3Price.id, nickname: "A3", amount: priceA3 / 100 },
-      ],
-    });
-  }
+  // Run full sync
+  const result = await syncArtworksToStripe(1600000, 2400000, limit);
 
   return NextResponse.json({
-    message: `Created ${created.length} products`,
-    created,
-    remaining: artworks.length - existingNames.size - created.length,
+    message: `Sync complete`,
+    created: result.created,
+    archived: result.archived,
+    reactivated: result.reactivated,
+    errors: result.errors,
   });
 }
 
