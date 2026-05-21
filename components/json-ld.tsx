@@ -24,7 +24,7 @@ export default function JsonLd({ type, language = "en", productData }: JsonLdPro
     url: "https://andrasdenes.com",
     jobTitle: language === "hu" ? "Képzőművész, Harsonaművész" : "Visual Artist, Trombonist",
     nationality: language === "hu" ? "Magyar" : "Hungarian",
-    knowsAbout: ["yellow sketches", "giclée prints", "contemporary art", "trombone"],
+    knowsAbout: ["yellow sketches", "giclée prints", "art posters", "contemporary art", "trombone"],
     sameAs: [
       "https://instagram.com/yellowsky.sketches",
       "https://instagram.com/abstract.sketcher",
@@ -38,8 +38,8 @@ export default function JsonLd({ type, language = "en", productData }: JsonLdPro
     name: "Yellowsky",
     url: baseUrl,
     description: language === "hu" 
-      ? "Sárga grafikák és giclée nyomatok Dénes Andrástól" 
-      : "Yellow sketches and giclée prints by András Dénes",
+      ? "Sárga grafikák, giclée nyomatok és poszterek Dénes Andrástól" 
+      : "Yellow sketches, giclée prints, and art posters by András Dénes",
     publisher: {
       "@type": "Person",
       name: "András Dénes",

@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     default: "Yellowsky | Yellow Sketches & Giclée Prints by András Dénes",
     template: "%s | Yellowsky",
   },
-  description: "Discover and purchase original yellow sketches and giclée prints by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
-  keywords: ["yellow sketches", "giclée prints", "art prints", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge"],
+  description: "Discover and purchase original yellow sketches, giclée prints, and art posters by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available."
+  keywords: ["yellow sketches", "giclée prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
   authors: [{ name: "András Dénes", url: "https://andrasdenes.com" }],
   creator: "András Dénes",
   publisher: "András Dénes",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
   openGraph: {
-    title: "Yellowsky | Yellow Sketches & Giclée Prints by András Dénes",
+    title: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     description: "Discover and purchase original yellow sketches and giclée prints. A unique art collection that started during lockdown – free worldwide shipping.",
     url: "https://yellowsky.andrasdenes.com",
     siteName: "Yellowsky",

@@ -21,8 +21,8 @@ type MediaItem = {
 };
 
 export const metadata: Metadata = {
-  title: "Webshop – Buy Giclée Prints",
-  description: "Browse and purchase museum-quality giclée prints of András Dénes' yellow sketches. Free worldwide shipping. A4 and A3 sizes available.",
+  title: "Webshop – Buy Giclée Prints & Art Posters",
+  description: "Browse and purchase museum-quality giclée prints and art posters of András Dénes' yellow sketches. Free worldwide shipping. A4 and A3 sizes available.",
   openGraph: {
     title: "Webshop – Buy Giclée Prints | Yellowsky",
     description: "Browse and purchase museum-quality giclée prints of yellow sketches. Free worldwide shipping. A4 and A3 sizes available.",
