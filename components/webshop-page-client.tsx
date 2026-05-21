@@ -49,11 +49,17 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        console.error("Checkout failed:", data);
+        alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout failed. Please try again.");
+        return;
+      }
       if (data.url) {
         window.location.href = data.url;
       }
     } catch (err) {
       console.error("Checkout error:", err);
+      alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout error. Please try again.");
     } finally {
       setCheckoutLoading(false);
     }
