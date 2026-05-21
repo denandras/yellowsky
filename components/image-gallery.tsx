@@ -94,13 +94,13 @@ function ImageCard({
           style={{ opacity: loaded && !error ? 1 : 0, transition: "opacity 0.3s ease-out" }}
         />
 
-        {/* Basket button */}
+        {/* Basket button - visible on touch devices (no hover capability), hover-reveal on desktop */}
         {item.hasProduct && item.prices && item.prices.length > 0 && !error && (
           <button
             type="button"
             data-cart-toggle
             onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105 md:opacity-0 md:group-hover:opacity-100"
+            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105 opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
             aria-label={labels.buyPrint}
           >
             <IconShoppingBag className="size-4 text-text-dark" />
