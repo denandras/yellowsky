@@ -39,7 +39,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         products: {
           title: "III. A termékek ismertetése",
-          text: "A webáruházban giclée minőségű művészeti nyomatok kaphatók. A termékek a megrendeléskor megadott méretben és anyagban készülnek, egyedi gyártásúak.",
+          text: "A webáruházban giclée minőségű művészeti nyomatok kaphatók kenderpapíron. A termékek a megrendeléskor megadott méretben készülnek, egyedi gyártásúak.",
           images: "A weboldalon található képek tájékoztató jellegűek; a tényleges színek a képernyő beállításaitól függően eltérhetnek.",
         },
         ordering: {
@@ -87,7 +87,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Jótállás",
-          text: "A giclée nyomatokat archív minőségű papíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) akár 80 évig is megőrzik minőségüket.",
+          text: "A giclée nyomatokat archív minőségű kenderpapíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) akár 80 évig is megőrzik minőségüket.",
           defects: "Gyártási hiba vagy szállítási sérülés esetén a Szolgáltató a terméket ingyen kicseréli vagy visszatéríti a vételárat, a hibás termék visszaküldése mellett.",
         },
         intellectual: {
@@ -145,7 +145,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         products: {
           title: "III. Products",
-          text: "The webshop offers giclée quality art prints. Products are made to order in the specified size and material.",
+          text: "The webshop offers giclée quality art prints on hemp paper. Products are made to order in the specified size.",
           images: "Images on the website are illustrative; actual colors may vary depending on screen settings.",
         },
         ordering: {
@@ -193,7 +193,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Warranty",
-          text: "Giclée prints are made on archival quality paper. With proper storage (protected from direct sunlight and moisture), prints can retain their quality for up to 80 years.",
+          text: "Giclée prints are made on archival quality hemp paper. With proper storage (protected from direct sunlight and moisture), prints can retain their quality for up to 80 years.",
           defects: "In case of manufacturing defects or shipping damage, the Provider will replace the product free of charge or refund the purchase price, upon return of the defective item.",
         },
         intellectual: {

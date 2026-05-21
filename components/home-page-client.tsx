@@ -59,7 +59,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       </button>
       -t.</>,
     <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor az előadóművészetre kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
-    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni.",
+    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni, ezért létrehoztam ezt az oldalt, hogy a közeli ismerősökön túlra is eljuthassanak grafikáim, melyek egyenként készülnek kenderpapírra, giclée minőségben.",
   ];
 
   const storyParagraphsEn = [
@@ -73,7 +73,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       </button>
       .</>,
     <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
-    "Now that I have done my master's degree on the Franz Liszt Academy of Budapest, I have a bit more free time for creating.",
+    "Now that I've completed my master's degree at the Franz Liszt Academy of Budapest, I have more time to create. I created this site so my sketches can reach beyond my close circle — each one is printed on hemp paper, giclée quality.",
   ];
 
   const labels = isHungarian

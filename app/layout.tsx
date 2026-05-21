@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     template: "%s | Yellowsky",
   },
-  description: "Discover and purchase original yellow sketches, giclée prints, and art posters by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
+  description: "Discover and purchase original yellow sketches and giclée prints on hemp paper by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
   keywords: ["yellow sketches", "giclée prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
   authors: [{ name: "András Dénes", url: "https://andrasdenes.com" }],
   creator: "András Dénes",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
-    description: "Discover and purchase original yellow sketches and giclée prints. A unique art collection that started during lockdown – free worldwide shipping.",
+    description: "Discover and purchase original yellow sketches and giclée prints on hemp paper. A unique art collection that started during lockdown – free worldwide shipping.",
     url: "https://yellowsky.andrasdenes.com",
     siteName: "Yellowsky",
     locale: "en_US",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Yellowsky | Yellow Sketches & Giclée Prints",
-    description: "Discover and purchase original yellow sketches and giclée prints – free worldwide shipping.",
+    description: "Discover and purchase original yellow sketches and giclée prints on hemp paper – free worldwide shipping.",
     images: ["/hero.jpg"],
   },
   alternates: {
