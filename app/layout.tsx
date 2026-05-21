@@ -18,10 +18,10 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL("https://yellowsky.andrasdenes.com"),
   title: {
-    default: "Yellowsky | Yellow Sketches & Giclée Prints by András Dénes",
+    default: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     template: "%s | Yellowsky",
   },
-  description: "Discover and purchase original yellow sketches, giclée prints, and art posters by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available."
+  description: "Discover and purchase original yellow sketches, giclée prints, and art posters by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
   keywords: ["yellow sketches", "giclée prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
   authors: [{ name: "András Dénes", url: "https://andrasdenes.com" }],
   creator: "András Dénes",
@@ -72,6 +72,9 @@ export const metadata: Metadata = {
     },
   },
 };
+
+// Note: Keywords meta tag is deprecated for Google (ignored since 2009) but still used by Bing, Yandex, and some smaller search engines.
+// The keywords are also included in page content and meta descriptions for better SEO across all search engines.
 
 export default function RootLayout({
   children,
