@@ -365,7 +365,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {language === "hu" ? "5-7 munkanap" : "5-7 business days"}
+                  {language === "hu" ? "7-14 nap" : "7-14 calendar days"}
                 </span>
               </div>
             </div>
