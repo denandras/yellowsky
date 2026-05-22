@@ -247,13 +247,15 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
             {/* Title text at image edge */}
             <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
-              <div className="mx-auto max-w-2xl px-3">
-                {/* Title sits at image edge, no background */}
+              {/* Title - left aligned on desktop, no background */}
+              <div className="px-6 md:px-8">
                 <h1 className="font-display text-7xl font-bold leading-none tracking-tighter text-left text-text-dark">
                   {labels.title}
                 </h1>
-                {/* Name and divider on white background below */}
-                <div className="relative bg-white pt-3 pb-3">
+              </div>
+              {/* Name and divider on white background below, centered */}
+              <div className="relative bg-white pt-3 pb-3">
+                <div className="mx-auto max-w-2xl px-6 md:px-8">
                   <div className="flex items-center gap-3">
                     <div className="h-px w-12 bg-primary" />
                     {labels.subtitleLink ? (
