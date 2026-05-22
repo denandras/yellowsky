@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { IconShoppingBag, IconX } from "@/components/icons";
+import { filenameToSlug } from "@/lib/slug";
 
 type MediaItem = {
   id: string;
@@ -57,6 +59,7 @@ function ImageCard({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const hasSelectedSize = !!selectedPrice[item.id];
+  const slug = filenameToSlug(item.title + ".png"); // title is already without extension
 
   return (
     <div
@@ -81,12 +84,12 @@ function ImageCard({
         </div>
       )}
 
-      {/* Image */}
-      <div className="relative">
+      {/* Image - clickable link to artwork page */}
+      <Link href={`/artwork/${slug}`} className="block relative">
         <img
           src={item.viewUrl}
           alt={item.alt}
-          className="w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+          className="w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}
@@ -94,27 +97,31 @@ function ImageCard({
           onError={() => { setLoaded(true); setError(true); }}
           style={{ opacity: loaded && !error ? 1 : 0, transition: "opacity 0.3s ease-out" }}
         />
+      </Link>
 
-        {/* Basket button - visible on touch devices (no hover capability), hover-reveal on desktop */}
-        {item.hasProduct && item.prices && item.prices.length > 0 && !error && (
-          <button
-            type="button"
-            data-cart-toggle
-            onClick={() => setActiveItem(isActive ? null : item.id)}
-            className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105"
-            aria-label={labels.buyPrint}
-          >
-            <IconShoppingBag className="size-4 text-text-dark" />
-          </button>
-        )}
+      {/* Basket button - separate from clickable area */}
+      {item.hasProduct && item.prices && item.prices.length > 0 && !error && (
+        <button
+          type="button"
+          data-cart-toggle
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setActiveItem(isActive ? null : item.id);
+          }}
+          className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all hover:bg-white hover:scale-105 z-10"
+          aria-label={labels.buyPrint}
+        >
+          <IconShoppingBag className="size-4 text-text-dark" />
+        </button>
+      )}
 
-        {/* Coming soon badge */}
-        {!item.hasProduct && loaded && !error && (
-          <div className="absolute bottom-3 right-3 rounded-full bg-white/90 backdrop-blur-sm shadow-md px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <p className="text-xs text-text-muted">{labels.comingSoon}</p>
-          </div>
-        )}
-      </div>
+      {/* Coming soon badge */}
+      {!item.hasProduct && loaded && !error && (
+        <div className="absolute bottom-3 right-3 rounded-full bg-white/90 backdrop-blur-sm shadow-md px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <p className="text-xs text-text-muted">{labels.comingSoon}</p>
+        </div>
+      )}
 
       {/* Price overlay */}
       {item.hasProduct && item.prices && item.prices.length > 0 && (
