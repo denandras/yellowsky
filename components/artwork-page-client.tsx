@@ -189,7 +189,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
-          <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden bg-neutral-100">
+          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-neutral-100">
             {/* Fade gradient overlay - starts very late */}
             <div className="absolute inset-0 z-10 pointer-events-none" 
                  style={{ 
@@ -199,14 +199,14 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                  }} 
             />
             
-            {/* Title overlay at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 pt-16 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+            {/* Title overlay at bottom - bigger text */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                 {artwork.title}
               </h1>
             </div>
 
-            {/* Hero Image - top of image aligned to top */}
+            {/* Hero Image - wide: contain centered, narrow: cover to fill height */}
             {!heroLoaded && !heroError && (
               <div className="absolute inset-0 animate-pulse bg-neutral-100" />
             )}
@@ -219,7 +219,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 src={heroUrl}
                 alt={artwork.alt}
                 fill
-                className={`object-contain transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`object-cover md:object-contain transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
                 priority
                 sizes="100vw"
                 onLoad={() => setHeroLoaded(true)}
@@ -232,9 +232,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Content Section - Artwork + Purchase Options */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Main artwork image in bracket */}
-            <div className="relative">
-              <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-4 md:p-6">
+            {/* Left: Main artwork image in bracket - always visible, smaller on mobile */}
+            <div className="relative max-w-sm mx-auto md:max-w-none">
+              <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
                 {/* Bracket frame - dynamic aspect ratio from image */}
                 <div 
                   className="relative overflow-hidden"
@@ -253,7 +253,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       alt={artwork.alt}
                       fill
                       className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="(max-width: 768px) 320px, 50vw"
                       onLoad={(e) => {
                         const img = e.currentTarget;
                         if (img.naturalWidth && img.naturalHeight) {
@@ -270,16 +270,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
             {/* Right: Purchase options */}
             <div className="flex flex-col">
-              {/* Title (mobile only, desktop shows in hero) */}
-              <div className="md:hidden mb-6">
-                <h2 className="font-display text-2xl font-bold tracking-tight mb-2">
-                  {artwork.title}
-                </h2>
-                <p className="text-text-muted text-sm">
-                  {artwork.alt}
-                </p>
-              </div>
-
               {/* Purchase section */}
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
