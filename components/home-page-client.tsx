@@ -227,7 +227,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
         <main className="flex-1 pb-24">
           {/* Hero section - full width image */}
-          <section className="relative w-full">
+          <section className="relative w-full bg-white pb-16">
             {/* Image - full width */}
             <div className="relative w-full bg-white" style={{ minHeight: 'clamp(343px, 58.8vh, 693px)' }}>
               {mounted && (
