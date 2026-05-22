@@ -200,19 +200,17 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           <div className="absolute inset-x-0 top-0 h-80 w-full pointer-events-none" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
           
           <div className="relative px-6 pt-8 pb-6 md:pt-16">
-            <div className="mx-auto max-w-2xl" data-reveal>
-              <div className="flex flex-col items-center" data-reveal>
-                {labels.storyParagraphs.map((paragraph, idx) => (
-                  <p
-                    key={`story-${idx}`}
-                    className="text-base leading-relaxed text-text-muted text-center"
-                    data-reveal
-                    style={{ "--reveal-delay": `${100 + idx * 80}ms` } as React.CSSProperties}
+            <div className="mx-auto max-w-2xl space-y-6" data-reveal>
+              {labels.storyParagraphs.map((paragraph, idx) => (
+                <p
+                  key={`story-${idx}`}
+                  className="text-base leading-relaxed text-text-muted"
+                  data-reveal
+                  style={{ "--reveal-delay": `${100 + idx * 80}ms` } as React.CSSProperties}
                   >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </div>
         </section>
