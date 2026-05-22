@@ -189,11 +189,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
           <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
-            {/* Fade gradient overlay */}
-            <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-background-light" 
+            {/* Fade gradient overlay - starts later, fades quicker */}
+            <div className="absolute inset-0 z-10 pointer-events-none" 
                  style={{ 
                    backgroundImage: hasJpg 
-                     ? "linear-gradient(to bottom, transparent 70%, rgba(250,249,247,0.8) 85%, rgba(250,249,247,1) 100%)"
+                     ? "linear-gradient(to bottom, transparent 80%, rgba(250,249,247,0.9) 92%, rgba(250,249,247,1) 100%)"
                      : "linear-gradient(to bottom, transparent 0%, transparent 100%)"
                  }} 
             />
@@ -205,7 +205,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               </h1>
             </div>
 
-            {/* Hero Image */}
+            {/* Hero Image - focal point higher */}
             {!heroLoaded && !heroError && (
               <div className="absolute inset-0 animate-pulse bg-neutral-100" />
             )}
@@ -218,7 +218,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 src={heroUrl}
                 alt={artwork.alt}
                 fill
-                className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`object-cover object-[center_30%] transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
                 priority
                 sizes="100vw"
                 onLoad={() => setHeroLoaded(true)}
