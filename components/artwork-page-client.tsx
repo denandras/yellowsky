@@ -208,7 +208,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
           <div 
-            className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-neutral-100 cursor-zoom-in"
+            className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100 cursor-zoom-in"
             onClick={() => setHeroZoomOpen(true)}
           >
             {/* Fade gradient overlay - starts very late */}
