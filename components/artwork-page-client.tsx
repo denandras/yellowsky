@@ -194,7 +194,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   router.push("/webshop");
                 }
               }}
-              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity"
+              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity cursor-pointer"
             >
               {labels.webshop}
             </button>
