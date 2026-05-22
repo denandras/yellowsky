@@ -41,6 +41,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageAspect, setImageAspect] = useState<number | null>(null); // width / height
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -186,9 +187,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </header>
 
+        {/* Colored header space */}
+        <div className="h-2 bg-primary" />
+
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
-          <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+          <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden bg-neutral-100">
             {/* Fade gradient overlay - starts very late */}
             <div className="absolute inset-0 z-10 pointer-events-none" 
                  style={{ 
@@ -234,8 +238,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             {/* Left: Main artwork image in bracket */}
             <div className="relative">
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-4 md:p-6">
-                {/* Bracket frame */}
-                <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden">
+                {/* Bracket frame - dynamic aspect ratio from image */}
+                <div 
+                  className="relative overflow-hidden"
+                  style={{ aspectRatio: imageAspect ? `${imageAspect}` : undefined }}
+                >
                   {!imageLoaded && !imageError && (
                     <div className="absolute inset-0 animate-pulse bg-neutral-100" />
                   )}
@@ -250,7 +257,13 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       fill
                       className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      onLoad={() => setImageLoaded(true)}
+                      onLoad={(e) => {
+                        const img = e.currentTarget;
+                        if (img.naturalWidth && img.naturalHeight) {
+                          setImageAspect(img.naturalWidth / img.naturalHeight);
+                        }
+                        setImageLoaded(true);
+                      }}
                       onError={() => setImageError(true)}
                     />
                   )}
