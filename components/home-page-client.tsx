@@ -145,7 +145,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             {mounted && (
               <div className="absolute inset-0 flex items-center justify-center px-2.5 py-4">
                 <Image
-                  alt="Yellowsky Seoul sketch - yellow architectural illustration"
+                  alt="Yellowsky German Street sketch - yellow architectural illustration"
                   className="h-full w-full object-contain transition-opacity duration-500"
                   src="/hero.jpg"
                   fill
