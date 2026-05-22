@@ -298,8 +298,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         <BottomNav active="home" />
 
         <footer className="bg-background-light py-12 pb-32 text-center">
-          {/* Trust signals */}
-          <div className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
+          {/* Trust signals - 2x2 grid on desktop */}
+          <div className="mb-8 grid grid-cols-2 justify-items-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
             <span className="flex items-center gap-1.5">
               <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -329,7 +329,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             <BrandMark size={32} />
           </div>
           <p className="mb-1.5 text-xs font-medium tracking-widest text-text-muted uppercase">
-            © {currentYear} András Dénes
+            © {currentYear} {language === "hu" ? "Dénes András" : "András Dénes"}
           </p>
           <p className="mb-4 text-[10px] text-text-muted/60">
             {labels.footerTagline}
