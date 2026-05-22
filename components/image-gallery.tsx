@@ -179,7 +179,8 @@ function ImageCard({
 
           <button
             type="button"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (selectedPrice[item.id] && !showAdded) {
                 onAddToCart(item, selectedPrice[item.id]);
                 setShowAdded(true);
