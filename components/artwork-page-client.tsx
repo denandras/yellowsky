@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
@@ -168,18 +169,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
-            <button
-              onClick={() => {
-                if (cameFromWebshop) {
-                  router.back();
-                } else {
-                  router.push("/webshop");
-                }
-              }}
+            <Link
+              href="/webshop"
               className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity"
             >
-              ← {labels.webshop}
-            </button>
+              {labels.webshop}
+            </Link>
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
               <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
