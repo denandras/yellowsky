@@ -164,7 +164,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           <div className="bg-white px-6 pt-2 pb-1">
             <h1
               key={`title-${language}`}
-              className="font-display mb-1.5 md:mb-2 text-4xl font-bold leading-none tracking-tighter md:text-7xl"
+              className="font-display mb-1.5 md:mb-2 text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-none tracking-tighter"
               data-reveal
               style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
             >
