@@ -171,7 +171,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
         <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
           <section className="pt-6 pb-10">
-            <div data-reveal style={{ "--reveal-delay": "0ms" } as React.CSSProperties}>
+            <div>
               <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
                 {labels.subtitle}
               </h2>
