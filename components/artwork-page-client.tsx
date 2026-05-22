@@ -231,9 +231,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 src={heroUrl}
                 alt={artwork.alt}
                 fill
-                className={`object-cover md:object-contain transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
                 priority
                 sizes="100vw"
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
                 onLoad={() => setHeroLoaded(true)}
                 onError={() => setHeroError(true)}
               />
@@ -268,6 +270,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       sizes="(max-width: 768px) 100vw, 50vw"
                       unoptimized
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
                       onLoad={(e) => {
                         console.log('Artwork image loaded:', artwork.viewUrl, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight);
                         const img = e.currentTarget;

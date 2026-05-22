@@ -186,11 +186,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               {mounted && (
                 <Image
                   alt="Yellowsky German Street sketch - yellow architectural illustration"
-                  className="object-contain"
+                  className="object-cover"
                   src="/hero.jpg"
                   fill
                   priority
                   sizes="100vw"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
                 />
               )}
             </div>

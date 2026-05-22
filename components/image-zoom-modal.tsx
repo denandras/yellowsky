@@ -167,16 +167,6 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
         </button>
-        <div className="mx-2 h-4 w-px bg-white/30" />
-        <button
-          onClick={() => {
-            setScale(1);
-            setPosition({ x: 50, y: 50 });
-          }}
-          className="text-xs text-white/80 hover:text-white"
-        >
-          Reset
-        </button>
       </div>
 
       {/* Image container */}
@@ -210,6 +200,8 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             className="max-h-[85vh] max-w-[90vw] object-contain"
             priority
             unoptimized
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
           />
         </div>
       </div>
