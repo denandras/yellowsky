@@ -161,27 +161,28 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           </div>
 
           {/* Title text */}
-          <div className="bg-white px-6 pt-2 pb-1">
-            <h1
-              key={`title-${language}`}
-              className="font-display mb-1.5 md:mb-2 text-7xl font-bold leading-none tracking-tighter"
-              data-reveal
-              style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
-            >
-              {labels.title}
-            </h1>
-            <div
-              key={`subtitle-${language}`}
-              className="flex items-center gap-3"
-              data-reveal
-              style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
-            >
-              <div className="h-px w-12 bg-primary" />
-              {labels.subtitleLink ? (
-                <a
-                  href={labels.subtitleLink}
-                  className="font-display text-sm font-bold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-                >
+          <div className="bg-white pt-2 pb-1">
+            <div className="mx-auto max-w-2xl px-6">
+              <h1
+                key={`title-${language}`}
+                className="font-display mb-1.5 md:mb-2 text-7xl font-bold leading-none tracking-tighter"
+                data-reveal
+                style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
+              >
+                {labels.title}
+              </h1>
+              <div
+                key={`subtitle-${language}`}
+                className="flex items-center gap-3"
+                data-reveal
+                style={{ "--reveal-delay": "220ms" } as React.CSSProperties}
+              >
+                <div className="h-px w-12 bg-primary" />
+                {labels.subtitleLink ? (
+                  <a
+                    href={labels.subtitleLink}
+                    className="font-display text-sm font-bold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                  >
                   {labels.subtitle}
                 </a>
               ) : (
@@ -189,6 +190,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   {labels.subtitle}
                 </p>
               )}
+            </div>
             </div>
           </div>
 
