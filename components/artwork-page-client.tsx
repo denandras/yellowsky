@@ -243,7 +243,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 alt={artwork.alt}
                 fill
                 className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-                style={{ objectPosition: 'center 37%' }}
+                style={{ objectPosition: 'center 41%' }}
                 priority
                 sizes="100vw"
                 draggable={false}
