@@ -170,7 +170,6 @@ function ImageCard({
             onClick={() => {
               if (selectedPrice[item.id]) {
                 onAddToCart(item, selectedPrice[item.id]);
-                closeItem();
               }
             }}
             disabled={!hasSelectedSize || cartLoading[item.id]}
