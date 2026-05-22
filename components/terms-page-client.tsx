@@ -65,7 +65,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         shipping: {
           title: "VI. Szállítás",
           worldwide: "A Szolgáltató világszerte ingyenes szállítást biztosít.",
-          timeframe: "A várható szállítási idő 7-14 munkanap a rendelés visszaigazolásától számítva (nyomtatás és csomagolás után).",
+          timeframe: "A várható szállítási idő 7-14 naptári nap a rendelés visszaigazolásától számítva (nyomtatás és csomagolás után).",
           tracking: "A Szolgáltató e-mailben értesíti a Felhasználót a megrendelés állapotáról.",
           damage: "Ha a csomag sérülten érkezik, a Felhasználó köteles a sérülésről fotót készíteni és a Szolgáltatót 48 órán belül értesíteni.",
         },
@@ -171,7 +171,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         shipping: {
           title: "VI. Shipping",
           worldwide: "The Provider offers free worldwide shipping.",
-          timeframe: "Estimated delivery is 7-14 business days from order confirmation (after printing and packaging).",
+          timeframe: "Estimated delivery is 7-14 calendar days from order confirmation (after printing and packaging).",
           tracking: "The Provider notifies the User via email about order status updates.",
           damage: "If the package arrives damaged, the User must photograph the damage and notify the Provider within 48 hours.",
         },
