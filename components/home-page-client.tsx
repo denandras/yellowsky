@@ -162,7 +162,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
           {/* Title text */}
           <div className="bg-white pt-2 pb-1">
-            <div className="mx-auto max-w-2xl px-6">
+            <div className="mx-auto max-w-2xl px-3">
               <h1
                 key={`title-${language}`}
                 className="font-display mb-1.5 md:mb-2 text-7xl font-bold leading-none tracking-tighter"
@@ -201,7 +201,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           {/* Gradient background behind first two paragraphs */}
           <div className="absolute inset-x-0 top-0 h-80 w-full pointer-events-none" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
           
-          <div className="relative px-6 pt-8 pb-6 md:pt-16">
+          <div className="relative px-3 pt-8 pb-6 md:pt-16">
             <div className="mx-auto max-w-2xl space-y-6" data-reveal>
               {labels.storyParagraphs.map((paragraph, idx) => (
                 <p
@@ -218,7 +218,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         </section>
 
         {/* CTA - Gallery button */}
-        <section className="px-6 py-8">
+        <section className="px-3 py-8">
           <div key={`cta-${language}`} className="mx-auto max-w-2xl" data-reveal style={{ "--reveal-delay": "340ms" } as React.CSSProperties}>
             <a
               href="/webshop"
@@ -280,7 +280,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         <div className="mb-9 flex justify-center">
           <BrandMark size={32} />
         </div>
-        <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
+        <p className="mb-1.5 text-xs font-medium tracking-widest text-text-muted uppercase">
           © {currentYear} András Dénes
         </p>
         <p className="mb-4 text-[10px] text-text-muted/60">
