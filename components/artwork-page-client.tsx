@@ -232,8 +232,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Content Section - Artwork + Purchase Options */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Main artwork image in bracket - always visible, smaller on mobile */}
-            <div className="relative max-w-sm mx-auto md:max-w-none">
+            {/* Left: Main artwork image in bracket */}
+            <div className="relative">
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
                 {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
                 <div 
@@ -253,7 +253,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       alt={artwork.alt}
                       fill
                       className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      sizes="(max-width: 768px) 320px, 50vw"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       onLoad={(e) => {
                         const img = e.currentTarget;
                         if (img.naturalWidth && img.naturalHeight) {
