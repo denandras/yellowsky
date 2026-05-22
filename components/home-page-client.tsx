@@ -64,7 +64,16 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         #yellowskychallenge
       </button>
       -t.</>,
-    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor az előadóművészetre kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
+    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor az{" "}
+      <a
+        href="https://andrasdenes.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      >
+        előadóművészetre
+      </a>{" "}
+      kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
     "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni, ezért létrehoztam ezt az oldalt, hogy a közeli ismerősökön túlra is eljuthassanak grafikáim, melyek egyenként készülnek kenderpapírra, giclée minőségben.",
   ];
 
@@ -78,7 +87,15 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         #yellowskychallenge
       </button>
       .</>,
-    <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on playing the trombone, but sometimes I sketched a bit.</>,
+    <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
+      <a
+        href="https://andrasdenes.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+      >
+        playing the trombone
+      </a>, but sometimes I sketched a bit.</>,
     "Now that I've completed my master's degree at the Franz Liszt Academy of Budapest, I have more time to create. I created this site so my sketches can reach beyond my close circle — each one is printed on hemp paper, giclée quality.",
   ];
 
