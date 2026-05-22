@@ -204,7 +204,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 <Image
                   alt="Yellowsky German Street sketch - yellow architectural illustration"
                   className="object-cover"
-                  style={{ objectPosition: 'center 35%' }}
+                  style={{ objectPosition: 'center 35.5%' }}
                   src="/hero.jpg"
                   fill
                   priority
