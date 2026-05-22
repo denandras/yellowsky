@@ -8,7 +8,9 @@ import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 export const dynamic = "force-dynamic";
 
-const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
+// Webshop images: PNG/WebP/AVIF only (no JPG/JPEG)
+// JPG files are reserved for product page previews
+const IMAGE_EXTENSIONS = new Set(["png", "webp", "gif", "avif"]);
 
 function isImageKey(key: string) {
   const ext = key.split(".").pop()?.toLowerCase();

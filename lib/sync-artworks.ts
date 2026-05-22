@@ -3,7 +3,9 @@ import { getStripeSecretKey } from "./stripe-config";
 import { getS4Config, getS4ArtPrefix } from "./s4-config";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
-const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
+// Webshop images: PNG/WebP/AVIF only (no JPG/JPEG)
+// JPG files are reserved for product page previews
+const IMAGE_EXTENSIONS = new Set(["png", "webp", "gif", "avif"]);
 
 function isImageKey(key: string) {
   const ext = key.split(".").pop()?.toLowerCase();
