@@ -167,7 +167,12 @@ function ImageCard({
 
           <button
             type="button"
-            onClick={() => selectedPrice[item.id] && onAddToCart(item, selectedPrice[item.id])}
+            onClick={() => {
+              if (selectedPrice[item.id]) {
+                onAddToCart(item, selectedPrice[item.id]);
+                closeItem();
+              }
+            }}
             disabled={!hasSelectedSize || cartLoading[item.id]}
             className={`w-full rounded-lg py-2.5 text-sm font-medium transition-all ${
               hasSelectedSize && !cartLoading[item.id] ? "bg-text-dark text-white hover:bg-text-dark/90" : "bg-neutral-200 text-text-muted cursor-not-allowed"
