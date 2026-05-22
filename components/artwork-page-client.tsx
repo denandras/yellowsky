@@ -44,7 +44,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageAspect, setImageAspect] = useState<number | null>(null); // width / height
-  const [zoomOpen, setZoomOpen] = useState(false);
+  const [heroZoomOpen, setHeroZoomOpen] = useState(false);
+  const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -161,10 +162,16 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   return (
     <>
       <ImageZoomModal
+        src={heroUrl}
+        alt={`${artwork.alt} (preview)`}
+        isOpen={heroZoomOpen}
+        onClose={() => setHeroZoomOpen(false)}
+      />
+      <ImageZoomModal
         src={artwork.viewUrl}
         alt={artwork.alt}
-        isOpen={zoomOpen}
-        onClose={() => setZoomOpen(false)}
+        isOpen={artworkZoomOpen}
+        onClose={() => setArtworkZoomOpen(false)}
       />
 
       <CartDrawer
@@ -202,7 +209,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         <section className="relative w-full">
           <div 
             className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-neutral-100 cursor-zoom-in"
-            onClick={() => setZoomOpen(true)}
+            onClick={() => setHeroZoomOpen(true)}
           >
             {/* Fade gradient overlay - starts very late */}
             <div className="absolute inset-0 z-10 pointer-events-none" 
@@ -256,7 +263,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 <div
                   className="relative overflow-hidden cursor-zoom-in"
                   style={{ aspectRatio: imageAspect ?? 0.707 }}
-                  onClick={() => setZoomOpen(true)}
+                  onClick={() => setArtworkZoomOpen(true)}
                 >
                   {!imageLoaded && !imageError && (
                     <div className="absolute inset-0 animate-pulse bg-neutral-100" />

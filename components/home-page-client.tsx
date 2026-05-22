@@ -180,22 +180,22 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       />
 
       <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-        <main className="flex-1 pb-24">
-          {/* Header - same as other pages */}
-          <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-            <div className="flex h-16 w-full items-center justify-between px-6">
-              <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity">
-                Yellowsky
-              </Link>
-              <div className="flex items-center gap-3">
-                <LanguageSwitcher initialLanguage={initialLanguage} />
-                {cartItems.length > 0 && (
-                  <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
-                )}
-              </div>
+        {/* Header */}
+        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
+          <div className="flex h-16 w-full items-center justify-between px-6">
+            <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity">
+              Yellowsky
+            </Link>
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher initialLanguage={initialLanguage} />
+              {cartItems.length > 0 && (
+                <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
+              )}
             </div>
-          </header>
+          </div>
+        </header>
 
+        <main className="flex-1 pb-24">
           {/* Hero section - full width image */}
           <section className="relative w-full">
             {/* Image - full width */}
