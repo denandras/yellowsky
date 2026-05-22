@@ -50,12 +50,32 @@ function generateTitle(filename: string): string {
 }
 
 /**
+ * Normalize accented characters for URL-safe slugs.
+ */
+function normalizeAccents(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/ø/g, "o")
+    .replace(/Ø/g, "O")
+    .replace(/æ/g, "ae")
+    .replace(/Æ/g, "AE")
+    .replace(/ð/g, "d")
+    .replace(/Ð/g, "D")
+    .replace(/þ/g, "th")
+    .replace(/Þ/g, "Th")
+    .replace(/ß/g, "ss");
+}
+
+/**
  * Generate slug from filename.
  * "2020.01 Venice.png" → "2020-01-Venice"
+ * "2020.68 Deák Square.png" → "2020-68-Deak-Square"
  */
 function generateSlug(filename: string): string {
   const base = filename.replace(/\.[^.]+$/, "");
-  return base.replace(/[.\s]+/g, "-").replace(/-+/g, "-");
+  const normalized = normalizeAccents(base);
+  return normalized.replace(/[.\s]+/g, "-").replace(/-+/g, "-");
 }
 
 /**
