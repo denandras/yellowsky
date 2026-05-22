@@ -24,7 +24,6 @@ type ImageGalleryProps = {
     loading: string;
     freeShipping: string;
     addToCart: string;
-    addedToCart: string;
     comingSoon: string;
     selectSize: string;
   };
@@ -59,7 +58,6 @@ function ImageCard({
 }) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const [showAdded, setShowAdded] = useState(false);
   const hasSelectedSize = !!selectedPrice[item.id];
   const slug = filenameToSlug(item.title + ".png"); // title is already without extension
 
@@ -170,21 +168,17 @@ function ImageCard({
           <button
             type="button"
             onClick={() => {
-              if (selectedPrice[item.id] && !showAdded) {
+              if (selectedPrice[item.id]) {
                 onAddToCart(item, selectedPrice[item.id]);
-                setShowAdded(true);
-                setTimeout(() => {
-                  setShowAdded(false);
-                  closeItem();
-                }, 1000);
+                closeItem();
               }
             }}
             disabled={!hasSelectedSize || cartLoading[item.id]}
             className={`w-full rounded-lg py-2.5 text-sm font-medium transition-all ${
               hasSelectedSize && !cartLoading[item.id] ? "bg-text-dark text-white hover:bg-text-dark/90" : "bg-neutral-200 text-text-muted cursor-not-allowed"
-            } ${showAdded ? 'bg-green-600 hover:bg-green-600' : ''}`}
+            }`}
           >
-            {showAdded ? (labels.addedToCart || 'Added!') : cartLoading[item.id] ? labels.loading : labels.addToCart}
+            {cartLoading[item.id] ? labels.loading : labels.addToCart}
           </button>
         </div>
       )}
