@@ -206,7 +206,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         loading={checkoutLoading}
       />
 
-      <div className="flex min-h-screen flex-col bg-white text-text-dark">
+      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
@@ -246,7 +246,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             </div>
 
             {/* Title at image edge - negative offset to move lower */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-30px' }}>
+            <div className="absolute left-0 right-0 pointer-events-none z-10" style={{ bottom: '-30px' }}>
               <div className="px-6 md:px-8">
                 <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
                   {labels.title}
@@ -254,9 +254,9 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               </div>
             </div>
             {/* Name overlay - 77px lower from bottom */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-77px' }}>
+            <div className="absolute left-0 right-0 pointer-events-none z-10" style={{ bottom: '-77px' }}>
               <div className="px-6 md:px-8">
-                <div className="flex items-center gap-3 px-3 py-1" style={{ marginLeft: '20px' }}>
+                <div className="flex items-center gap-3 bg-background-light px-3 py-1" style={{ marginLeft: '20px' }}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
