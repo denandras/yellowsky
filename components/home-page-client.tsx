@@ -143,7 +143,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           {/* Image */}
           <div className="relative w-full bg-white" style={{ minHeight: 'clamp(200px, 40vh, 500px)' }}>
             {mounted && (
-              <div className="absolute inset-0 flex items-center justify-center p-4">
+              <div className="absolute inset-0 flex items-center justify-center px-2.5 py-4">
                 <Image
                   alt="Yellowsky Seoul sketch - yellow architectural illustration"
                   className="h-full w-full object-contain transition-opacity duration-500"
