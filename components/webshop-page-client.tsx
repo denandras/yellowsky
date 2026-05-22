@@ -16,7 +16,6 @@ type MediaItem = {
   title: string;
   alt: string;
   viewUrl: string;
-  downloadUrl: string;
   productId?: string;
   productName?: string;
   prices?: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;

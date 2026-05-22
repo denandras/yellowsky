@@ -13,7 +13,6 @@ type MediaItem = {
   title: string;
   alt: string;
   viewUrl: string;
-  downloadUrl: string;
   productId?: string;
   productName?: string;
   prices?: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
@@ -177,7 +176,6 @@ async function getArtItems(): Promise<MediaItem[]> {
       title: hasProduct ? product.name : title,
       alt,
       viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
-      downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
       hasProduct,
       ...(hasProduct && product ? {
         productId: product.id,

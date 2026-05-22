@@ -8,7 +8,6 @@ export type Artwork = {
   title: string;
   filename: string;
   viewUrl: string;
-  downloadUrl: string;
   heroUrl?: string; // JPG preview if exists
   alt: string;
   productId?: string;
@@ -215,7 +214,6 @@ export async function getArtworks(): Promise<Artwork[]> {
       title,
       filename,
       viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
-      downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
       heroUrl,
       alt,
       hasProduct,

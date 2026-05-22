@@ -58,12 +58,12 @@ export async function GET(request: NextRequest) {
     const headers: Record<string, string> = {
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000, immutable",
+      // Prevent downloads - images are for viewing only
+      "Content-Disposition": "inline",
     };
 
-    const download = request.nextUrl.searchParams.get("download");
-    if (download === "1") {
-      headers["Content-Disposition"] = `attachment; filename="${payload.name}"`;
-    }
+    // Download parameter removed - images are not downloadable
+    // Users can zoom via the UI instead
 
     return new NextResponse(buffer, { status: 200, headers });
   } catch (err) {

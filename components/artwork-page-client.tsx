@@ -11,6 +11,7 @@ import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switche
 import { useCart } from "@/lib/cart-context";
 import type { Artwork } from "@/lib/artwork-data";
 import type { SiteLanguage } from "@/lib/site-language";
+import ImageZoomModal from "@/components/image-zoom-modal";
 
 type ArtworkPageClientProps = {
   artwork: Artwork;
@@ -42,6 +43,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageAspect, setImageAspect] = useState<number | null>(null); // width / height
+  const [zoomOpen, setZoomOpen] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -156,6 +158,13 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
   return (
     <>
+      <ImageZoomModal
+        src={artwork.viewUrl}
+        alt={artwork.alt}
+        isOpen={zoomOpen}
+        onClose={() => setZoomOpen(false)}
+      />
+
       <CartDrawer
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
@@ -189,7 +198,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
-          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-neutral-100">
+          <div 
+            className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden bg-neutral-100 cursor-zoom-in"
+            onClick={() => setZoomOpen(true)}
+          >
             {/* Fade gradient overlay - starts very late */}
             <div className="absolute inset-0 z-10 pointer-events-none" 
                  style={{ 
@@ -236,9 +248,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             <div className="relative">
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
                 {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
-                <div 
-                  className="relative overflow-hidden"
+                <div
+                  className="relative overflow-hidden cursor-zoom-in"
                   style={{ aspectRatio: imageAspect ?? 0.707 }}
+                  onClick={() => setZoomOpen(true)}
                 >
                   {!imageLoaded && !imageError && (
                     <div className="absolute inset-0 animate-pulse bg-neutral-100" />
