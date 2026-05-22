@@ -86,7 +86,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-8 pb-24">
         <section className="mt-6">
           <div className="relative grid gap-6 border-b border-neutral-border/70 py-10 md:grid-cols-12 md:gap-8" data-reveal>
-            <h3 className="pointer-events-none absolute top-11 left-1 z-0 hidden max-w-[92%] font-display text-6xl leading-[0.85] font-bold tracking-tight text-text-dark/10 uppercase md:block lg:text-7xl">
+            <h3 className="pointer-events-none absolute top-11 left-1 z-0 hidden max-w-[92%] font-display text-6xl leading-[0.85] font-bold tracking-tight text-text-dark uppercase md:block lg:text-7xl">
               {labels.header}
             </h3>
 
@@ -143,7 +143,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
 
           {/* Contact form */}
           <div className="relative grid gap-6 border-b border-neutral-border/70 py-10 md:grid-cols-12 md:gap-8" data-reveal>
-            <h3 className="pointer-events-none absolute top-11 right-1 z-0 hidden max-w-[92%] font-display text-6xl leading-[0.85] font-bold tracking-tight text-text-dark/10 uppercase md:block lg:text-7xl">
+            <h3 className="pointer-events-none absolute top-11 right-1 z-0 hidden max-w-[92%] font-display text-6xl leading-[0.85] font-bold tracking-tight text-text-dark uppercase md:block lg:text-7xl">
               {labels.formTitle}
             </h3>
 
