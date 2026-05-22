@@ -231,7 +231,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Content Section - Artwork + Purchase Options */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             {/* Left: Main artwork image in bracket */}
             <div className="relative">
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
