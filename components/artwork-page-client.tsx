@@ -235,10 +235,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             {/* Left: Main artwork image in bracket - always visible, smaller on mobile */}
             <div className="relative max-w-sm mx-auto md:max-w-none">
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
-                {/* Bracket frame - dynamic aspect ratio from image */}
+                {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
                 <div 
                   className="relative overflow-hidden"
-                  style={{ aspectRatio: imageAspect ? `${imageAspect}` : undefined }}
+                  style={{ aspectRatio: imageAspect ?? 0.707 }}
                 >
                   {!imageLoaded && !imageError && (
                     <div className="absolute inset-0 animate-pulse bg-neutral-100" />

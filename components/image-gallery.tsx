@@ -193,7 +193,7 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
       if (typeof window === "undefined") return;
       if (window.innerWidth < 768) setColumnCount(1);
       else if (window.innerWidth < 1024) setColumnCount(2);
-      else setColumnCount(3);
+      else setColumnCount(2);
     };
     updateColumns();
     window.addEventListener("resize", updateColumns);
