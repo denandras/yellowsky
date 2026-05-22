@@ -60,8 +60,12 @@ function ImageCard({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [showAdded, setShowAdded] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const hasSelectedSize = !!selectedPrice[item.id];
   const slug = filenameToSlug(item.title + ".png"); // title is already without extension
+  
+  // Default to portrait while loading, then use actual aspect ratio
+  const imageAspect = aspectRatio ?? 0.75; // 3/4 portrait default
 
   return (
     <div
@@ -76,18 +80,18 @@ function ImageCard({
     >
       {/* Skeleton placeholder */}
       {!loaded && !error && (
-        <div className="w-full aspect-[4/3] bg-neutral-100 animate-pulse" />
+        <div className="w-full bg-neutral-100 animate-pulse" style={{ aspectRatio: imageAspect }} />
       )}
 
       {/* Error state */}
       {error && (
-        <div className="w-full aspect-[4/3] bg-neutral-100 flex items-center justify-center">
+        <div className="w-full bg-neutral-100 flex items-center justify-center" style={{ aspectRatio: imageAspect }}>
           <p className="text-sm text-text-muted">Image unavailable</p>
         </div>
       )}
 
       {/* Image - clickable link to artwork page */}
-      <Link href={`/artwork/${slug}`} className="block relative aspect-[4/3] overflow-hidden rounded-lg">
+      <Link href={`/artwork/${slug}`} className="block relative overflow-hidden rounded-lg" style={{ aspectRatio: imageAspect }}>
         <img
           src={item.viewUrl}
           alt={item.alt}
@@ -95,7 +99,13 @@ function ImageCard({
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}
-          onLoad={() => setLoaded(true)}
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            if (img.naturalWidth && img.naturalHeight) {
+              setAspectRatio(img.naturalWidth / img.naturalHeight);
+            }
+            setLoaded(true);
+          }}
           onError={() => { setLoaded(true); setError(true); }}
           style={{ opacity: loaded && !error ? 1 : 0, transition: "opacity 0.3s ease-out" }}
         />
