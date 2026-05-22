@@ -106,6 +106,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         loading: "Betöltés...",
         freeShipping: "Ingyenes szállítás",
         addToCart: "Kosárba",
+        addedToCart: "Hozzáadva!",
         continue: "Vásárlás folytatása",
         comingSoon: "Hamarosan",
         cart: {
@@ -132,6 +133,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         loading: "Loading...",
         freeShipping: "Free shipping",
         addToCart: "Add to Cart",
+        addedToCart: "Added!",
         continue: "Continue shopping",
         comingSoon: "Coming soon",
         cart: {
@@ -189,6 +191,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                   loading: labels.loading,
                   freeShipping: labels.freeShipping,
                   addToCart: labels.addToCart,
+                  addedToCart: labels.addedToCart,
                   comingSoon: labels.comingSoon,
                   selectSize: labels.selectSize,
                 }}
