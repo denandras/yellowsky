@@ -218,7 +218,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 src={heroUrl}
                 alt={artwork.alt}
                 fill
-                className={`object-cover object-[center_30%] transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`object-cover object-[center_70%] transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
                 priority
                 sizes="100vw"
                 onLoad={() => setHeroLoaded(true)}
