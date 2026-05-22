@@ -221,10 +221,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             />
             
             {/* Title overlay at bottom - bigger text */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-                {artwork.title}
-              </h1>
+            <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
+              <div className="mx-auto w-full max-w-6xl px-6">
+                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                  {artwork.title}
+                </h1>
+              </div>
             </div>
 
             {/* Hero Image - wide: contain centered, narrow: cover to fill height */}
@@ -241,7 +243,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 alt={artwork.alt}
                 fill
                 className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-                style={{ objectPosition: 'center 36%' }}
+                style={{ objectPosition: 'center 41%' }}
                 priority
                 sizes="100vw"
                 draggable={false}
