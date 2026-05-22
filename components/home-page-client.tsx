@@ -35,6 +35,33 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Reveal animation observer
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!nodes.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    const raf = window.requestAnimationFrame(() => {
+      nodes.forEach((node) => observer.observe(node));
+    });
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      observer.disconnect();
+    };
+  }, []);
+
   const currentYear = new Date().getFullYear();
 
   const isHungarian = language === "hu";
@@ -249,7 +276,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           </section>
 
           {/* Story - all paragraphs with consistent spacing */}
-          <section className="relative">
+          <section className="relative" data-reveal>
             {/* Gradient background behind first two paragraphs */}
             <div className="absolute inset-x-0 top-0 h-64 w-full pointer-events-none" style={{ background: 'linear-gradient(to bottom, #ffffff, #fafafa)' }} />
             
