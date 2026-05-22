@@ -265,13 +265,16 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 </div>
               </div>
             </div>
-            {/* Title below hero */}
-            <div className="px-6 md:px-8 pt-3">
+          </section>
+
+          {/* Title below hero - aligned with content baseline */}
+          <div className="px-3 pt-6">
+            <div className="mx-auto max-w-2xl px-6 md:px-8">
               <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
                 {labels.title}
               </h1>
             </div>
-          </section>
+          </div>
 
           {/* Story - all paragraphs with consistent spacing */}
           <section className="relative" data-reveal>
