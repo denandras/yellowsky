@@ -183,9 +183,12 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
-            <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity cursor-pointer"
+            >
               Yellowsky
-            </Link>
+            </button>
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
               {cartItems.length > 0 && (
