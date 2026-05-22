@@ -253,7 +253,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 {labels.storyParagraphs.map((paragraph, idx) => (
                   <p
                     key={`story-${idx}`}
-                    className="text-base leading-relaxed text-text-muted"
+                    className="text-base leading-relaxed text-text-muted text-justify"
                   >
                     {paragraph}
                   </p>
