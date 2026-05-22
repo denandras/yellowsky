@@ -227,7 +227,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
         <main className="flex-1 pb-24">
           {/* Hero section - full width image */}
-          <section className="relative w-full bg-white pb-16">
+          <section className="relative w-full">
             {/* Image - full width */}
             <div className="relative w-full bg-white" style={{ minHeight: 'clamp(343px, 58.8vh, 693px)' }}>
               {mounted && (
@@ -256,7 +256,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             {/* Name overlay - 37px lower from bottom */}
             <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-37px' }}>
               <div className="px-6 md:px-8">
-                <div className="flex items-center gap-3 bg-white px-3 py-1" style={{ marginLeft: '20px' }}>
+                <div className="flex items-center gap-3 px-3 py-1" style={{ marginLeft: '20px' }}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
