@@ -280,12 +280,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   {/* Size options */}
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[...artwork.prices].sort((a, b) => {
-                      // Smallest sizes first (A5), then bigger (A4), then biggest (A3)
-                      const order = { 'A5': 1, 'A4': 2, 'A3': 3 };
-                      const aOrder = order[a.nickname as keyof typeof order] ?? 99;
-                      const bOrder = order[b.nickname as keyof typeof order] ?? 99;
-                      if (aOrder !== bOrder) return aOrder - bOrder;
-                      return (a.nickname || '').localeCompare(b.nickname || '');
+                      // Smallest first: reverse alphabetical (A5 > A4 > A3)
+                      return (b.nickname || '').localeCompare(a.nickname || '');
                     }).map(price => (
                       <button
                         key={price.id}
