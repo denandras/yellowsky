@@ -34,7 +34,9 @@ export const metadata: Metadata = {
 // Revalidate every 2 minutes - ISR caching (faster refresh for product availability)
 export const revalidate = 120;
 
-const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "avif"]);
+// Webshop images: PNG/WebP/AVIF only (no JPG/JPEG)
+// JPG files are reserved for product page previews
+const IMAGE_EXTENSIONS = new Set(["png", "webp", "gif", "avif"]);
 
 function isImageKey(key: string) {
   const ext = key.split(".").pop()?.toLowerCase();
