@@ -160,6 +160,20 @@ body {
   }
 }
 
+/* Fade in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
 /* Shimmer animation for skeleton loading */
 @keyframes shimmer {
   0% {

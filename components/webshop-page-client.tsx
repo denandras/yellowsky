@@ -96,7 +96,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         title: "Webshop",
         subtitle: "Műalkotások nyomatai",
         description: hasConfig && items.length > 0
-          ? "Vásárolj giclée minőségű nyomatokat — ingyenes szállítás világszerte."
+          ? "Vásárolj giclée minőségű nyomatokat — ingyenes szállítással világszerte."
           : hasConfig
             ? "Hamarosan műalkotások."
             : "A galéria konfigurációja nem elérhető.",
@@ -174,7 +174,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
         <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
           <section className="pt-6 pb-10">
-            <div>
+            <div className="animate-fade-in">
               <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
                 {labels.subtitle}
               </h2>
