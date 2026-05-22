@@ -187,9 +187,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </header>
 
-        {/* Colored header space */}
-        <div className="h-2 bg-primary" />
-
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
           <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden bg-neutral-100">
