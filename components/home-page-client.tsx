@@ -248,7 +248,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             {/* Title at image edge - negative offset to move lower */}
             <div className="absolute left-0 right-0 pointer-events-none z-10" style={{ bottom: '-30px' }}>
               <div className="px-6 md:px-8">
-                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
+                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark bg-background-light px-3">
                   {labels.title}
                 </h1>
               </div>
