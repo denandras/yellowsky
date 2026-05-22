@@ -89,7 +89,7 @@ function ImageCard({
         <img
           src={item.viewUrl}
           alt={item.alt}
-          className="w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
+          className="w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-105 cursor-pointer"
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}
