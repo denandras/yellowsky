@@ -127,13 +127,11 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      onClick={onClose}
     >
       {/* Close button */}
       <button
-        onClick={onClose}
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
         className="absolute top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/20"
         aria-label="Close"
       >
@@ -143,7 +141,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       </button>
 
       {/* Zoom controls */}
-      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
+      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => setScale(s => Math.max(1, s - 0.5))}
           disabled={scale <= 1}
@@ -183,6 +181,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={(e) => e.stopPropagation()}
       >
         <div
           className="absolute inset-0 flex items-center justify-center"
