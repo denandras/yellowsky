@@ -1,6 +1,7 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { getS4Config, getS4ArtPrefix, getMediaTokenSecret } from "./s4-config";
 import { createMediaAccessToken } from "./media-access-token";
+import { fetchStripeProducts, mapArtworksToProducts } from "./stripe-products";
 
 export type Artwork = {
   slug: string;
@@ -10,10 +11,21 @@ export type Artwork = {
   downloadUrl: string;
   heroUrl?: string; // JPG preview if exists
   alt: string;
+  productId?: string;
+  productName?: string;
+  prices?: Array<{ id: string; nickname?: string; unitAmount?: number; currency: string }>;
+  hasProduct: boolean;
 };
 
 // Webshop images: PNG/WebP/GIF/AVIF only (no JPG)
 const ARTWORK_EXTENSIONS = ["png", "webp", "gif", "avif"];
+
+// Image dimensions for aspect ratio detection
+export type ImageDimensions = {
+  width: number;
+  height: number;
+  orientation: "portrait" | "landscape" | "square";
+};
 
 /**
  * Generate alt text from filename.
@@ -66,27 +78,37 @@ export async function getArtworks(): Promise<Artwork[]> {
     },
   });
 
-  // List all files
-  const keys: string[] = [];
-  let token: string | undefined;
+  // Parallelize: fetch S3 list and Stripe products
+  const [s3Result, stripeProducts] = await Promise.all([
+    (async () => {
+      // List all files
+      const keys: string[] = [];
+      let token: string | undefined;
 
-  do {
-    const list = await client.send(
-      new ListObjectsV2Command({
-        Bucket: cfg.bucket,
-        Prefix: artPrefix,
-        ContinuationToken: token,
-        MaxKeys: 500,
-      }),
-    );
+      do {
+        const list = await client.send(
+          new ListObjectsV2Command({
+            Bucket: cfg.bucket,
+            Prefix: artPrefix,
+            ContinuationToken: token,
+            MaxKeys: 500,
+          }),
+        );
 
-    for (const obj of list.Contents ?? []) {
-      if (!obj.Key) continue;
-      keys.push(obj.Key);
-    }
+        for (const obj of list.Contents ?? []) {
+          if (!obj.Key) continue;
+          keys.push(obj.Key);
+        }
 
-    token = list.IsTruncated ? list.NextContinuationToken : undefined;
-  } while (token);
+        token = list.IsTruncated ? list.NextContinuationToken : undefined;
+      } while (token);
+
+      return keys;
+    })(),
+    fetchStripeProducts(),
+  ]);
+
+  const keys = s3Result;
 
   // Build map of basenames → files
   const basenameMap = new Map<string, { artwork?: string; jpg?: string }>();
@@ -133,6 +155,13 @@ export async function getArtworks(): Promise<Artwork[]> {
     return numB - numA;
   });
 
+  // Map artworks to Stripe products
+  const filenames = sortedBasenames.map(basename => {
+    const files = basenameMap.get(basename);
+    return files?.artwork ? files.artwork.split("/").pop() ?? "" : "";
+  }).filter(f => f);
+  const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
+
   // Build artworks (only those with artwork files)
   const artworks: Artwork[] = [];
 
@@ -144,6 +173,8 @@ export async function getArtworks(): Promise<Artwork[]> {
     const slug = generateSlug(filename);
     const title = generateTitle(filename);
     const alt = generateAltText(filename);
+    const product = artworkToProduct.get(filename);
+    const hasProduct = !!product;
 
     const accessToken = createMediaAccessToken(
       { key: files.artwork, name: filename, exp: Date.now() + 1000 * 60 * 60 * 24 },
@@ -167,6 +198,17 @@ export async function getArtworks(): Promise<Artwork[]> {
       downloadUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}&download=1`,
       heroUrl,
       alt,
+      hasProduct,
+      ...(hasProduct && product ? {
+        productId: product.id,
+        productName: product.name,
+        prices: product.prices.map(p => ({
+          id: p.id,
+          nickname: p.nickname ?? undefined,
+          unitAmount: p.unitAmount ?? undefined,
+          currency: p.currency,
+        })),
+      } : {}),
     });
   }
 

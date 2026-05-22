@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { getArtworkBySlug, getArtworks } from "@/lib/artwork-data";
+import { cookies } from "next/headers";
 import ArtworkPageClient from "@/components/artwork-page-client";
+import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -47,5 +47,10 @@ export default async function ArtworkPage({ params }: Props) {
     notFound();
   }
 
-  return <ArtworkPageClient artwork={artwork} />;
+  const cookieStore = await cookies();
+  const initialLanguage = normalizeSiteLanguage(
+    cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
+  );
+
+  return <ArtworkPageClient artwork={artwork} initialLanguage={initialLanguage} />;
 }
