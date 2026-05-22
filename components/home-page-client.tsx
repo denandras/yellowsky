@@ -82,7 +82,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         subtitle: "Dénes András",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
-        ctaLabel: "giclèe nyomatok elérhetők",
+        ctaLabel: "giclée nyomatok elérhetők",
         ctaTitle: "A galériához",
         footerTagline: "Yellowsky • Vázlatok Budapestről",
       }
@@ -91,7 +91,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         subtitle: "by András Dénes",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsEn,
-        ctaLabel: "giclèe prints available",
+        ctaLabel: "giclée prints available",
         ctaTitle: "To the Gallery",
         footerTagline: "Yellowsky • Sketches from Budapest",
       };

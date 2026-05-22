@@ -97,7 +97,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         title: "Webshop",
         subtitle: "Műalkotások nyomatai",
         description: hasConfig && items.length > 0
-          ? "Vásárolj giclèe minőségű nyomatokat — ingyenes szállítás világszerte."
+          ? "Vásárolj giclée minőségű nyomatokat — ingyenes szállítás világszerte."
           : hasConfig
             ? "Hamarosan műalkotások."
             : "A galéria konfigurációja nem elérhető.",
@@ -124,7 +124,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         title: "Webshop",
         subtitle: "Prints of Artworks",
         description: hasConfig && items.length > 0
-          ? "Browse and purchase giclèe quality prints — free worldwide shipping."
+          ? "Browse and purchase giclée quality prints — free worldwide shipping."
           : hasConfig
             ? "Artwork coming soon."
             : "Gallery configuration not available.",
