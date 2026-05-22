@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getArtworkBySlug, getArtworks } from "@/lib/artwork-data";
+import { getArtworkBySlug } from "@/lib/artwork-data";
 import { cookies } from "next/headers";
 import ArtworkPageClient from "@/components/artwork-page-client";
 import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
@@ -12,13 +12,17 @@ type Props = {
 // ISR: regenerate every 60 seconds
 export const revalidate = 60;
 
-// Generate static paths for all artworks
-export async function generateStaticParams() {
-  const artworks = await getArtworks();
-  return artworks.map((artwork) => ({
-    slug: artwork.slug,
-  }));
-}
+// Dynamic rendering - don't pre-render all pages (avoids Stripe rate limits during build)
+// Pages will be generated on-demand and cached
+export const dynamic = "force-dynamic";
+
+// Disable static params generation - ISR will handle this
+// export async function generateStaticParams() {
+//   const artworks = await getArtworks();
+//   return artworks.map((artwork) => ({
+//     slug: artwork.slug,
+//   }));
+// }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
