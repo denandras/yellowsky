@@ -218,25 +218,27 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               )}
             </div>
 
-            {/* Title text overlapping image edge */}
+            {/* Title text at image edge */}
             <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
               <div className="mx-auto max-w-2xl px-3">
-                <div className="relative bg-white pt-4 pb-3">
-                  <h1 className="font-display text-7xl font-bold leading-none tracking-tighter text-left">
-                    {labels.title}
-                  </h1>
-                  <div className="mt-2 flex items-center gap-3">
+                {/* Title sits at image edge, no background */}
+                <h1 className="font-display text-7xl font-bold leading-none tracking-tighter text-left text-text-dark">
+                  {labels.title}
+                </h1>
+                {/* Name and divider on white background below */}
+                <div className="relative bg-white pt-3 pb-3">
+                  <div className="flex items-center gap-3">
                     <div className="h-px w-12 bg-primary" />
                     {labels.subtitleLink ? (
                       <a
                         href={labels.subtitleLink}
-                        className="font-display text-sm font-bold tracking-[0.2em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                        className="font-display text-xl font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {labels.subtitle}
                       </a>
                     ) : (
-                      <p className="font-display text-lg font-bold tracking-[0.1em] text-primary uppercase">
+                      <p className="font-display text-xl font-bold tracking-[0.1em] text-primary uppercase">
                         {labels.subtitle}
                       </p>
                     )}
