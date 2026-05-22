@@ -34,7 +34,7 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
 
   return (
     <section className="px-6 py-8">
-      <div className="mx-auto max-w-2xl" data-reveal>
+      <div className="mx-auto max-w-2xl">
         <div className="mb-6 text-center">
           <h2 className="font-display text-2xl font-bold tracking-tight">
             {labels.title}
