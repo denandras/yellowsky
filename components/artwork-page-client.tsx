@@ -37,6 +37,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
+  const [showPostAddOptions, setShowPostAddOptions] = useState(false);
 
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [heroError, setHeroError] = useState(false);
@@ -120,6 +121,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     await new Promise(resolve => setTimeout(resolve, 300));
     setAddingToCart(false);
     setShowAddedMessage(true);
+    setShowPostAddOptions(true);
     setTimeout(() => setShowAddedMessage(false), 2000);
   };
 
@@ -345,7 +347,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   </button>
 
                   {/* Post-add options */}
-                  {showAddedMessage && (
+                  {showPostAddOptions && (
                     <div className="mt-4 flex gap-3 animate-fadeIn">
                       <button
                         type="button"
