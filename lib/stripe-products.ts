@@ -22,6 +22,10 @@ export type StripePrice = {
 
 let stripeInstance: Stripe | null = null;
 
+// Cache Stripe products with 5-minute TTL to avoid rate limits
+let productsCache: { data: StripeProduct[]; timestamp: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 function getStripe(): Stripe | null {
   const key = getStripeSecretKey();
   if (!key) return null;
@@ -33,6 +37,11 @@ function getStripe(): Stripe | null {
 }
 
 export async function fetchStripeProducts(): Promise<StripeProduct[]> {
+  // Return cached data if still valid
+  if (productsCache && Date.now() - productsCache.timestamp < CACHE_TTL) {
+    return productsCache.data;
+  }
+
   const stripe = getStripe();
   if (!stripe) return [];
 
@@ -90,6 +99,9 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
     );
     results.push(...batchResults);
   }
+
+  // Cache the results
+  productsCache = { data: results, timestamp: Date.now() };
 
   return results;
 }
