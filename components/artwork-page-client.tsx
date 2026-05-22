@@ -201,7 +201,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             
             {/* Title overlay at bottom - bigger text */}
             <div className="absolute bottom-0 left-0 right-0 z-20 px-6 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
                 {artwork.title}
               </h1>
             </div>
@@ -230,7 +230,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         </section>
 
         {/* Content Section - Artwork + Purchase Options */}
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             {/* Left: Main artwork image in bracket */}
             <div className="relative">
