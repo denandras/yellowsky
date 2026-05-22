@@ -277,9 +277,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
           {/* Story - all paragraphs with consistent spacing */}
           <section className="relative" data-reveal>
-            {/* Gradient background behind first two paragraphs */}
-            <div className="absolute inset-x-0 top-0 h-64 w-full pointer-events-none" style={{ background: 'transparent' }} />
-            
             <div className="relative px-3 pt-8 pb-6">
               <div className="mx-auto max-w-2xl space-y-6">
                 {labels.storyParagraphs.map((paragraph, idx) => (
