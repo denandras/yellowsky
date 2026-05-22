@@ -245,15 +245,10 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               )}
             </div>
 
-            {/* Title text at image edge - 20px lower */}
+            {/* Name at image edge - 20px from bottom */}
             <div className="absolute bottom-5 left-0 right-0 pointer-events-none">
-              {/* Title - left aligned on screen edge */}
               <div className="px-6 md:px-8">
-                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
-                  {labels.title}
-                </h1>
-                {/* Name directly under title */}
-                <div className="flex items-center gap-3 mt-2">
+                <div className="flex items-center gap-3">
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
@@ -269,6 +264,12 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   )}
                 </div>
               </div>
+            </div>
+            {/* Title below hero */}
+            <div className="px-6 md:px-8 pt-3">
+              <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
+                {labels.title}
+              </h1>
             </div>
           </section>
 
