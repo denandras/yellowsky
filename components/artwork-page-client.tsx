@@ -254,14 +254,19 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       fill
                       className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                       sizes="(max-width: 768px) 100vw, 50vw"
+                      unoptimized
                       onLoad={(e) => {
+                        console.log('Artwork image loaded:', artwork.viewUrl, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight);
                         const img = e.currentTarget;
                         if (img.naturalWidth && img.naturalHeight) {
                           setImageAspect(img.naturalWidth / img.naturalHeight);
                         }
                         setImageLoaded(true);
                       }}
-                      onError={() => setImageError(true)}
+                      onError={(e) => {
+                        console.error('Artwork image error:', artwork.viewUrl, e);
+                        setImageError(true);
+                      }}
                     />
                   )}
                 </div>
