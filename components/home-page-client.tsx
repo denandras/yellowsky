@@ -247,31 +247,28 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
 
             {/* Title text at image edge */}
             <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
-              {/* Title - left aligned on screen edge */}
-              <div className="px-6 md:px-8">
-                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
-                  {labels.title}
-                </h1>
-                {/* Name directly under title */}
-                <div className="flex items-center gap-3 mt-2">
-                  <div className="h-px w-12 bg-primary" />
-                  {labels.subtitleLink ? (
-                    <a
-                      href={labels.subtitleLink}
-                      className="font-display text-xl font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-                    >
-                      {labels.subtitle}
-                    </a>
-                  ) : (
-                    <p className="font-display text-xl font-bold tracking-[0.1em] text-primary uppercase">
-                      {labels.subtitle}
-                    </p>
-                  )}
-                </div>
-              </div>
-              {/* White background below */}
+              {/* White background with title and name */}
               <div className="relative bg-white pt-3 pb-3">
-                <div className="mx-auto max-w-2xl px-6 md:px-8">
+                <div className="px-6 md:px-8">
+                  <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
+                    {labels.title}
+                  </h1>
+                  {/* Name directly under title */}
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="h-px w-12 bg-primary" />
+                    {labels.subtitleLink ? (
+                      <a
+                        href={labels.subtitleLink}
+                        className="font-display text-xl font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                      >
+                        {labels.subtitle}
+                      </a>
+                    ) : (
+                      <p className="font-display text-xl font-bold tracking-[0.1em] text-primary uppercase">
+                        {labels.subtitle}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
