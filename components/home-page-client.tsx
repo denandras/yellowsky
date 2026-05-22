@@ -245,8 +245,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               )}
             </div>
 
-            {/* Title at image edge - 80px from bottom */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '80px' }}>
+            {/* Title at image edge - closer to bottom */}
+            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '20px' }}>
               <div className="px-6 md:px-8">
                 <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
                   {labels.title}
