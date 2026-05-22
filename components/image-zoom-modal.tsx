@@ -143,7 +143,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       </button>
 
       {/* Zoom controls */}
-      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
         <button
           onClick={() => setScale(s => Math.max(1, s - 0.5))}
           disabled={scale <= 1}
