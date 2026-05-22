@@ -245,16 +245,16 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               )}
             </div>
 
-            {/* Title at image edge - 35px from bottom */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '35px' }}>
+            {/* Title at image edge - 80px from bottom */}
+            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '80px' }}>
               <div className="px-6 md:px-8">
                 <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark">
                   {labels.title}
                 </h1>
               </div>
             </div>
-            {/* Name overlay - 35px lower from bottom */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-35px' }}>
+            {/* Name overlay - 37px lower from bottom */}
+            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-37px' }}>
               <div className="px-6 md:px-8">
                 <div className="flex items-center gap-3 bg-white px-3 py-1" style={{ marginLeft: '20px' }}>
                   <div className="h-px w-12 bg-primary" />
