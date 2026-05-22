@@ -90,7 +90,7 @@ function ImageCard({
       )}
 
       {/* Image - clickable link to artwork page */}
-      <Link href={`/artwork/${slug}`} className="block relative overflow-hidden rounded-lg" style={{ aspectRatio: imageAspect }}>
+      <Link href={`/artwork/${slug}`} className="block relative rounded-lg overflow-hidden" style={{ aspectRatio: imageAspect }}>
         <img
           src={item.viewUrl}
           alt={item.alt}
@@ -106,7 +106,6 @@ function ImageCard({
             setLoaded(true);
           }}
           onError={() => { setLoaded(true); setError(true); }}
-          style={{ opacity: loaded && !error ? 1 : 0, transition: "opacity 0.3s ease-out" }}
         />
       </Link>
 
