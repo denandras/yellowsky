@@ -253,8 +253,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 </h1>
               </div>
             </div>
-            {/* Name overlay below title */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: 0 }}>
+            {/* Name overlay - 35px lower from bottom */}
+            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-35px' }}>
               <div className="px-6 md:px-8">
                 <div className="flex items-center gap-3 bg-white px-3 py-1" style={{ marginLeft: '20px' }}>
                   <div className="h-px w-12 bg-primary" />
