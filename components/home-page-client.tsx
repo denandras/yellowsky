@@ -221,12 +221,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-          <div className="flex h-16 w-full items-center justify-between px-4 md:px-8">
+          <div className="flex h-16 w-full items-center justify-between px-6">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity cursor-pointer"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              Yellowsky
+              <BrandMark size={18} />
+              <span className="font-display text-lg font-bold tracking-tight uppercase">Yellowsky</span>
             </button>
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
@@ -260,12 +261,16 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             </div>
 
             {/* Unified text overlay - bottom left at image edge */}
-            <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full px-4 md:px-8">
-              <div className={`flex flex-col items-start transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <h1 className="font-display text-[4.675rem] md:text-[5.865rem] font-bold leading-none tracking-tighter text-text-dark translate-y-[5px]">
-                  {labels.title}
-                </h1>
-                <div className={`mt-2 ml-[30px] md:ml-[20px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full"
+            >
+              <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="flex items-center gap-2 translate-y-[5px]">
+                  <BrandMark size={28} />
+                  <h1 className="font-display text-[4.5rem] md:text-[5.75rem] font-bold leading-none tracking-tighter text-text-dark">
+                    {labels.title}
+                  </h1>
+                </div>
+                <div className={`mt-2 ml-[36px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
