@@ -259,18 +259,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               )}
             </div>
 
-            {/* Title at image edge - negative offset to move lower */}
-            <div className="absolute left-0 right-0 pointer-events-none z-10" style={{ bottom: '-30px' }}>
-              <div className="px-6 md:px-8">
-                <h1 className={`font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark bg-background-light px-3 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            {/* Unified text overlay - single centered gray stripe */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-[15px] z-10 pointer-events-none">
+              <div className={`flex flex-col items-center bg-background-light/95 px-6 py-4 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-text-dark">
                   {labels.title}
                 </h1>
-              </div>
-            </div>
-            {/* Name overlay - 77px lower from bottom */}
-            <div className={`absolute left-0 right-0 pointer-events-none transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ bottom: '-77px' }}>
-              <div className="px-6 md:px-8">
-                <div className="flex items-center gap-3 bg-background-light px-3 py-1" style={{ marginLeft: '20px' }}>
+                <div className={`mt-2 flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
