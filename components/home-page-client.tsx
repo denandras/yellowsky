@@ -263,9 +263,16 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full"
             >
               <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <h1 className="font-display font-bold leading-none tracking-tighter" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(3px, 1.5px + 0.2vw, 5px))', color: '#ffcb2a' }}>
-                  {labels.title}
-                </h1>
+                <div className="relative">
+                  {/* Dark offset text behind */}
+                  <h1 className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 translate-x-[2px]" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(3px, 1.5px + 0.2vw, 5px)) translateX(2px)', color: '#1a1a1a' }}>
+                    {labels.title}
+                  </h1>
+                  {/* Yellow text on top */}
+                  <h1 className="font-display font-bold leading-none tracking-tighter relative" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(3px, 1.5px + 0.2vw, 5px))', color: '#ffcb2a' }}>
+                    {labels.title}
+                  </h1>
+                </div>
                 <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
