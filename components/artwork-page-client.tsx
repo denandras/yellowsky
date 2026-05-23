@@ -52,7 +52,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const hasJpg = !!artwork.heroUrl;
 
   // Check if we came from webshop (for smart back navigation)
-  const cameFromWebshop = typeof window !== "undefined" && 
+  const cameFromWebshop = typeof window !== "undefined" &&
     document.referrer.includes("/webshop");
 
   const labels = language === "hu"
@@ -218,23 +218,28 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Hero Section - Fading JPG */}
         <section className="relative w-full">
-          <div 
-            className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100 cursor-zoom-in"
-            onClick={() => setHeroZoomOpen(true)}
+          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100"
           >
-            {/* Fade gradient overlay - starts very late */}
-            <div className="absolute inset-0 z-10 pointer-events-none" 
-                 style={{ 
-                   backgroundImage: hasJpg 
-                     ? "linear-gradient(to bottom, transparent 88%, rgba(250,249,247,0.95) 96%, rgba(250,249,247,1) 100%)"
-                     : "linear-gradient(to bottom, transparent 0%, transparent 100%)"
-                 }} 
+            {/* Hero Image - clickable area only above fade */}
+            <div
+              className="absolute inset-0 z-0 cursor-zoom-in"
+              onClick={() => setHeroZoomOpen(true)}
+              style={{ clipPath: 'polygon(0 0, 100% 0, 100% 88%, 0 88%)' }}
             />
-            
+            {/* Fade gradient overlay - no click in fade zone */}
+            <div
+              className="absolute inset-0 z-10 pointer-events-none"
+              style={{
+                backgroundImage: hasJpg
+                  ? "linear-gradient(to bottom, transparent 88%, rgba(250,249,247,0.95) 96%, rgba(250,249,247,1) 100%)"
+                  : "linear-gradient(to bottom, transparent 0%, transparent 100%)"
+              }}
+            />
+
             {/* Title overlay at bottom - bigger text */}
             <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
               <div className="mx-auto w-full max-w-6xl px-6">
-                <h1 
+                <h1
                   className={`font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
@@ -362,10 +367,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                           : 'bg-neutral-300 cursor-not-allowed'
                     }`}
                   >
-                    {showAddedMessage 
-                      ? labels.addedToCart 
-                      : addingToCart 
-                        ? '...' 
+                    {showAddedMessage
+                      ? labels.addedToCart
+                      : addingToCart
+                        ? '...'
                         : labels.addToCart
                     }
                   </button>
