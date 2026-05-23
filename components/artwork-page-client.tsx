@@ -211,7 +211,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             </button>
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
-              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
+              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
             </div>
           </div>
         </header>

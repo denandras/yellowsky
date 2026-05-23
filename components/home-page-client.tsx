@@ -231,7 +231,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
               {cartItems.length > 0 && (
-                <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
+                <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
               )}
             </div>
           </div>
