@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from "react";
 import Link from "next/link";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import { filenameToSlug } from "@/lib/slug";
@@ -90,7 +90,17 @@ function ImageCard({
       )}
 
       {/* Image - clickable link to artwork page */}
-      <Link href={`/artwork/${slug}`} className="block relative rounded-lg overflow-hidden" style={{ aspectRatio: imageAspect }}>
+      <Link 
+        href={`/artwork/${slug}`} 
+        className="block relative rounded-lg overflow-hidden" 
+        style={{ aspectRatio: imageAspect }}
+        onClick={() => {
+          // Store the item ID for scroll restoration
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
+          }
+        }}
+      >
         <img
           src={item.viewUrl}
           alt={item.alt}
@@ -203,6 +213,7 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
   const [columnCount, setColumnCount] = useState(3);
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRestoredRef = useRef(false);
 
   // Calculate columns based on viewport
   useEffect(() => {
@@ -230,6 +241,31 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, [activeItem]);
+
+  // Restore scroll position to last clicked item on mobile
+  useLayoutEffect(() => {
+    if (typeof window === "undefined" || scrollRestoredRef.current) return;
+    
+    // Only on mobile (single column)
+    if (columnCount !== 1) return;
+    
+    const lastClickedId = sessionStorage.getItem("yellowsky-last-artwork-id");
+    if (!lastClickedId) return;
+    
+    // Clear the stored ID so we don't scroll again on subsequent navigations
+    sessionStorage.removeItem("yellowsky-last-artwork-id");
+    scrollRestoredRef.current = true;
+    
+    // Find the item element and scroll to it
+    const timer = setTimeout(() => {
+      const itemEl = document.querySelector(`[data-item-id="${lastClickedId}"]`);
+      if (itemEl) {
+        itemEl.scrollIntoView({ behavior: "instant", block: "center" });
+      }
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [columnCount, items]);
 
   // Default price for single-price items
   useEffect(() => {

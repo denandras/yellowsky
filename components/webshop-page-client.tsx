@@ -9,7 +9,7 @@ import ImageGallery from "@/components/image-gallery";
 import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 
 type MediaItem = {
   id: string;
@@ -34,6 +34,13 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const { language } = useSiteLanguage(initialLanguage);
+
+  // Disable automatic scroll restoration - we handle it manually in ImageGallery
+  useLayoutEffect(() => {
+    if (typeof window !== "undefined" && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  }, []);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
