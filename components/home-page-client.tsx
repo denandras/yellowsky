@@ -277,7 +277,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   <div className="h-px w-12 bg-text-dark" />
                   <a
                     href="https://andrasdenes.com"
-                    className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase"
+                    className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase pointer-events-auto"
                   >
                     {labels.subtitle}
                   </a>
