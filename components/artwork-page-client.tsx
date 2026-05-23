@@ -246,6 +246,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 style={{ objectPosition: 'center 41%' }}
                 priority
                 sizes="100vw"
+                unoptimized
                 draggable={false}
                 onContextMenu={(e) => e.preventDefault()}
                 onLoad={() => setHeroLoaded(true)}

@@ -239,6 +239,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   fill
                   priority
                   sizes="100vw"
+                  unoptimized
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
                 />
