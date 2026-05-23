@@ -32,11 +32,17 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
     prevCountRef.current = count;
   }, [count, hasLoaded]);
 
+  const handleClick = () => {
+    if (count > 0) {
+      onClick();
+    }
+  };
+
   return (
     <button
       type="button"
-      onClick={onClick}
-      className="relative flex items-center justify-center rounded-lg p-2 transition-colors hover:bg-neutral-100"
+      onClick={handleClick}
+      className={`relative flex items-center justify-center rounded-lg p-2 transition-colors ${count > 0 ? 'hover:bg-neutral-100' : 'cursor-default'}`}
       aria-label={labels.ariaLabel}
     >
       <IconShoppingBag className="size-6 text-text-dark" />

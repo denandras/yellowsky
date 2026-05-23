@@ -263,7 +263,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full"
             >
               <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="relative -mt-[0.5px] md:mt-0">
+                <div className="relative -mt-[1px] md:mt-0">
                   {/* Yellow offset text behind */}
                   <h1 
                     className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0" 
