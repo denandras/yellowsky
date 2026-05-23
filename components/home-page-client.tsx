@@ -289,6 +289,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           <section className="relative" data-reveal>
             <div className="relative px-3 pt-8 pb-6">
               <div className="mx-auto max-w-2xl space-y-6">
+                <div className="mb-6" />
                 {labels.storyParagraphs.map((paragraph, idx) => (
                   <p
                     key={`story-${idx}`}
