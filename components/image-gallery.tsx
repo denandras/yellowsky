@@ -211,22 +211,8 @@ function ImageCard({
 export default function ImageGallery({ items, labels, onAddToCart, cartLoading }: ImageGalleryProps) {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
-  const [columnCount, setColumnCount] = useState(3);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRestoredRef = useRef(false);
-
-  // Calculate columns based on viewport
-  useEffect(() => {
-    const updateColumns = () => {
-      if (typeof window === "undefined") return;
-      if (window.innerWidth < 640) setColumnCount(1);
-      else if (window.innerWidth < 1024) setColumnCount(2);
-      else setColumnCount(3);
-    };
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
-  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -246,8 +232,8 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
   useLayoutEffect(() => {
     if (typeof window === "undefined" || scrollRestoredRef.current) return;
     
-    // Only on mobile (single column)
-    if (columnCount !== 1) return;
+    // Only on mobile (check viewport width)
+    if (window.innerWidth >= 640) return;
     
     const lastClickedId = sessionStorage.getItem("yellowsky-last-artwork-id");
     if (!lastClickedId) return;
@@ -265,7 +251,7 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
     }, 50);
     
     return () => clearTimeout(timer);
-  }, [columnCount, items]);
+  }, [items]);
 
   // Default price for single-price items
   useEffect(() => {
@@ -280,42 +266,23 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
 
   const closeItem = useCallback(() => setActiveItem(null), []);
 
-  // Balanced column distribution
-  const columnItems = useMemo(() => {
-    const columns: MediaItem[][] = Array.from({ length: columnCount }, () => []);
-    const heights = Array(columnCount).fill(0);
-    items.forEach((item) => {
-      const shortest = heights.indexOf(Math.min(...heights));
-      columns[shortest].push(item);
-      heights[shortest] += 1;
-    });
-    return columns;
-  }, [items, columnCount]);
-
   return (
-    <div ref={containerRef} className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}>
-      {columnItems.map((colItems, colIndex) => (
-        <div key={colIndex} className="flex flex-col gap-4">
-          {colItems.map((item) => {
-            const globalIndex = items.indexOf(item);
-            return (
-              <ImageCard
-                key={item.id}
-                item={item}
-                index={globalIndex}
-                labels={labels}
-                isVisible={true}
-                onAddToCart={onAddToCart}
-                cartLoading={cartLoading}
-                isActive={activeItem === item.id}
-                setActiveItem={setActiveItem}
-                closeItem={closeItem}
-                selectedPrice={selectedPrice}
-                setSelectedPrice={setSelectedPrice}
-              />
-            );
-          })}
-        </div>
+    <div ref={containerRef} className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+      {items.map((item, index) => (
+        <ImageCard
+          key={item.id}
+          item={item}
+          index={index}
+          labels={labels}
+          isVisible={true}
+          onAddToCart={onAddToCart}
+          cartLoading={cartLoading}
+          isActive={activeItem === item.id}
+          setActiveItem={setActiveItem}
+          closeItem={closeItem}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+        />
       ))}
     </div>
   );
