@@ -127,7 +127,12 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={(e) => {
+        // Only close if clicking the background, not the image
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       {/* Close button */}
       <button
