@@ -263,7 +263,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full"
             >
               <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <h1 className="font-display text-[4.5rem] md:text-[5.75rem] font-bold leading-none tracking-tighter text-text-dark -translate-y-[2px] md:translate-y-[5px]">
+                <h1 className="font-display text-[4.5rem] md:text-[5.75rem] font-bold leading-none tracking-tighter text-text-dark translate-y-[1px] md:translate-y-[5px]">
                   {labels.title}
                 </h1>
                 <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
