@@ -3,9 +3,12 @@
 import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
+import CartButton from "@/components/cart-button";
+import CartDrawer from "@/components/cart-drawer";
+import { useCart } from "@/lib/cart-context";
 import { IconMail, IconOpenInNew, IconCamera } from "@/components/icons";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type ContactPageClientProps = {
@@ -14,6 +17,9 @@ type ContactPageClientProps = {
 
 export default function ContactPageClient({ initialLanguage }: ContactPageClientProps) {
   const { language } = useSiteLanguage(initialLanguage);
+  const { items: cartItems } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
@@ -41,6 +47,36 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
     };
   }, []);
 
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+
+    setCheckoutLoading(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cartItems.map(item => ({ priceId: item.priceId, quantity: item.quantity })),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Checkout failed:", data);
+        alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout failed. Please try again.");
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout error. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   const labels = language === "hu"
     ? {
         header: "Kapcsolat",
@@ -55,6 +91,16 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
         send: "Üzenet küldése",
         subject: "Új üzenet a yellowsky.andrasdenes.com oldalról",
         formTitle: "Űrlap",
+        cart: {
+          title: "Kosár",
+          empty: "A kosarad üres",
+          remove: "Eltávolítás",
+          clearCart: "Kosár ürítése",
+          checkout: "Pénztár",
+          total: "Összesen",
+          loading: "Feldolgozás...",
+          ariaLabel: "Kosár megnyitása",
+        },
       }
     : {
         header: "Get in Touch",
@@ -69,19 +115,40 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
         send: "Send Message",
         subject: "New inquiry from yellowsky.andrasdenes.com",
         formTitle: "Form",
+        cart: {
+          title: "Cart",
+          empty: "Your cart is empty",
+          remove: "Remove",
+          clearCart: "Clear cart",
+          checkout: "Checkout",
+          total: "Total",
+          loading: "Processing...",
+          ariaLabel: "Open cart",
+        },
       };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-      <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-        <div className="flex h-16 w-full items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <BrandMark />
-            <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.header}</h1>
+    <>
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        onCheckout={handleCheckout}
+        labels={labels.cart}
+        loading={checkoutLoading}
+      />
+      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
+        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
+          <div className="flex h-16 w-full items-center justify-between px-6">
+            <div className="flex items-center gap-2">
+              <BrandMark />
+              <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.header}</h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher initialLanguage={initialLanguage} />
+              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
+            </div>
           </div>
-          <LanguageSwitcher initialLanguage={initialLanguage} />
-        </div>
-      </header>
+        </header>
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-8 pb-24">
         <section className="mt-6">
@@ -244,5 +311,6 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
         </div>
       </footer>
     </div>
+    </>
   );
 }
