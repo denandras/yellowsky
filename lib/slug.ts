@@ -1,13 +1,35 @@
 /**
+ * Normalize accented characters for URL-safe slugs.
+ * Exported for use in other modules.
+ */
+export function normalizeAccents(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/ø/g, "o")
+    .replace(/Ø/g, "O")
+    .replace(/æ/g, "ae")
+    .replace(/Æ/g, "AE")
+    .replace(/ð/g, "d")
+    .replace(/Ð/g, "D")
+    .replace(/þ/g, "th")
+    .replace(/Þ/g, "Th")
+    .replace(/ß/g, "ss");
+}
+
+/**
  * Convert filename to URL slug.
  * "2020.01 Venice.png" → "2020-01-Venice"
  * "2020.105 Amsterdam.webp" → "2020-105-Amsterdam"
+ * "2020.68 Deák Square.png" → "2020-68-Deak-Square"
  */
 export function filenameToSlug(filename: string): string {
   // Remove extension
   const base = filename.replace(/\.[^.]+$/, "");
+  // Normalize accents first
+  const normalized = normalizeAccents(base);
   // Replace dots and spaces with dashes, collapse multiple dashes
-  return base.replace(/[.\s]+/g, "-").replace(/-+/g, "-");
+  return normalized.replace(/[.\s]+/g, "-").replace(/-+/g, "-");
 }
 
 /**

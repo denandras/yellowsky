@@ -2,6 +2,7 @@ import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { getS4Config, getS4ArtPrefix, getMediaTokenSecret } from "./s4-config";
 import { createMediaAccessToken } from "./media-access-token";
 import { fetchStripeProducts, mapArtworksToProducts } from "./stripe-products";
+import { normalizeAccents } from "./slug";
 
 export type Artwork = {
   slug: string;
@@ -46,24 +47,6 @@ function generateAltText(filename: string): string {
  */
 function generateTitle(filename: string): string {
   return filename.replace(/\.[^.]+$/, "");
-}
-
-/**
- * Normalize accented characters for URL-safe slugs.
- */
-function normalizeAccents(str: string): string {
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/ø/g, "o")
-    .replace(/Ø/g, "O")
-    .replace(/æ/g, "ae")
-    .replace(/Æ/g, "AE")
-    .replace(/ð/g, "d")
-    .replace(/Ð/g, "D")
-    .replace(/þ/g, "th")
-    .replace(/Þ/g, "Th")
-    .replace(/ß/g, "ss");
 }
 
 /**
