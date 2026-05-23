@@ -220,13 +220,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         <section className="relative w-full">
           <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100"
           >
-            {/* Hero Image - clickable area only above fade */}
-            <div
-              className="absolute inset-0 z-0 cursor-zoom-in"
-              onClick={() => setHeroZoomOpen(true)}
-              style={{ clipPath: 'polygon(0 0, 100% 0, 100% 88%, 0 88%)' }}
-            />
-            {/* Fade gradient overlay - no click in fade zone */}
+            {/* Fade gradient overlay */}
             <div
               className="absolute inset-0 z-10 pointer-events-none"
               style={{
@@ -256,20 +250,32 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 <p className="text-sm text-text-muted">Image unavailable</p>
               </div>
             ) : (
-              <Image
-                src={heroUrl}
-                alt={artwork.alt}
-                fill
-                className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-                style={{ objectPosition: 'center 41%' }}
-                priority
-                sizes="100vw"
-                unoptimized
-                draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                onLoad={() => setHeroLoaded(true)}
-                onError={() => setHeroError(true)}
-              />
+              <div
+                className="absolute inset-0 cursor-zoom-in"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const y = e.clientY - rect.top;
+                  const fadeStart = rect.height * 0.88;
+                  if (y < fadeStart) {
+                    setHeroZoomOpen(true);
+                  }
+                }}
+              >
+                <Image
+                  src={heroUrl}
+                  alt={artwork.alt}
+                  fill
+                  className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  style={{ objectPosition: 'center 41%' }}
+                  priority
+                  sizes="100vw"
+                  unoptimized
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onLoad={() => setHeroLoaded(true)}
+                  onError={() => setHeroError(true)}
+                />
+              </div>
             )}
           </div>
         </section>
