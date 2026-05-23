@@ -275,19 +275,12 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 </div>
                 <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <div className="h-px w-12 bg-primary" />
-                  {labels.subtitleLink ? (
-                    <a
-                      href={labels.subtitleLink}
-                      className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
-                    >
-                      {labels.subtitle}
-                    </a>
-                  ) : (
-                    <p className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-primary uppercase"
-                    >
-                      {labels.subtitle}
-                    </p>
-                  )}
+                  <a
+                    href="https://andrasdenes.com"
+                    className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase"
+                  >
+                    {labels.subtitle}
+                  </a>
                 </div>
               </div>
             </div>
