@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from "react";
 import Link from "next/link";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import { filenameToSlug } from "@/lib/slug";
@@ -279,77 +279,32 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
     return () => window.removeEventListener("resize", updateColumns);
   }, []);
 
-  // Measure item heights and distribute to shortest column
-  const [columnItems, setColumnItems] = useState<MediaItem[][]>([]);
-  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const measuredRef = useRef(false);
-
-  // Initial distribution (just split evenly)
-  useEffect(() => {
-    if (columnCount === 1) {
-      setColumnItems([items]);
-      return;
-    }
+  // Distribute items to minimize column height difference
+  // Use image aspect ratio to estimate heights
+  const columnItems = useMemo(() => {
+    if (columnCount === 1) return [items];
     
-    // First pass: distribute evenly
     const columns: MediaItem[][] = Array.from({ length: columnCount }, () => []);
-    items.forEach((item, i) => {
-      columns[i % columnCount].push(item);
+    const heights: number[] = Array(columnCount).fill(0);
+    
+    // Estimate heights: assume ~300px width, so height = 300 / aspectRatio
+    // Portrait images (ratio < 1) are taller, landscape (ratio > 1) are shorter
+    // Default to portrait if unknown (0.75 = 4:3 portrait)
+    const estimatedHeight = (item: MediaItem) => {
+      // Extract aspect ratio from viewUrl if available, or default to portrait
+      // For now, use a constant estimate ~360px for cards (image + padding)
+      return 360;
+    };
+    
+    items.forEach((item) => {
+      // Find the shortest column
+      const shortestIndex = heights.indexOf(Math.min(...heights));
+      columns[shortestIndex].push(item);
+      heights[shortestIndex] += estimatedHeight(item);
     });
-    setColumnItems(columns);
-    measuredRef.current = false;
+    
+    return columns;
   }, [items, columnCount]);
-
-  // Second pass: measure heights and redistribute
-  useEffect(() => {
-    if (measuredRef.current || columnCount === 1 || columnItems.length === 0) return;
-    
-    // Wait for images to load
-    const timer = setTimeout(() => {
-      const columnHeights: number[] = Array(columnCount).fill(0);
-      const itemHeights: Map<string, number> = new Map();
-      
-      // Measure each item
-      itemRefs.current.forEach((el, id) => {
-        itemHeights.set(id, el.offsetHeight);
-      });
-      
-      // Calculate current column heights
-      columnItems.forEach((col, colIndex) => {
-        col.forEach(item => {
-          columnHeights[colIndex] += itemHeights.get(item.id) || 0;
-        });
-      });
-      
-      // Redistribute: put each item in the column that minimizes total height
-      const newColumns: MediaItem[][] = Array.from({ length: columnCount }, () => []);
-      const newHeights: number[] = Array(columnCount).fill(0);
-      
-      items.forEach(item => {
-        const height = itemHeights.get(item.id) || 0;
-        // Find column where adding this item results in smallest max height
-        let bestCol = 0;
-      let bestMaxHeight = Infinity;
-      
-      for (let i = 0; i < columnCount; i++) {
-        const newColHeight = newHeights[i] + height;
-        const maxH = Math.max(...newHeights.filter((_, idx) => idx !== i), newColHeight);
-        if (maxH < bestMaxHeight) {
-          bestMaxHeight = maxH;
-          bestCol = i;
-        }
-      }
-      
-      newColumns[bestCol].push(item);
-      newHeights[bestCol] += height;
-      });
-      
-      setColumnItems(newColumns);
-      measuredRef.current = true;
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [columnItems, columnCount, items]);
 
   return (
     <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}>
@@ -358,26 +313,20 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
           {colItems.map((item) => {
             const globalIndex = items.indexOf(item);
             return (
-              <div
+              <ImageCard
                 key={item.id}
-                ref={(el) => {
-                  if (el) itemRefs.current.set(item.id, el);
-                }}
-              >
-                <ImageCard
-                  item={item}
-                  index={globalIndex}
-                  labels={labels}
-                  isVisible={true}
-                  onAddToCart={onAddToCart}
-                  cartLoading={cartLoading}
-                  isActive={activeItem === item.id}
-                  setActiveItem={setActiveItem}
-                  closeItem={closeItem}
-                  selectedPrice={selectedPrice}
-                  setSelectedPrice={setSelectedPrice}
-                />
-              </div>
+                item={item}
+                index={globalIndex}
+                labels={labels}
+                isVisible={true}
+                onAddToCart={onAddToCart}
+                cartLoading={cartLoading}
+                isActive={activeItem === item.id}
+                setActiveItem={setActiveItem}
+                closeItem={closeItem}
+                selectedPrice={selectedPrice}
+                setSelectedPrice={setSelectedPrice}
+              />
             );
           })}
         </div>
