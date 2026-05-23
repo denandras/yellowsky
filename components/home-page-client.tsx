@@ -265,11 +265,11 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <div className="relative">
                   {/* Yellow offset text behind */}
-                  <h1 className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px)) translateX(4px)', color: '#ffcb2a' }}>
+                  <h1 className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(-8.5px, -10.5px + 0.25vw, -6.5px)) translateX(4px)', color: '#ffcb2a' }}>
                     {labels.title}
                   </h1>
                   {/* Dark text on top */}
-                  <h1 className="font-display font-bold leading-none tracking-tighter relative" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))', color: '#1a1a1a' }}>
+                  <h1 className="font-display font-bold leading-none tracking-tighter relative" style={{ fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', transform: 'translateY(clamp(-8.5px, -10.5px + 0.25vw, -6.5px))', color: '#1a1a1a' }}>
                     {labels.title}
                   </h1>
                 </div>
