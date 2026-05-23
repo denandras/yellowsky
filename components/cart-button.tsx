@@ -42,7 +42,7 @@ export default function CartButton({ onClick, labels }: CartButtonProps) {
     <button
       type="button"
       onClick={handleClick}
-      className={`relative flex items-center justify-center rounded-lg p-2 transition-colors ${count > 0 ? 'hover:bg-neutral-100' : 'cursor-default'}`}
+      className={`relative flex items-center justify-center rounded-lg p-2 transition-colors active:scale-95 ${count > 0 ? 'hover:bg-neutral-100 cursor-pointer' : 'active:bg-neutral-100 cursor-default'}`}
       aria-label={labels.ariaLabel}
     >
       <IconShoppingBag className="size-6 text-text-dark" />
