@@ -265,17 +265,18 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 <h1 className="font-display text-[4.675rem] md:text-[5.865rem] font-bold leading-none tracking-tighter text-text-dark">
                   {labels.title}
                 </h1>
-                <div className={`mt-2 flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`mt-2 ml-[20px] -translate-y-[5px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
                       href={labels.subtitleLink}
-                      className="font-display text-[0.85rem] font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
+                      className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 uppercase"
                     >
                       {labels.subtitle}
                     </a>
                   ) : (
-                    <p className="font-display text-[0.85rem] font-bold tracking-[0.1em] text-primary uppercase">
+                    <p className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-primary uppercase"
+                    >
                       {labels.subtitle}
                     </p>
                   )}
