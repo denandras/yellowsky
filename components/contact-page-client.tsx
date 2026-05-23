@@ -228,7 +228,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
           <BrandMark size={32} />
         </div>
         <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
-          © {new Date().getFullYear()} András Dénes
+          © {new Date().getFullYear()} {language === "hu" ? "Dénes András" : "András Dénes"}
         </p>
         <p className="mb-4 text-[10px] text-text-muted/60">
           {language === "hu" ? "Yellowsky • Vázlatok Budapestről" : "Yellowsky • Sketches from Budapest"}

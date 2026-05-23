@@ -451,7 +451,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             <BrandMark size={32} />
           </div>
           <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
-            © {new Date().getFullYear()} András Dénes
+            © {new Date().getFullYear()} {language === "hu" ? "Dénes András" : "András Dénes"}
           </p>
           <p className="text-[10px] text-text-muted/60">
             Yellowsky • Sketches from Budapest
