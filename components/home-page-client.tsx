@@ -31,9 +31,21 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   const { language } = useSiteLanguage(initialLanguage);
   const { items: cartItems } = useCart();
   const [mounted, setMounted] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Show title after hero loads or after 300ms
+  useEffect(() => {
+    if (heroLoaded) {
+      setShowTitle(true);
+      return;
+    }
+    const timer = setTimeout(() => setShowTitle(true), 300);
+    return () => clearTimeout(timer);
+  }, [heroLoaded]);
 
   // Reveal animation observer
   useEffect(() => {
@@ -233,7 +245,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
               {mounted && (
                 <Image
                   alt="Yellowsky German Street sketch - yellow architectural illustration"
-                  className="object-cover"
+                  className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
                   style={{ objectPosition: 'center 36%' }}
                   src="/hero.jpg"
                   fill
@@ -242,6 +254,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   unoptimized
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
+                  onLoad={() => setHeroLoaded(true)}
                 />
               )}
             </div>
@@ -249,13 +262,13 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             {/* Title at image edge - negative offset to move lower */}
             <div className="absolute left-0 right-0 pointer-events-none z-10" style={{ bottom: '-30px' }}>
               <div className="px-6 md:px-8">
-                <h1 className="font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark bg-background-light px-3">
+                <h1 className={`font-display text-[5.5rem] md:text-[6.9rem] font-bold leading-none tracking-tighter text-left text-text-dark bg-background-light px-3 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   {labels.title}
                 </h1>
               </div>
             </div>
             {/* Name overlay - 77px lower from bottom */}
-            <div className="absolute left-0 right-0 pointer-events-none" style={{ bottom: '-77px' }}>
+            <div className={`absolute left-0 right-0 pointer-events-none transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ bottom: '-77px' }}>
               <div className="px-6 md:px-8">
                 <div className="flex items-center gap-3 bg-background-light px-3 py-1" style={{ marginLeft: '20px' }}>
                   <div className="h-px w-12 bg-primary" />

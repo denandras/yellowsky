@@ -41,6 +41,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [heroError, setHeroError] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageAspect, setImageAspect] = useState<number | null>(null); // width / height
@@ -159,6 +160,16 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   // Determine image orientation from dimensions (we'll detect from aspect ratio)
   const isLandscape = true; // Default, will be refined
 
+  // Show title after hero loads or after 300ms (whichever comes first)
+  useEffect(() => {
+    if (heroLoaded) {
+      setShowTitle(true);
+      return;
+    }
+    const timer = setTimeout(() => setShowTitle(true), 300);
+    return () => clearTimeout(timer);
+  }, [heroLoaded]);
+
   return (
     <>
       <ImageZoomModal
@@ -223,7 +234,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             {/* Title overlay at bottom - bigger text */}
             <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
               <div className="mx-auto w-full max-w-6xl px-6">
-                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                <h1 
+                  className={`font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                >
                   {artwork.title}
                 </h1>
               </div>
