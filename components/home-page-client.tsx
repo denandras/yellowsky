@@ -274,7 +274,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   </h1>
                 </div>
                 <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                  <div className="h-px w-12 bg-primary" />
+                  <div className="h-px w-12 bg-text-dark" />
                   <a
                     href="https://andrasdenes.com"
                     className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase"
