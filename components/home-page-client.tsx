@@ -260,12 +260,12 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             </div>
 
             {/* Unified text overlay - bottom left at image edge */}
-            <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none px-6 md:px-8">
+            <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none px-4 md:px-8">
               <div className={`flex flex-col items-start px-3 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <h1 className="font-display text-[4.675rem] md:text-[5.865rem] font-bold leading-none tracking-tighter text-text-dark translate-y-[5px]">
                   {labels.title}
                 </h1>
-                <div className={`mt-2 ml-[20px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`mt-2 ml-[30px] md:ml-[20px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <div className="h-px w-12 bg-primary" />
                   {labels.subtitleLink ? (
                     <a
