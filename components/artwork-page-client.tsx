@@ -46,7 +46,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [imageAspect, setImageAspect] = useState<number | null>(null);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
-  const [purchaseVisible, setPurchaseVisible] = useState(false);
+  // Staggered fade-in states for purchase section
+  const [showSelectSize, setShowSelectSize] = useState(false);
+  const [showSizeButtons, setShowSizeButtons] = useState(false);
+  const [showAddButton, setShowAddButton] = useState(false);
+  const [showTrustSignals, setShowTrustSignals] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -161,11 +165,19 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     return () => clearTimeout(timer);
   }, [heroLoaded]);
 
-  // Show purchase section after artwork image loads (with delay)
+  // Staggered reveal of purchase section elements after image loads
   useEffect(() => {
     if (imageLoaded) {
-      const timer = setTimeout(() => setPurchaseVisible(true), 150);
-      return () => clearTimeout(timer);
+      const t1 = setTimeout(() => setShowSelectSize(true), 100);
+      const t2 = setTimeout(() => setShowSizeButtons(true), 200);
+      const t3 = setTimeout(() => setShowAddButton(true), 300);
+      const t4 = setTimeout(() => setShowTrustSignals(true), 400);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+      };
     }
   }, [imageLoaded]);
 
@@ -328,28 +340,17 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options */}
+            {/* Right: Purchase options - always rendered, elements fade in staggered */}
             <div className="flex flex-col">
-              {/* Skeleton while image loads */}
-              {!purchaseVisible && !imageError && (
-                <div className="bg-white rounded-lg border border-neutral-border p-6 animate-pulse">
-                  <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                  </div>
-                  <div className="h-12 bg-neutral-200 rounded-lg" />
-                </div>
-              )}
-
-              {/* Purchase section - fades in after image loads */}
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
-                <div className={`bg-white rounded-lg border border-neutral-border p-6 transition-all duration-500 ${purchaseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                  <h3 className="font-display text-lg font-semibold mb-4">
+                <div className="bg-white rounded-lg border border-neutral-border p-6">
+                  {/* Title */}
+                  <h3 className={`font-display text-lg font-semibold mb-4 transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                     {labels.selectSize}
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6">
+                  {/* Size buttons */}
+                  <div className={`grid grid-cols-2 gap-3 mb-6 transition-all duration-300 ${showSizeButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                     {[...artwork.prices].sort((a, b) => {
                       return (b.nickname || '').localeCompare(a.nickname || '');
                     }).map(price => (
@@ -371,11 +372,14 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     ))}
                   </div>
 
+                  {/* Add to cart button */}
                   <button
                     type="button"
                     onClick={handleAddToCart}
                     disabled={!selectedSize}
-                    className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all ${
+                    className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 ${
+                      showAddButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                    } ${
                       showAddedMessage
                         ? 'bg-green-600'
                         : selectedSize
@@ -406,7 +410,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   )}
                 </div>
               ) : (
-                <div className={`bg-neutral-50 rounded-lg border border-neutral-border p-6 text-center transition-all duration-500 ${purchaseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className={`bg-neutral-50 rounded-lg border border-neutral-border p-6 text-center transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                   <p className="text-text-muted">
                     {labels.notForSale}
                   </p>
@@ -414,7 +418,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
 
               {/* Trust signals */}
-              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-text-muted">
+              <div className={`mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-text-muted transition-all duration-300 ${showTrustSignals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                 <span className="flex items-center gap-1.5">
                   <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
