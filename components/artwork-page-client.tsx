@@ -44,14 +44,15 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [showTitle, setShowTitle] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [imageAspect, setImageAspect] = useState<number | null>(null); // width / height
+  const [imageAspect, setImageAspect] = useState<number | null>(null);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
+  const [purchaseVisible, setPurchaseVisible] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
 
-  // Check if we came from webshop (for smart back navigation)
   const cameFromWebshop = typeof window !== "undefined" &&
     document.referrer.includes("/webshop");
 
@@ -119,7 +120,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       viewUrl: artwork.viewUrl,
     });
 
-    // Brief delay to show feedback
     await new Promise(resolve => setTimeout(resolve, 300));
     setAddingToCart(false);
     setShowAddedMessage(true);
@@ -157,10 +157,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     }
   };
 
-  // Determine image orientation from dimensions (we'll detect from aspect ratio)
-  const isLandscape = true; // Default, will be refined
-
-  // Show title after hero loads or after 300ms (whichever comes first)
+  // Show title after hero loads or after 300ms
   useEffect(() => {
     if (heroLoaded) {
       setShowTitle(true);
@@ -169,6 +166,15 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     const timer = setTimeout(() => setShowTitle(true), 300);
     return () => clearTimeout(timer);
   }, [heroLoaded]);
+
+  // Show content after image loads with staggered fade-in
+  useEffect(() => {
+    if (imageLoaded) {
+      setContentVisible(true);
+      // Stagger the purchase section
+      setTimeout(() => setPurchaseVisible(true), 150);
+    }
+  }, [imageLoaded]);
 
   return (
     <>
@@ -216,10 +222,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </header>
 
-        {/* Hero Section - Fading JPG */}
+        {/* Hero Section */}
         <section className="relative w-full">
-          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100"
-          >
+          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100">
             {/* Fade gradient overlay */}
             <div
               className="absolute inset-0 z-10 pointer-events-none"
@@ -230,7 +235,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               }}
             />
 
-            {/* Title overlay at bottom - bigger text */}
+            {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
               <div className="mx-auto w-full max-w-6xl px-6">
                 <h1
@@ -241,7 +246,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               </div>
             </div>
 
-            {/* Hero Image - wide: contain centered, narrow: cover to fill height */}
+            {/* Hero Image */}
             {!heroLoaded && !heroError && (
               <div className="absolute inset-0 animate-pulse bg-neutral-100" />
             )}
@@ -281,34 +286,31 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </section>
 
-        {/* Content Section - Artwork + Purchase Options */}
+        {/* Content Section */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Main artwork image - no container, image sizes itself */}
+            {/* Left: Artwork image - fade in when loaded */}
             <div className="relative">
-              {/* Image container - dynamic aspect ratio from image, default to portrait while loading */}
-              <div
-                className={`relative overflow-hidden rounded-lg ${imageLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
-                style={{ aspectRatio: imageAspect ?? 0.707 }}
-                onClick={() => {
-                  if (imageLoaded) {
-                    setArtworkZoomOpen(true);
-                  }
-                }}
-              >
-                {!imageLoaded && !imageError && (
-                  <div className="absolute inset-0 animate-pulse bg-neutral-100" />
-                )}
-                {imageError ? (
-                  <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
-                    <p className="text-sm text-text-muted">Image unavailable</p>
-                  </div>
-                ) : (
+              {/* Skeleton while loading */}
+              {!imageLoaded && !imageError && (
+                <div
+                  className="w-full animate-pulse bg-neutral-100 rounded-lg"
+                  style={{ aspectRatio: 0.707 }}
+                />
+              )}
+
+              {/* Image - only visible when loaded */}
+              {imageLoaded && !imageError && (
+                <div
+                  className={`relative overflow-hidden rounded-lg cursor-zoom-in transition-all duration-700 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ aspectRatio: imageAspect ?? 0.707 }}
+                  onClick={() => setArtworkZoomOpen(true)}
+                >
                   <Image
                     src={artwork.viewUrl}
                     alt={artwork.alt}
                     fill
-                    className="object-contain transition-opacity duration-500 bg-white"
+                    className="object-contain bg-white"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     unoptimized
                     draggable={false}
@@ -320,27 +322,29 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       }
                       setImageLoaded(true);
                     }}
-                    onError={() => {
-                      setImageError(true);
-                    }}
+                    onError={() => setImageError(true)}
                   />
-                )}
-              </div>
+                </div>
+              )}
+
+              {/* Error state */}
+              {imageError && (
+                <div className="flex items-center justify-center bg-neutral-100 rounded-lg" style={{ aspectRatio: 0.707 }}>
+                  <p className="text-sm text-text-muted">Image unavailable</p>
+                </div>
+              )}
             </div>
 
-            {/* Right: Purchase options */}
-            <div className="flex flex-col">
-              {/* Purchase section */}
+            {/* Right: Purchase options - staggered fade-in */}
+            <div className={`flex flex-col transition-all duration-700 ${purchaseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
                   <h3 className="font-display text-lg font-semibold mb-4">
                     {labels.selectSize}
                   </h3>
 
-                  {/* Size options */}
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[...artwork.prices].sort((a, b) => {
-                      // Smallest first: reverse alphabetical (A5 > A4 > A3)
                       return (b.nickname || '').localeCompare(a.nickname || '');
                     }).map(price => (
                       <button
@@ -361,7 +365,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     ))}
                   </div>
 
-                  {/* Add to cart button */}
                   <button
                     type="button"
                     onClick={handleAddToCart}
@@ -382,7 +385,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     }
                   </button>
 
-                  {/* Post-add options */}
                   {showPostAddOptions && (
                     <div className="mt-4 flex gap-3 animate-fadeIn">
                       <button
