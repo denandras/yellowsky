@@ -97,8 +97,11 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     }
 
     setPosition(prev => {
-      const newX = prev.x - (e.clientX - dragStart.x) * 0.05;
-      const newY = prev.y - (e.clientY - dragStart.y) * 0.05;
+      // At higher zoom levels, drag should move the image proportionally
+      // The higher the zoom, the more we need to move the position
+      const dragMultiplier = 100 / (scale * 100);
+      const newX = prev.x - (e.clientX - dragStart.x) * dragMultiplier;
+      const newY = prev.y - (e.clientY - dragStart.y) * dragMultiplier;
       return {
         x: Math.max(0, Math.min(100, newX)),
         y: Math.max(0, Math.min(100, newY)),
@@ -184,10 +187,13 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       setHasDragged(true);
     }
 
-    setPosition(prev => ({
-      x: Math.max(0, Math.min(100, prev.x - (touch.clientX - dragStart.x) * 0.05)),
-      y: Math.max(0, Math.min(100, prev.y - (touch.clientY - dragStart.y) * 0.05)),
-    }));
+    setPosition(prev => {
+      const dragMultiplier = 100 / (scale * 100);
+      return {
+        x: Math.max(0, Math.min(100, prev.x - (touch.clientX - dragStart.x) * dragMultiplier)),
+        y: Math.max(0, Math.min(100, prev.y - (touch.clientY - dragStart.y) * dragMultiplier)),
+      };
+    });
 
     setDragStart({ x: touch.clientX, y: touch.clientY });
   }, [isDragging, scale, dragStart]);
