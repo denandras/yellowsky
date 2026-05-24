@@ -286,7 +286,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             {/* Left: Main artwork image in bracket */}
             <div className="relative">
-              <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
+              <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border">
                 {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
                 <div
                   className={`relative overflow-hidden ${imageLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}

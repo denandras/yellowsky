@@ -33,3 +33,7 @@ npm run dev
 - [ ] Canvas preview - artwork preview on canvas element before purchase
 - [ ] SEO - meta tags, Open Graph, structured data for artwork pages
 - [ ] Marketing - social sharing, email notifications, promotional campaigns
+- [ ] "New" badge - heartbeat animation for artworks uploaded <5 days ago
+  - Use S3 `LastModified` timestamp
+  - Pulse animation ~1.5s cycle
+  - See `clawledge/days/YYYY-MM-DD/yellowsky.md` for detailed plan
