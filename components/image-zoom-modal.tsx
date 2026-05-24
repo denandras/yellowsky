@@ -218,21 +218,18 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
         >
-          <div
-            style={imageDimensions ? { aspectRatio: `${imageDimensions.width}/${imageDimensions.height}` } : undefined}
-          >
-            <Image
-              src={src}
-              alt={alt}
-              width={imageDimensions?.width ?? 1200}
-              height={imageDimensions?.height ?? 1600}
-              className="max-h-[90vh] max-w-[95vw] object-contain"
-              priority
-              unoptimized
-              draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
-            />
-          </div>
+          <Image
+            src={src}
+            alt={alt}
+            width={imageDimensions?.width ?? 1200}
+            height={imageDimensions?.height ?? 1600}
+            className="max-h-[90vh] max-w-[95vw] h-auto w-auto object-contain"
+            style={{ width: 'auto', height: 'auto' }}
+            priority
+            unoptimized
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
         </div>
       </div>
       <style jsx>{`
