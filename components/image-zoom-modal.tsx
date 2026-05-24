@@ -17,9 +17,6 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const [hasDragged, setHasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
-  const [showControls, setShowControls] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   // Detect image dimensions
@@ -33,19 +30,12 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     img.src = src;
   }, [isOpen, src]);
 
-  // Reset on open, then show controls after delay
+  // Reset on open
   useEffect(() => {
     if (isOpen) {
       setScale(1);
       setPosition({ x: 50, y: 50 });
-      setShowControls(false);
       setHasDragged(false);
-      setIsClosing(false);
-      setIsVisible(true);
-      const timer = setTimeout(() => setShowControls(true), 200);
-      return () => clearTimeout(timer);
-    } else {
-      setShowControls(false);
     }
   }, [isOpen, src]);
 
@@ -82,26 +72,17 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Mouse wheel zoom
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.2 : 0.2;
-    setScale(s => Math.max(1, Math.min(4, s + delta)));
-  }, []);
-
-  // Drag to pan (when zoomed)
+  // Mouse handling for drag
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (scale > 1) {
-      setIsDragging(true);
-      setHasDragged(false);
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
+    if (scale <= 1) return;
+    setIsDragging(true);
+    setHasDragged(false);
+    setDragStart({ x: e.clientX, y: e.clientY });
   }, [scale]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging || scale <= 1) return;
 
-    // Mark as dragged if moved more than 5px
     const dx = Math.abs(e.clientX - dragStart.x);
     const dy = Math.abs(e.clientY - dragStart.y);
     if (dx > 5 || dy > 5) {
@@ -149,17 +130,32 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     // Only close if clicking the backdrop itself (not the image container)
     if (e.target === e.currentTarget) {
-      setIsClosing(true);
-      setTimeout(() => {
-        setIsVisible(false);
-        onClose();
-      }, 200);
+      onClose();
     }
   }, [onClose]);
 
-  // Prevent double-click from selecting text
+  // Double-click: toggle zoom
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
+    if (scale === 1) {
+      // Zoom in to 2x at double-click position
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setPosition({ x, y });
+      setScale(2);
+    } else {
+      setScale(1);
+    }
+  }, [scale]);
+
+  // Wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.deltaY < 0) {
+      setScale(s => Math.min(s + 0.25, 4));
+    } else {
+      setScale(s => Math.max(s - 0.25, 1));
+    }
   }, []);
 
   // Touch handling for mobile
@@ -193,61 +189,51 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     setIsDragging(false);
   }, []);
 
-  if (!isOpen && !isVisible) return null;
+  if (!isOpen) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
+      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm"
       onClick={handleBackdropClick}
       onDoubleClick={handleDoubleClick}
     >
       {/* Close button */}
-      {showControls && (
-        <button
-          onClick={() => {
-            setIsClosing(true);
-            setTimeout(() => {
-              setIsVisible(false);
-              onClose();
-            }, 200);
-          }}
-          className={`fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20 ${showControls ? 'opacity-100' : 'opacity-0'}`}
-          aria-label="Close"
-        >
-          <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      )}
+      <button
+        onClick={onClose}
+        className="fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+        aria-label="Close"
+      >
+        <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
 
       {/* Zoom controls */}
-      {showControls && (
-        <div className={`fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm transition-opacity duration-200 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-          <button
-            onClick={() => setScale(s => Math.max(1, s - 0.5))}
-            disabled={scale <= 1}
-            className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
-            aria-label="Zoom out"
-          >
-            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-            </svg>
-          </button>
-          <span className="min-w-[3rem] text-center text-sm text-white">
-            {Math.round(scale * 100)}%
-          </span>
-          <button
-            onClick={() => setScale(s => Math.min(4, s + 0.5))}
-            disabled={scale >= 4}
-            className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
-            aria-label="Zoom in"
-          >
-            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-          </button>
-        </div>
-      )}
+      <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
+        <button
+          onClick={() => setScale(s => Math.max(1, s - 0.5))}
+          disabled={scale <= 1}
+          className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
+          aria-label="Zoom out"
+        >
+          <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+          </svg>
+        </button>
+        <span className="min-w-[3rem] text-center text-sm text-white">
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          onClick={() => setScale(s => Math.min(4, s + 0.5))}
+          disabled={scale >= 4}
+          className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
+          aria-label="Zoom in"
+        >
+          <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
 
       {/* Centered image container - pointer-events-none so clicks pass through to backdrop */}
       <div className="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
@@ -269,8 +255,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div onClick={handleImageClick}
->
+          <div onClick={handleImageClick}>
             <Image
               src={src}
               alt={alt}
@@ -281,28 +266,10 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
               priority
               unoptimized
               draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
             />
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes fadeOut {
-          from { opacity: 1; }
-          to { opacity: 0; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-        .animate-fadeOut {
-          animation: fadeOut 0.2s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }
