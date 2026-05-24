@@ -340,8 +340,20 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options */}
+            {/* Right: Purchase options - skeleton while loading, then staggered fade-in */}
             <div className="flex flex-col">
+              {/* Skeleton while image loads */}
+              {!showSelectSize && !imageError && (
+                <div className="bg-white rounded-lg border border-neutral-border p-6 animate-pulse">
+                  <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="h-20 bg-neutral-200 rounded-lg" />
+                    <div className="h-20 bg-neutral-200 rounded-lg" />
+                  </div>
+                  <div className="h-12 bg-neutral-200 rounded-lg" />
+                </div>
+              )}
+
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
                   {/* Title */}
