@@ -194,7 +194,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
         </div>
       )}
 
-      {/* Image container */}
+      {/* Image container - click through to backdrop unless on image */}
       <div
         ref={containerRef}
         className="relative h-full w-full overflow-hidden"
@@ -208,7 +208,6 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onClick={(e) => e.stopPropagation()}
       >
         <div
           className="absolute inset-0 flex items-center justify-center"
@@ -218,18 +217,20 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
         >
-          <Image
-            src={src}
-            alt={alt}
-            width={imageDimensions?.width ?? 1200}
-            height={imageDimensions?.height ?? 1600}
-            className="max-h-[90vh] max-w-[95vw] h-auto w-auto object-contain"
-            style={{ width: 'auto', height: 'auto' }}
-            priority
-            unoptimized
-            draggable={false}
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          <div onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={src}
+              alt={alt}
+              width={imageDimensions?.width ?? 1200}
+              height={imageDimensions?.height ?? 1600}
+              className="max-h-[90vh] max-w-[95vw] h-auto w-auto object-contain"
+              style={{ width: 'auto', height: 'auto' }}
+              priority
+              unoptimized
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
         </div>
       </div>
       <style jsx>{`
