@@ -35,7 +35,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [addingToCart, setAddingToCart] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
   const [showPostAddOptions, setShowPostAddOptions] = useState(false);
 
@@ -99,13 +98,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         },
       };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!selectedSize || !artwork.prices) return;
 
     const selectedPrice = artwork.prices.find(p => p.id === selectedSize);
     if (!selectedPrice) return;
-
-    setAddingToCart(true);
 
     addItem({
       id: `${artwork.productId}-${selectedSize}`,
@@ -119,8 +116,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       viewUrl: artwork.viewUrl,
     });
 
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setAddingToCart(false);
     setShowAddedMessage(true);
     setShowPostAddOptions(true);
     setTimeout(() => setShowAddedMessage(false), 2000);
@@ -364,7 +359,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    disabled={!selectedSize || addingToCart}
+                    disabled={!selectedSize}
                     className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all ${
                       showAddedMessage
                         ? 'bg-green-600'
@@ -373,12 +368,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                           : 'bg-neutral-300 cursor-not-allowed'
                     }`}
                   >
-                    {showAddedMessage
-                      ? labels.addedToCart
-                      : addingToCart
-                        ? '...'
-                        : labels.addToCart
-                    }
+                    {showAddedMessage ? labels.addedToCart : labels.addToCart}
                   </button>
 
                   {showPostAddOptions && (
