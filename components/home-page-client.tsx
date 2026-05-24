@@ -146,7 +146,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         storyParagraphs: storyParagraphsHu,
         ctaLabel: "giclée nyomatok elérhetők",
         ctaTitle: "A galériához",
-        footerTagline: "Yellowsky • Vázlatok Budapestről",
+        footerTagline: "Yellowsky • Építészeti grafikák",
         cart: {
           title: "Kosár",
           empty: "A kosarad üres",
@@ -165,7 +165,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         storyParagraphs: storyParagraphsEn,
         ctaLabel: "giclée prints available",
         ctaTitle: "To the Gallery",
-        footerTagline: "Yellowsky • Sketches from Budapest",
+        footerTagline: "Yellowsky • Architectural graphics",
         cart: {
           title: "Cart",
           empty: "Your cart is empty",
