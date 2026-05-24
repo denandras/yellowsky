@@ -244,7 +244,10 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
     const timer = setTimeout(() => {
       const itemEl = document.querySelector(`[data-item-id="${lastClickedId}"]`);
       if (itemEl) {
-        itemEl.scrollIntoView({ behavior: "instant", block: "center" });
+        // Scroll to top of item, not center (preserves original scroll position better)
+        const rect = itemEl.getBoundingClientRect();
+        const scrollTop = window.scrollY + rect.top - 16; // 16px offset for header + margin
+        window.scrollTo({ top: scrollTop, behavior: "instant" });
       }
     }, 50);
     
