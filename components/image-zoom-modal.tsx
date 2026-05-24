@@ -136,9 +136,8 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       setPosition({ x, y });
       setScale(2);
     } else {
-      // Reset zoom
+      // Zoom out - keep current position (don't jump to center)
       setScale(1);
-      setPosition({ x: 50, y: 50 });
     }
   }, [scale, hasDragged]);
 
@@ -236,11 +235,11 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
         </div>
       )}
 
-      {/* Centered image container */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+      {/* Centered image container - pointer-events-none so clicks pass through to backdrop */}
+      <div className="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
         <div
           ref={imageRef}
-          className="relative select-none"
+          className="relative select-none pointer-events-auto"
           style={{
             cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
             transform: `scale(${scale})`,
@@ -256,7 +255,8 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div onClick={handleImageClick}>
+          <div onClick={handleImageClick}
+>
             <Image
               src={src}
               alt={alt}
