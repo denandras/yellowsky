@@ -41,13 +41,11 @@ export default function CartDrawer({
 
   return (
     <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[80] bg-black/30 backdrop-blur-sm transition-opacity"
-          onClick={onClose}
-        />
-      )}
+      {/* Backdrop - always rendered for transition */}
+      <div
+        className={`fixed inset-0 z-[80] transition-all duration-300 ${isOpen ? 'bg-black/30 backdrop-blur-sm' : 'bg-black/0 backdrop-blur-none pointer-events-none'}`}
+        onClick={onClose}
+      />
 
       {/* Drawer */}
       <div

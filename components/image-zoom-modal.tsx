@@ -202,11 +202,9 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     setIsDragging(false);
   }, []);
 
-  if (!isOpen) return null;
-
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm"
+      className={`fixed inset-0 z-[100] transition-all duration-300 ${showContent ? 'bg-black/90 backdrop-blur-sm' : 'bg-black/0 backdrop-blur-none pointer-events-none'}`}
       onClick={handleBackdropClick}
       onDoubleClick={handleDoubleClick}
     >
