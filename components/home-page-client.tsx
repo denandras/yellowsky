@@ -239,7 +239,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           {/* Hero section - full width image */}
           <section className="relative w-full">
             {/* Image - full width */}
-            <div className="relative w-full" style={{ minHeight: 'clamp(343px, 58.8vh, 693px)' }}>
+            <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(80vh-7px)] overflow-hidden bg-neutral-100">
               {mounted && (
                 <Image
                   alt="Yellowsky German Street sketch - yellow architectural illustration"

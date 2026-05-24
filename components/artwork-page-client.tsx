@@ -229,7 +229,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Hero Section */}
         <section className="relative w-full">
-          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(70vh-7px)] overflow-hidden bg-neutral-100">
+          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(80vh-7px)] overflow-hidden bg-neutral-100">
             {/* Fade gradient overlay */}
             <div
               className="absolute inset-0 z-10 pointer-events-none"
