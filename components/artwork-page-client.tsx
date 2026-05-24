@@ -369,12 +369,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 && showSelectSize && (
                   <>
                     {/* Title */}
-                    <h3 className="font-display text-lg font-semibold mb-4">
+                    <h3 className="font-display text-lg font-semibold mb-4 transition-all duration-300 opacity-0 translate-y-2 animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
                       {labels.selectSize}
                     </h3>
 
                     {/* Size buttons */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="grid grid-cols-2 gap-3 mb-6 transition-all duration-300 opacity-0 translate-y-2 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
                       {[...artwork.prices].sort((a, b) => {
                         return (b.nickname || '').localeCompare(a.nickname || '');
                       }).map(price => (
@@ -401,13 +401,14 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       type="button"
                       onClick={handleAddToCart}
                       disabled={!selectedSize}
-                      className={`w-full rounded-lg py-3 font-display font-semibold text-white ${
+                      className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 opacity-0 translate-y-2 animate-fade-in ${
                         showAddedMessage
                           ? 'bg-green-600'
                           : selectedSize
                             ? 'bg-primary hover:bg-primary/90'
                             : 'bg-neutral-300 cursor-not-allowed'
                       }`}
+                      style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
                     >
                       {showAddedMessage ? labels.addedToCart : labels.addToCart}
                     </button>
