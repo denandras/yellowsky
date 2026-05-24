@@ -109,10 +109,22 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     setIsDragging(false);
   }, []);
 
-  // Double-click to toggle zoom
+  // Double-click to toggle zoom (cycle through 1x -> 2x -> 4x -> 1x)
   const handleDoubleClick = useCallback(() => {
-    setScale(s => s > 1 ? 1 : 2);
+    setScale(s => s < 2 ? 2 : s < 4 ? 4 : 1);
+    setPosition({ x: 50, y: 50 });
   }, []);
+
+  // Single-click to zoom in (when at 1x) or reset (when zoomed)
+  const handleImageClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (scale === 1) {
+      setScale(2);
+    } else {
+      setScale(1);
+      setPosition({ x: 50, y: 50 });
+    }
+  }, [scale]);
 
   // Touch handling for mobile
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -217,7 +229,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
         >
-          <div onClick={(e) => e.stopPropagation()}>
+          <div onClick={handleImageClick}>
             <Image
               src={src}
               alt={alt}
