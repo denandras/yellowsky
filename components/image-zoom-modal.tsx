@@ -18,6 +18,8 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [showControls, setShowControls] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   // Detect image dimensions
@@ -38,7 +40,9 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       setPosition({ x: 50, y: 50 });
       setShowControls(false);
       setHasDragged(false);
-      const timer = setTimeout(() => setShowControls(true), 500);
+      setIsClosing(false);
+      setIsVisible(true);
+      const timer = setTimeout(() => setShowControls(true), 200);
       return () => clearTimeout(timer);
     } else {
       setShowControls(false);
@@ -145,7 +149,11 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     // Only close if clicking the backdrop itself (not the image container)
     if (e.target === e.currentTarget) {
-      onClose();
+      setIsClosing(true);
+      setTimeout(() => {
+        setIsVisible(false);
+        onClose();
+      }, 200);
     }
   }, [onClose]);
 
@@ -185,19 +193,25 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     setIsDragging(false);
   }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isVisible) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm animate-fadeIn"
+      className={`fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
       onClick={handleBackdropClick}
       onDoubleClick={handleDoubleClick}
     >
       {/* Close button */}
       {showControls && (
         <button
-          onClick={onClose}
-          className="fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+          onClick={() => {
+            setIsClosing(true);
+            setTimeout(() => {
+              setIsVisible(false);
+              onClose();
+            }, 200);
+          }}
+          className={`fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20 ${showControls ? 'opacity-100' : 'opacity-0'}`}
           aria-label="Close"
         >
           <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -208,7 +222,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
 
       {/* Zoom controls */}
       {showControls && (
-        <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
+        <div className={`fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm transition-opacity duration-200 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
           <button
             onClick={() => setScale(s => Math.max(1, s - 0.5))}
             disabled={scale <= 1}
@@ -278,8 +292,15 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
           from { opacity: 0; }
           to { opacity: 1; }
         }
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
         .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
+          animation: fadeIn 0.2s ease-out;
+        }
+        .animate-fadeOut {
+          animation: fadeOut 0.2s ease-out forwards;
         }
       `}</style>
     </div>
