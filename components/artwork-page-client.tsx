@@ -47,7 +47,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [imageAspect, setImageAspect] = useState<number | null>(null);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -166,13 +165,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     return () => clearTimeout(timer);
   }, [heroLoaded]);
 
-  // Show content after image loads
-  useEffect(() => {
-    if (imageLoaded) {
-      setContentVisible(true);
-    }
-  }, [imageLoaded]);
-
   return (
     <>
       <ImageZoomModal
@@ -286,22 +278,22 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Content Section */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Artwork image - fade in when loaded */}
+            {/* Left: Artwork image */}
             <div className="relative">
               {/* Skeleton while loading */}
               {!imageLoaded && !imageError && (
                 <div
                   className="w-full animate-pulse bg-neutral-100 rounded-lg"
-                  style={{ aspectRatio: 0.707 }}
+                  style={{ aspectRatio: imageAspect ?? 0.707 }}
                 />
               )}
 
-              {/* Image - only visible when loaded */}
-              {imageLoaded && !imageError && (
+              {/* Image container - always rendered to trigger onLoad, opacity transition when loaded */}
+              {!imageError && (
                 <div
-                  className={`relative overflow-hidden rounded-lg cursor-zoom-in transition-all duration-700 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`relative overflow-hidden rounded-lg transition-opacity duration-500 ${imageLoaded ? 'opacity-100 cursor-zoom-in' : 'opacity-0'}`}
                   style={{ aspectRatio: imageAspect ?? 0.707 }}
-                  onClick={() => setArtworkZoomOpen(true)}
+                  onClick={() => imageLoaded && setArtworkZoomOpen(true)}
                 >
                   <Image
                     src={artwork.viewUrl}
@@ -332,7 +324,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options - always visible */}
+            {/* Right: Purchase options */}
             <div className="flex flex-col">
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
