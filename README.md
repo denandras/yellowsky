@@ -30,6 +30,7 @@ npm run dev
 
 ## TODO
 
+- [ ] URL lang param — Accept `?lang=en` or `?lang=hu` to pre-set site language (for marketing links)
 - [ ] Canvas preview - artwork preview on canvas element before purchase
 - [ ] SEO - meta tags, Open Graph, structured data for artwork pages
 - [ ] Marketing - social sharing, email notifications, promotional campaigns

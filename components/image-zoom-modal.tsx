@@ -14,10 +14,11 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
+  const [hasDragged, setHasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [showControls, setShowControls] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
 
   // Detect image dimensions
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       setScale(1);
       setPosition({ x: 50, y: 50 });
       setShowControls(false);
+      setHasDragged(false);
       const timer = setTimeout(() => setShowControls(true), 500);
       return () => clearTimeout(timer);
     } else {
@@ -87,6 +89,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (scale > 1) {
       setIsDragging(true);
+      setHasDragged(false);
       setDragStart({ x: e.clientX, y: e.clientY });
     }
   }, [scale]);
@@ -94,13 +97,21 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging || scale <= 1) return;
 
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
+    // Mark as dragged if moved more than 5px
+    const dx = Math.abs(e.clientX - dragStart.x);
+    const dy = Math.abs(e.clientY - dragStart.y);
+    if (dx > 5 || dy > 5) {
+      setHasDragged(true);
+    }
 
-    setPosition(prev => ({
-      x: Math.max(0, Math.min(100, prev.x - dx * 0.1)),
-      y: Math.max(0, Math.min(100, prev.y - dy * 0.1)),
-    }));
+    setPosition(prev => {
+      const newX = prev.x - (e.clientX - dragStart.x) * 0.05;
+      const newY = prev.y - (e.clientY - dragStart.y) * 0.05;
+      return {
+        x: Math.max(0, Math.min(100, newX)),
+        y: Math.max(0, Math.min(100, newY)),
+      };
+    });
 
     setDragStart({ x: e.clientX, y: e.clientY });
   }, [isDragging, scale, dragStart]);
@@ -109,27 +120,46 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     setIsDragging(false);
   }, []);
 
-  // Double-click to toggle zoom (cycle through 1x -> 2x -> 4x -> 1x)
-  const handleDoubleClick = useCallback(() => {
-    setScale(s => s < 2 ? 2 : s < 4 ? 4 : 1);
-    setPosition({ x: 50, y: 50 });
-  }, []);
-
-  // Single-click to zoom in (when at 1x) or reset (when zoomed)
+  // Click on image: zoom in at click position, or reset if already zoomed
   const handleImageClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
+    // Don't zoom if we just dragged
+    if (hasDragged) {
+      setHasDragged(false);
+      return;
+    }
+
     if (scale === 1) {
+      // Zoom in to 2x at click position
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setPosition({ x, y });
       setScale(2);
     } else {
+      // Reset zoom
       setScale(1);
       setPosition({ x: 50, y: 50 });
     }
-  }, [scale]);
+  }, [scale, hasDragged]);
+
+  // Click on backdrop: close modal
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    // Only close if clicking the backdrop itself (not the image container)
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  }, [onClose]);
+
+  // Prevent double-click from selecting text
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+  }, []);
 
   // Touch handling for mobile
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 1 && scale > 1) {
       setIsDragging(true);
+      setHasDragged(false);
       setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     }
   }, [scale]);
@@ -137,15 +167,19 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging || e.touches.length !== 1 || scale <= 1) return;
 
-    const dx = e.touches[0].clientX - dragStart.x;
-    const dy = e.touches[0].clientY - dragStart.y;
+    const touch = e.touches[0];
+    const dx = Math.abs(touch.clientX - dragStart.x);
+    const dy = Math.abs(touch.clientY - dragStart.y);
+    if (dx > 5 || dy > 5) {
+      setHasDragged(true);
+    }
 
     setPosition(prev => ({
-      x: Math.max(0, Math.min(100, prev.x - dx * 0.1)),
-      y: Math.max(0, Math.min(100, prev.y - dy * 0.1)),
+      x: Math.max(0, Math.min(100, prev.x - (touch.clientX - dragStart.x) * 0.05)),
+      y: Math.max(0, Math.min(100, prev.y - (touch.clientY - dragStart.y) * 0.05)),
     }));
 
-    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setDragStart({ x: touch.clientX, y: touch.clientY });
   }, [isDragging, scale, dragStart]);
 
   const handleTouchEnd = useCallback(() => {
@@ -156,18 +190,14 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-fadeIn"
-      onClick={(e) => {
-        // Only close if clicking the background, not the image
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
+      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm animate-fadeIn"
+      onClick={handleBackdropClick}
+      onDoubleClick={handleDoubleClick}
     >
       {/* Close button */}
       {showControls && (
         <button
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          onClick={onClose}
           className="fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
           aria-label="Close"
         >
@@ -179,7 +209,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
 
       {/* Zoom controls */}
       {showControls && (
-        <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
           <button
             onClick={() => setScale(s => Math.max(1, s - 0.5))}
             disabled={scale <= 1}
@@ -206,28 +236,25 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
         </div>
       )}
 
-      {/* Image container - click through to backdrop unless on image */}
-      <div
-        ref={containerRef}
-        className="relative h-full w-full overflow-hidden"
-        style={{ cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in" }}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onDoubleClick={handleDoubleClick}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+      {/* Centered image container */}
+      <div className="absolute inset-0 flex items-center justify-center p-4">
         <div
-          className="absolute inset-0 flex items-center justify-center"
+          ref={imageRef}
+          className="relative select-none"
           style={{
-            transform: `scale(${scale}) translate(${50 - position.x}%, ${50 - position.y}%)`,
+            cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
+            transform: `scale(${scale})`,
             transformOrigin: `${position.x}% ${position.y}%`,
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div onClick={handleImageClick}>
             <Image
@@ -245,6 +272,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
           </div>
         </div>
       </div>
+
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }
