@@ -47,6 +47,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [imageAspect, setImageAspect] = useState<number | null>(null);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -164,6 +165,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     const timer = setTimeout(() => setShowTitle(true), 300);
     return () => clearTimeout(timer);
   }, [heroLoaded]);
+
+  // Fade in content after mount
+  useEffect(() => {
+    const timer = setTimeout(() => setContentVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -325,7 +332,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             </div>
 
             {/* Right: Purchase options */}
-            <div className="flex flex-col">
+            <div className={`flex flex-col transition-all duration-500 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
                   <h3 className="font-display text-lg font-semibold mb-4">
