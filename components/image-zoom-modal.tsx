@@ -17,6 +17,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const [hasDragged, setHasDragged] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [showContent, setShowContent] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   // Detect image dimensions
@@ -30,12 +31,18 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
     img.src = src;
   }, [isOpen, src]);
 
-  // Reset on open
+  // Reset on open and fade in content
   useEffect(() => {
     if (isOpen) {
       setScale(1);
       setPosition({ x: 50, y: 50 });
       setHasDragged(false);
+      setShowContent(false);
+      // Fade in content after a brief delay
+      const timer = setTimeout(() => setShowContent(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
     }
   }, [isOpen, src]);
 
@@ -200,7 +207,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       {/* Close button */}
       <button
         onClick={onClose}
-        className="fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+        className={`fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 ${showContent ? 'opacity-100' : 'opacity-0'}`}
         aria-label="Close"
       >
         <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -209,7 +216,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       </button>
 
       {/* Zoom controls */}
-      <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
+      <div className={`fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm transition-opacity duration-300 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
         <button
           onClick={() => setScale(s => Math.max(1, s - 0.5))}
           disabled={scale <= 1}
@@ -236,7 +243,9 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       </div>
 
       {/* Centered image container - pointer-events-none so clicks pass through to backdrop */}
-      <div className="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div
+        className={`absolute inset-0 flex items-center justify-center p-4 pointer-events-none transition-opacity duration-300 ${showContent ? 'opacity-100' : 'opacity-0'}`}
+      >
         <div
           ref={imageRef}
           className="relative select-none pointer-events-auto"
