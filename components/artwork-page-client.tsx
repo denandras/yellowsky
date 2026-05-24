@@ -251,8 +251,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               </div>
             ) : (
               <div
-                className="absolute inset-0 cursor-zoom-in"
+                className={`absolute inset-0 ${heroLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
                 onClick={(e) => {
+                  if (!heroLoaded) return;
                   const rect = e.currentTarget.getBoundingClientRect();
                   const y = e.clientY - rect.top;
                   const fadeStart = rect.height * 0.88;
@@ -288,9 +289,13 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border p-3 md:p-6">
                 {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
                 <div
-                  className="relative overflow-hidden cursor-zoom-in"
+                  className={`relative overflow-hidden ${imageLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
                   style={{ aspectRatio: imageAspect ?? 0.707 }}
-                  onClick={() => setArtworkZoomOpen(true)}
+                  onClick={() => {
+                    if (imageLoaded) {
+                      setArtworkZoomOpen(true);
+                    }
+                  }}
                 >
                   {!imageLoaded && !imageError && (
                     <div className="absolute inset-0 animate-pulse bg-neutral-100" />

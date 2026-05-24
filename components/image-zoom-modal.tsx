@@ -15,13 +15,31 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [showControls, setShowControls] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Reset on open
+  // Detect image dimensions
+  useEffect(() => {
+    if (!isOpen || !src) return;
+    
+    const img = new window.Image();
+    img.onload = () => {
+      setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = src;
+  }, [isOpen, src]);
+
+  // Reset on open, then show controls after delay
   useEffect(() => {
     if (isOpen) {
       setScale(1);
       setPosition({ x: 50, y: 50 });
+      setShowControls(false);
+      const timer = setTimeout(() => setShowControls(true), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowControls(false);
     }
   }, [isOpen, src]);
 
@@ -126,7 +144,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-fadeIn"
       onClick={(e) => {
         // Only close if clicking the background, not the image
         if (e.target === e.currentTarget) {
@@ -135,42 +153,46 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
       }}
     >
       {/* Close button */}
-      <button
-        onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
-        aria-label="Close"
-      >
-        <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {showControls && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="fixed top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+          aria-label="Close"
+        >
+          <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
 
       {/* Zoom controls */}
-      <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
-        <button
-          onClick={() => setScale(s => Math.max(1, s - 0.5))}
-          disabled={scale <= 1}
-          className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
-          aria-label="Zoom out"
-        >
-          <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-          </svg>
-        </button>
-        <span className="min-w-[3rem] text-center text-sm text-white">
-          {Math.round(scale * 100)}%
-        </span>
-        <button
-          onClick={() => setScale(s => Math.min(4, s + 0.5))}
-          disabled={scale >= 4}
-          className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
-          aria-label="Zoom in"
-        >
-          <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
-      </div>
+      {showControls && (
+        <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => setScale(s => Math.max(1, s - 0.5))}
+            disabled={scale <= 1}
+            className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
+            aria-label="Zoom out"
+          >
+            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+          <span className="min-w-[3rem] text-center text-sm text-white">
+            {Math.round(scale * 100)}%
+          </span>
+          <button
+            onClick={() => setScale(s => Math.min(4, s + 0.5))}
+            disabled={scale >= 4}
+            className="flex size-8 items-center justify-center rounded-full text-white transition-all hover:bg-white/20 disabled:opacity-30"
+            aria-label="Zoom in"
+          >
+            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Image container */}
       <div
@@ -196,19 +218,33 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
         >
-          <Image
-            src={src}
-            alt={alt}
-            width={1200}
-            height={1600}
-            className="max-h-[85vh] max-w-[90vw] object-contain"
-            priority
-            unoptimized
-            draggable={false}
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          <div 
+            className="bg-white p-1"
+            style={imageDimensions ? { aspectRatio: `${imageDimensions.width}/${imageDimensions.height}` } : undefined}
+          >
+            <Image
+              src={src}
+              alt={alt}
+              width={imageDimensions?.width ?? 1200}
+              height={imageDimensions?.height ?? 1600}
+              className="max-h-[85vh] max-w-[90vw] object-contain"
+              priority
+              unoptimized
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

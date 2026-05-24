@@ -139,10 +139,12 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
       <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
-            <div className="flex items-center gap-2">
-              <BrandMark />
-              <h1 className="font-display text-lg font-bold tracking-tight uppercase">{labels.header}</h1>
-            </div>
+            <Link
+              href="/"
+              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity"
+            >
+              YELLOWSKY
+            </Link>
             <div className="flex items-center gap-3">
               <LanguageSwitcher initialLanguage={initialLanguage} />
               <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
