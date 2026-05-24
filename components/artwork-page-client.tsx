@@ -48,7 +48,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
-  const [purchaseVisible, setPurchaseVisible] = useState(false);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
   const hasJpg = !!artwork.heroUrl;
@@ -167,12 +166,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     return () => clearTimeout(timer);
   }, [heroLoaded]);
 
-  // Show content after image loads with staggered fade-in
+  // Show content after image loads
   useEffect(() => {
     if (imageLoaded) {
       setContentVisible(true);
-      // Stagger the purchase section
-      setTimeout(() => setPurchaseVisible(true), 150);
     }
   }, [imageLoaded]);
 
@@ -335,8 +332,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options - staggered fade-in */}
-            <div className={`flex flex-col transition-all duration-700 ${purchaseVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            {/* Right: Purchase options - always visible */}
+            <div className="flex flex-col">
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
                   <h3 className="font-display text-lg font-semibold mb-4">
