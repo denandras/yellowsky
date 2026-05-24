@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${artwork.title} | Yellowsky`,
+    title: artwork.title,
     description: artwork.alt,
     openGraph: {
       title: `${artwork.title} | Yellowsky`,
