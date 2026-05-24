@@ -284,51 +284,47 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {/* Content Section - Artwork + Purchase Options */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Main artwork image in bracket */}
+            {/* Left: Main artwork image - no container, image sizes itself */}
             <div className="relative">
-              <div className="relative bg-white rounded-lg shadow-sm border border-neutral-border">
-                {/* Bracket frame - dynamic aspect ratio from image, default to portrait while loading */}
-                <div
-                  className={`relative overflow-hidden ${imageLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
-                  style={{ aspectRatio: imageAspect ?? 0.707 }}
-                  onClick={() => {
-                    if (imageLoaded) {
-                      setArtworkZoomOpen(true);
-                    }
-                  }}
-                >
-                  {!imageLoaded && !imageError && (
-                    <div className="absolute inset-0 animate-pulse bg-neutral-100" />
-                  )}
-                  {imageError ? (
-                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
-                      <p className="text-sm text-text-muted">Image unavailable</p>
-                    </div>
-                  ) : (
-                    <Image
-                      src={artwork.viewUrl}
-                      alt={artwork.alt}
-                      fill
-                      className={`object-contain transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      unoptimized
-                      draggable={false}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onLoad={(e) => {
-                        console.log('Artwork image loaded:', artwork.viewUrl, e.currentTarget.naturalWidth, e.currentTarget.naturalHeight);
-                        const img = e.currentTarget;
-                        if (img.naturalWidth && img.naturalHeight) {
-                          setImageAspect(img.naturalWidth / img.naturalHeight);
-                        }
-                        setImageLoaded(true);
-                      }}
-                      onError={(e) => {
-                        console.error('Artwork image error:', artwork.viewUrl, e);
-                        setImageError(true);
-                      }}
-                    />
-                  )}
-                </div>
+              {/* Image container - dynamic aspect ratio from image, default to portrait while loading */}
+              <div
+                className={`relative overflow-hidden rounded-lg ${imageLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
+                style={{ aspectRatio: imageAspect ?? 0.707 }}
+                onClick={() => {
+                  if (imageLoaded) {
+                    setArtworkZoomOpen(true);
+                  }
+                }}
+              >
+                {!imageLoaded && !imageError && (
+                  <div className="absolute inset-0 animate-pulse bg-neutral-100" />
+                )}
+                {imageError ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
+                    <p className="text-sm text-text-muted">Image unavailable</p>
+                  </div>
+                ) : (
+                  <Image
+                    src={artwork.viewUrl}
+                    alt={artwork.alt}
+                    fill
+                    className="object-contain transition-opacity duration-500 bg-white"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
+                      if (img.naturalWidth && img.naturalHeight) {
+                        setImageAspect(img.naturalWidth / img.naturalHeight);
+                      }
+                      setImageLoaded(true);
+                    }}
+                    onError={() => {
+                      setImageError(true);
+                    }}
+                  />
+                )}
               </div>
             </div>
 

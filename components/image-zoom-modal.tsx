@@ -218,8 +218,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
             transition: isDragging ? "none" : "transform 0.2s ease-out",
           }}
         >
-          <div 
-            className="bg-white p-1"
+          <div
             style={imageDimensions ? { aspectRatio: `${imageDimensions.width}/${imageDimensions.height}` } : undefined}
           >
             <Image
@@ -227,7 +226,7 @@ export default function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomM
               alt={alt}
               width={imageDimensions?.width ?? 1200}
               height={imageDimensions?.height ?? 1600}
-              className="max-h-[85vh] max-w-[90vw] object-contain"
+              className="max-h-[90vh] max-w-[95vw] object-contain"
               priority
               unoptimized
               draggable={false}
