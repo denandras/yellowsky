@@ -39,19 +39,19 @@ export default function CartDrawer({
 }: CartDrawerProps) {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCart();
 
+  if (!isOpen) return null;
+
   return (
     <>
-      {/* Backdrop - always rendered for transition */}
+      {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-[80] transition-all duration-300 ${isOpen ? 'bg-black/30 backdrop-blur-sm' : 'bg-black/0 backdrop-blur-none pointer-events-none'}`}
+        className="fixed inset-0 z-[80] bg-black/30 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 z-[90] h-full w-full max-w-sm transform bg-white shadow-xl transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className="fixed right-0 top-0 z-[90] h-full w-full max-w-sm transform bg-white shadow-xl transition-transform duration-300"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-neutral-border p-4">
