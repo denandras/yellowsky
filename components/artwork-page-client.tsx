@@ -340,94 +340,99 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options - skeleton while loading, then staggered fade-in */}
+            {/* Right: Purchase options */}
             <div className="flex flex-col">
-              {/* Skeleton while image loads */}
-              {!showSelectSize && !imageError && (
-                <div className="bg-white rounded-lg border border-neutral-border p-6 animate-pulse">
-                  <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                  </div>
-                  <div className="h-12 bg-neutral-200 rounded-lg" />
-                </div>
-              )}
-
-              {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
-                <div className="bg-white rounded-lg border border-neutral-border p-6">
-                  {/* Title */}
-                  <h3 className={`font-display text-lg font-semibold mb-4 transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                    {labels.selectSize}
-                  </h3>
-
-                  {/* Size buttons */}
-                  <div className={`grid grid-cols-2 gap-3 mb-6 transition-all duration-300 ${showSizeButtons ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                    {[...artwork.prices].sort((a, b) => {
-                      return (b.nickname || '').localeCompare(a.nickname || '');
-                    }).map(price => (
-                      <button
-                        key={price.id}
-                        type="button"
-                        onClick={() => setSelectedSize(price.id)}
-                        className={`rounded-lg border-2 px-4 py-3 text-center transition-all ${
-                          selectedSize === price.id
-                            ? 'border-primary bg-primary/5 text-primary font-semibold'
-                            : 'border-neutral-border hover:border-neutral-300'
-                        }`}
-                      >
-                        <div className="font-display text-sm">{price.nickname || 'Standard'}</div>
-                        <div className="text-lg font-bold mt-1">
-                          {formatPrice(price.unitAmount || 0, price.currency)}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Add to cart button */}
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={!selectedSize}
-                    className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 ${
-                      showAddButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-                    } ${
-                      showAddedMessage
-                        ? 'bg-green-600'
-                        : selectedSize
-                          ? 'bg-primary hover:bg-primary/90'
-                          : 'bg-neutral-300 cursor-not-allowed'
-                    }`}
-                  >
-                    {showAddedMessage ? labels.addedToCart : labels.addToCart}
-                  </button>
-
-                  {showPostAddOptions && (
-                    <div className="mt-4 flex gap-3 animate-fadeIn">
-                      <button
-                        type="button"
-                        onClick={() => router.push("/webshop")}
-                        className="flex-1 rounded-lg border border-neutral-border bg-white px-4 py-3 text-center text-sm font-medium hover:bg-neutral-50 transition-colors"
-                      >
-                        {labels.continueShopping}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setCartOpen(true)}
-                        className="flex-1 rounded-lg bg-text-dark px-4 py-3 text-center text-sm font-medium text-white hover:bg-text-dark/90 transition-colors"
-                      >
-                        {labels.proceedToCheckout}
-                      </button>
+              {/* Container - skeleton, purchase UI, or coming soon */}
+              <div className="bg-white rounded-lg border border-neutral-border p-6">
+                {/* Skeleton while image loads */}
+                {!showSelectSize && !imageError && (
+                  <div className="animate-pulse">
+                    <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="h-20 bg-neutral-200 rounded-lg" />
+                      <div className="h-20 bg-neutral-200 rounded-lg" />
                     </div>
-                  )}
-                </div>
-              ) : (
-                <div className={`bg-neutral-50 rounded-lg border border-neutral-border p-6 text-center transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                  <p className="text-text-muted">
-                    {labels.notForSale}
-                  </p>
-                </div>
-              )}
+                    <div className="h-12 bg-neutral-200 rounded-lg" />
+                  </div>
+                )}
+
+                {/* Coming soon message */}
+                {showSelectSize && !artwork.hasProduct && (
+                  <div className={`text-center transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                    <p className="text-text-muted">
+                      {language === "hu" ? "Hamarosan" : "Coming soon"}
+                    </p>
+                  </div>
+                )}
+
+                {/* Purchase UI */}
+                {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 && showSelectSize && (
+                  <>
+                    {/* Title */}
+                    <h3 className="font-display text-lg font-semibold mb-4">
+                      {labels.selectSize}
+                    </h3>
+
+                    {/* Size buttons */}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      {[...artwork.prices].sort((a, b) => {
+                        return (b.nickname || '').localeCompare(a.nickname || '');
+                      }).map(price => (
+                        <button
+                          key={price.id}
+                          type="button"
+                          onClick={() => setSelectedSize(price.id)}
+                          className={`rounded-lg border-2 px-4 py-3 text-center transition-all ${
+                            selectedSize === price.id
+                              ? 'border-primary bg-primary/5 text-primary font-semibold'
+                              : 'border-neutral-border hover:border-neutral-300'
+                          }`}
+                        >
+                          <div className="font-display text-sm">{price.nickname || 'Standard'}</div>
+                          <div className="text-lg font-bold mt-1">
+                            {formatPrice(price.unitAmount || 0, price.currency)}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Add to cart button */}
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      disabled={!selectedSize}
+                      className={`w-full rounded-lg py-3 font-display font-semibold text-white ${
+                        showAddedMessage
+                          ? 'bg-green-600'
+                          : selectedSize
+                            ? 'bg-primary hover:bg-primary/90'
+                            : 'bg-neutral-300 cursor-not-allowed'
+                      }`}
+                    >
+                      {showAddedMessage ? labels.addedToCart : labels.addToCart}
+                    </button>
+
+                    {showPostAddOptions && (
+                      <div className="mt-4 flex gap-3 animate-fadeIn">
+                        <button
+                          type="button"
+                          onClick={() => router.push("/webshop")}
+                          className="flex-1 rounded-lg border border-neutral-border bg-white px-4 py-3 text-center text-sm font-medium hover:bg-neutral-50 transition-colors"
+                        >
+                          {labels.continueShopping}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCartOpen(true)}
+                          className="flex-1 rounded-lg bg-text-dark px-4 py-3 text-center text-sm font-medium text-white hover:bg-text-dark/90 transition-colors"
+                        >
+                          {labels.proceedToCheckout}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
 
               {/* Trust signals */}
               <div className={`mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted transition-all duration-300 ${showTrustSignals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
