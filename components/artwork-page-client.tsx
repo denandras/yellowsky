@@ -340,20 +340,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
             </div>
 
-            {/* Right: Purchase options - skeleton while loading, then staggered fade-in */}
+            {/* Right: Purchase options */}
             <div className="flex flex-col">
-              {/* Skeleton while image loads */}
-              {!showSelectSize && !imageError && (
-                <div className="bg-white rounded-lg border border-neutral-border p-6 animate-pulse">
-                  <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
-                  <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                    <div className="h-20 bg-neutral-200 rounded-lg" />
-                  </div>
-                  <div className="h-12 bg-neutral-200 rounded-lg" />
-                </div>
-              )}
-
               {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 ? (
                 <div className="bg-white rounded-lg border border-neutral-border p-6">
                   {/* Title */}
@@ -430,7 +418,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               )}
 
               {/* Trust signals */}
-              <div className={`mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-muted transition-all duration-300 ${showTrustSignals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+              <div className={`mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted transition-all duration-300 ${showTrustSignals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
                 <span className="flex items-center gap-1.5">
                   <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
