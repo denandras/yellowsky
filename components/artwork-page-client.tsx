@@ -401,7 +401,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       type="button"
                       onClick={handleAddToCart}
                       disabled={!selectedSize}
-                      className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 opacity-0 translate-y-2 animate-fade-in ${
+                      className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 opacity-0 translate-y-2 animate-fade-in mb-4 ${
                         showAddedMessage
                           ? 'bg-green-600'
                           : selectedSize
