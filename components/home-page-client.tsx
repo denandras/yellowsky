@@ -10,7 +10,7 @@ import { IconShoppingBag } from "@/components/icons";
 import CommunityGallery from "@/components/community-gallery";
 import { useCart } from "@/lib/cart-context";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 type CommunityPost = {
@@ -47,30 +47,69 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
     return () => clearTimeout(timer);
   }, [heroLoaded]);
 
-  // Reveal animation observer
+  const [heroBottomDebug, setHeroBottomDebug] = useState(0);
+  const [headerBottomDebug, setHeaderBottomDebug] = useState(0);
+  const [contentUnfixed, setContentUnfixed] = useState(false);
+  const contentUnfixedRef = useRef(false);
+
+  // Reveal animation observer - based on hero scroll position
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
+    const checkVisibility = () => {
+      // Target the image container, not the entire hero section
+      const heroImage = document.querySelector('section[class*="z-20"] > div[class*="absolute"]');
+      if (!heroImage) return;
+
+      const heroRect = heroImage.getBoundingClientRect();
+      const heroBottom = heroRect.bottom;
+      
+      // Get header bottom for debug
+      const header = document.querySelector('header');
+      const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+      
+      // Debug: update line positions
+      setHeroBottomDebug(heroBottom);
+      setHeaderBottomDebug(headerBottom);
+
+      // When hero bottom reaches header bottom, unfixed content
+      if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
+        contentUnfixedRef.current = true;
+        setContentUnfixed(true);
+      } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
+        contentUnfixedRef.current = false;
+        setContentUnfixed(false);
+      }
+
+      nodes.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        
+        // Fade in when hero has scrolled away enough that paragraph is fully exposed
+        // Fade out when scrolling back and hero covers the paragraph again
+        if (heroBottom < rect.top) {
+          // Hero bottom is above paragraph top → paragraph exposed → fade in
+          if (!node.classList.contains("is-visible")) {
+            node.classList.add("is-visible");
+          }
+        } else {
+          // Hero bottom is below paragraph top → paragraph covered → fade out
+          if (node.classList.contains("is-visible")) {
+            node.classList.remove("is-visible");
           }
         }
-      },
-      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
-    );
+      });
+    };
 
-    const raf = window.requestAnimationFrame(() => {
-      nodes.forEach((node) => observer.observe(node));
-    });
+    // Check on scroll and resize, slight delay for initial load
+    const timer = setTimeout(checkVisibility, 100);
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    window.addEventListener("resize", checkVisibility, { passive: true });
 
     return () => {
-      window.cancelAnimationFrame(raf);
-      observer.disconnect();
+      clearTimeout(timer);
+      window.removeEventListener("scroll", checkVisibility);
+      window.removeEventListener("resize", checkVisibility);
     };
   }, []);
 
@@ -239,7 +278,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         </header>
 
         {/* Hero section - scrolls up and away, in front of purple line */}
-        <section className="relative w-full z-20 h-[calc(60vh-7px+40px-13.25rem)] sm:h-[calc(60vh-7px+40px-13.25rem)] md:h-[calc(78vh-7px+42px-13.75rem)] lg:h-[calc(78vh-7px+42px-14.5rem)]">
+        <section className="relative w-full z-20 h-[calc(60vh-13px+40px-13.25rem)] sm:h-[calc(60vh-13px+40px-13.25rem)] md:h-[calc(78vh-14px+42px-13.75rem)] lg:h-[calc(78vh-7px+42px-14.5rem)]">
           {/* Image - full width, positioned at top */}
           <div className="absolute top-0 left-0 right-0 h-[calc(60vh-7px)] md:h-[calc(78vh-7px)] overflow-hidden bg-neutral-100">
             {mounted && (
@@ -299,17 +338,38 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           </div>
         </div>
 
-        {/* Scroll spacer - creates scroll height so hero can scroll away completely */}
+        {/* Scroll spacer - creates scroll height for hero reveal */}
         <div className="h-[100vh]" />
 
-        {/* Fixed content - stays in place, revealed as hero scrolls away */}
-        <div className="fixed inset-x-0 top-16 bottom-0 z-0">
-          {/* Spacer to position content below hero */}
-          <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />
+        {/* Debug: Hero bottom indicator */}
+        {heroBottomDebug > 0 && (
+          <>
+            {/* Header bottom line */}
+            <div 
+              className="fixed left-0 right-0 h-0.5 bg-green-500 z-50 pointer-events-none"
+              style={{ top: `${headerBottomDebug}px` }}
+            />
+            {/* Hero bottom line */}
+            <div 
+              className="fixed left-0 right-0 h-0.5 bg-purple-500 z-50 pointer-events-none"
+              style={{ top: `${heroBottomDebug}px` }}
+            />
+            {/* Gap display */}
+            <div 
+              className="fixed left-4 z-50 pointer-events-none bg-black/70 text-white px-2 py-1 rounded text-xs font-mono"
+              style={{ top: `${(headerBottomDebug + heroBottomDebug) / 2}px` }}
+            >
+              Gap: {Math.round(heroBottomDebug - headerBottomDebug)}px
+            </div>
+          </>
+        )}
 
+        {/* Content - fixed until hero sticks, then unfixed */}
+        <div className={`${contentUnfixed ? 'relative' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}>
+          {!contentUnfixed && <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />}
           {/* CTA - Gallery button */}
           <section className="px-3 pt-8 pb-3">
-            <div className="mx-auto max-w-2xl">
+            <div className="mx-auto max-w-2xl opacity-0 transition-opacity duration-700" data-reveal>
               <a
                 href="/webshop"
                 className="block w-full"
@@ -338,7 +398,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 {labels.storyParagraphs.map((paragraph, idx) => (
                   <p
                     key={`story-${idx}`}
-                    className="text-base leading-relaxed text-text-muted text-justify"
+                    className="text-base leading-relaxed text-text-muted text-justify opacity-0 transition-opacity duration-700"
+                    data-reveal
                   >
                     {paragraph}
                   </p>
