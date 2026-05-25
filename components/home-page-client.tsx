@@ -373,7 +373,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         {/* Content - fixed until hero sticks, then unfixed */}
         <div 
           className={`${contentUnfixed ? 'relative' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}
-          style={contentUnfixed ? { marginTop: `${unfixedMarginTop}px` } : undefined}
         >
           {!contentUnfixed && <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />}
           {/* CTA - Gallery button */}
@@ -414,30 +413,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                   </p>
                 ))}
               </div>
-            </div>
-          </section>
-
-          {/* CTA - Gallery button */}
-          <section className="px-3 py-8">
-            <div className="mx-auto max-w-2xl">
-              <a
-                href="/webshop"
-                className="block w-full"
-              >
-                <div className="group flex items-center gap-4 rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
-                    <IconShoppingBag className="size-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl font-semibold">
-                      {labels.ctaTitle}
-                    </h3>
-                    <p className="mt-1 text-xs font-medium tracking-widest text-text-muted">
-                      {labels.ctaLabel}
-                    </p>
-                  </div>
-                </div>
-              </a>
             </div>
           </section>
 
