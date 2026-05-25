@@ -75,15 +75,14 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       setHeaderBottomDebug(headerBottom);
 
       // When hero bottom reaches header bottom, unfixed content
-      if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
+      // Add 1px buffer to prevent jitter at boundary
+      if (heroBottom <= headerBottom - 1 && !contentUnfixedRef.current) {
         contentUnfixedRef.current = true;
         setContentUnfixed(true);
         // Calculate margin to keep content in same visual position
-        // Content was fixed at top-16 (64px below top)
-        // Now it's relative, need to account for scroll position
         const scrollY = window.scrollY;
         setUnfixedMarginTop(scrollY - 64);
-      } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
+      } else if (heroBottom > headerBottom + 1 && contentUnfixedRef.current) {
         contentUnfixedRef.current = false;
         setContentUnfixed(false);
         setUnfixedMarginTop(0);
