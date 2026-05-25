@@ -51,7 +51,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   const [headerBottomDebug, setHeaderBottomDebug] = useState(0);
   const [contentUnfixed, setContentUnfixed] = useState(false);
   const contentUnfixedRef = useRef(false);
-  const [unfixedMarginTop, setUnfixedMarginTop] = useState(0);
+  const [ctaTopDebug, setCtaTopDebug] = useState(0);
 
   // Reveal animation observer - based on hero scroll position
   useEffect(() => {
@@ -76,17 +76,20 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       // Debug logging
       console.log('heroBottom:', Math.round(heroBottom), 'headerBottom:', Math.round(headerBottom), 'unfixed:', contentUnfixedRef.current);
 
+      // Track CTA position
+      const cta = document.querySelector('[data-cta]');
+      if (cta) {
+        const ctaRect = cta.getBoundingClientRect();
+        setCtaTopDebug(ctaRect.top);
+      }
+
       // When hero bottom reaches header bottom, unfixed content
       if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
         contentUnfixedRef.current = true;
         setContentUnfixed(true);
-        // Calculate margin to keep content in same visual position
-        const scrollY = window.scrollY;
-        setUnfixedMarginTop(scrollY - 64);
       } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
         contentUnfixedRef.current = false;
         setContentUnfixed(false);
-        setUnfixedMarginTop(0);
       }
 
       nodes.forEach((node) => {
@@ -350,7 +353,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         </div>
 
         {/* Scroll spacer - creates scroll height for hero reveal */}
-        <div className="h-[100vh]" />
+        {!contentUnfixed && <div className="h-[100vh]" />}
 
         {/* Debug: Hero bottom indicator */}
         {heroBottomDebug > 0 && (
@@ -372,16 +375,23 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             >
               Gap: {Math.round(heroBottomDebug - headerBottomDebug)}px
             </div>
+            {/* CTA position display */}
+            <div 
+              className="fixed right-4 z-50 pointer-events-none bg-blue-500/70 text-white px-2 py-1 rounded text-xs font-mono"
+              style={{ top: '80px' }}
+            >
+              CTA from header: {Math.round(ctaTopDebug - headerBottomDebug)}px
+            </div>
           </>
         )}
 
         {/* Content - fixed until hero sticks, then unfixed */}
         <div 
-          className={`${contentUnfixed ? 'relative' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}
+          className={`${contentUnfixed ? 'relative pt-[118px]' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}
         >
           {!contentUnfixed && <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />}
           {/* CTA - Gallery button */}
-          <section className="px-3 pt-8 pb-3">
+          <section data-cta className="px-3 pt-8 pb-3">
             <div className="mx-auto max-w-2xl opacity-0 transition-opacity duration-700" data-reveal>
               <a
                 href="/webshop"
