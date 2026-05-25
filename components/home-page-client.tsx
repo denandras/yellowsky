@@ -51,6 +51,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   const [headerBottomDebug, setHeaderBottomDebug] = useState(0);
   const [contentUnfixed, setContentUnfixed] = useState(false);
   const contentUnfixedRef = useRef(false);
+  const [unfixedMarginTop, setUnfixedMarginTop] = useState(0);
 
   // Reveal animation observer - based on hero scroll position
   useEffect(() => {
@@ -77,9 +78,15 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
         contentUnfixedRef.current = true;
         setContentUnfixed(true);
+        // Calculate margin to keep content in same visual position
+        // Content was fixed at top-16 (64px below top)
+        // Now it's relative, need to account for scroll position
+        const scrollY = window.scrollY;
+        setUnfixedMarginTop(scrollY - 64);
       } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
         contentUnfixedRef.current = false;
         setContentUnfixed(false);
+        setUnfixedMarginTop(0);
       }
 
       nodes.forEach((node) => {
@@ -365,7 +372,10 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         )}
 
         {/* Content - fixed until hero sticks, then unfixed */}
-        <div className={`${contentUnfixed ? 'relative' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}>
+        <div 
+          className={`${contentUnfixed ? 'relative' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}
+          style={contentUnfixed ? { marginTop: `${unfixedMarginTop}px` } : undefined}
+        >
           {!contentUnfixed && <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />}
           {/* CTA - Gallery button */}
           <section className="px-3 pt-8 pb-3">
