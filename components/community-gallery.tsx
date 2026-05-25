@@ -33,7 +33,7 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
       };
 
   return (
-    <section className="px-6 py-8" data-reveal>
+    <section className="px-6 py-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-6 text-center">
           <h2 className="font-display text-2xl font-bold tracking-tight">
@@ -74,15 +74,17 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
                     <span className="text-sm font-semibold">{post.likes}</span>
                   </div>
                 </div>
-                <a
-                  href={`https://instagram.com/${post.author.replace("@", "")}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(`https://instagram.com/${post.author.replace("@", "")}`, "_blank", "noopener,noreferrer");
+                  }}
                   className="text-xs font-medium text-white/80 hover:text-white transition-colors"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {post.author}
-                </a>
+                </button>
               </div>
             </a>
           ))}

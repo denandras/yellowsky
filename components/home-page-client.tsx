@@ -218,7 +218,10 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         loading={checkoutLoading}
       />
 
-      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
+      <div className="bg-background-light text-text-dark">
+        {/* Purple vertical line for testing */}
+        <div className="fixed left-1/2 top-16 bottom-0 w-px bg-purple-500 z-10 pointer-events-none" style={{ transform: 'translateX(-50%)' }} />
+
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
           <div className="flex h-16 w-full items-center justify-between px-6">
@@ -235,12 +238,11 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           </div>
         </header>
 
-        <main className="flex-1 pb-24">
-          {/* Hero section - full width image */}
-          <section className="relative w-full">
-            {/* Image - full width */}
-            <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(78vh-7px)] overflow-hidden bg-neutral-100">
-              {mounted && (
+        {/* Hero section - scrolls up and away, in front of purple line */}
+        <section className="relative w-full z-20 h-[calc(60vh-7px+40px-13.25rem)] sm:h-[calc(60vh-7px+40px-13.25rem)] md:h-[calc(78vh-7px+42px-13.75rem)] lg:h-[calc(78vh-7px+42px-14.5rem)]">
+          {/* Image - full width, positioned at top */}
+          <div className="absolute top-0 left-0 right-0 h-[calc(60vh-7px)] md:h-[calc(78vh-7px)] overflow-hidden bg-neutral-100">
+            {mounted && (
                 <Image
                   alt="Yellowsky German Street sketch - yellow architectural illustration"
                   className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
@@ -256,53 +258,83 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 />
               )}
             </div>
+          </section>
 
-            {/* Unified text overlay - bottom left at image edge */}
-            <div className="absolute left-0 -bottom-[40px] z-10 pointer-events-none w-full"
-            >
-              <div className={`flex flex-col items-start px-6 transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="relative -mt-[1px] md:mt-0">
-                  {/* Yellow offset text behind */}
-                  <h1 
-                    className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0" 
-                    style={{ 
-                      fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', 
-                      transform: 'translateX(4px) translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))', 
-                      color: '#ffcb2a' 
-                    }}
-                  >
-                    {labels.title}
-                  </h1>
-                  {/* Dark text on top */}
-                  <h1 
-                    className="font-display font-bold leading-none tracking-tighter relative" 
-                    style={{ 
-                      fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)', 
-                      transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))', 
-                      color: '#1a1a1a' 
-                    }}
-                  >
-                    {labels.title}
-                  </h1>
+        {/* Sticky title - stays at top while hero scrolls away */}
+        <div className="sticky top-[calc(64px+1.25rem+3px)] md:top-[calc(64px+1.25rem-1px)] z-20 pointer-events-none">
+          <div className="flex flex-col items-start px-6">
+            <div className="relative -mt-[1px] md:mt-0">
+              {/* Yellow offset text behind */}
+              <h1
+                className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0"
+                style={{
+                  fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)',
+                  transform: 'translateX(4px) translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                  color: '#ffcb2a'
+                }}
+              >
+                {labels.title}
+              </h1>
+              {/* Dark text on top */}
+              <h1
+                className="font-display font-bold leading-none tracking-tighter relative"
+                style={{
+                  fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)',
+                  transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                  color: '#1a1a1a'
+                }}
+              >
+                {labels.title}
+              </h1>
+            </div>
+            <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className="h-px w-12 bg-text-dark" />
+              <a
+                href="https://andrasdenes.com"
+                className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase pointer-events-auto"
+              >
+                {labels.subtitle}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll spacer - creates scroll height so hero can scroll away completely */}
+        <div className="h-[100vh]" />
+
+        {/* Fixed content - stays in place, revealed as hero scrolls away */}
+        <div className="fixed inset-x-0 top-16 bottom-0 z-0">
+          {/* Spacer to position content below hero */}
+          <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />
+
+          {/* CTA - Gallery button */}
+          <section className="px-3 pt-8 pb-3">
+            <div className="mx-auto max-w-2xl">
+              <a
+                href="/webshop"
+                className="block w-full"
+              >
+                <div className="group flex items-center gap-4 rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
+                    <IconShoppingBag className="size-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl font-semibold">
+                      {labels.ctaTitle}
+                    </h3>
+                    <p className="mt-1 text-xs font-medium tracking-widest text-text-muted">
+                      {labels.ctaLabel}
+                    </p>
+                  </div>
                 </div>
-                <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                  <div className="h-px w-12 bg-text-dark" />
-                  <a
-                    href="https://andrasdenes.com"
-                    className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase pointer-events-auto"
-                  >
-                    {labels.subtitle}
-                  </a>
-                </div>
-              </div>
+              </a>
             </div>
           </section>
 
-          {/* Story - all paragraphs with consistent spacing */}
-          <section className="relative" data-reveal>
-            <div className="relative px-3 pt-8 pb-6">
+          {/* Story - behind purple line */}
+          <section className="relative bg-background-light pt-4">
+            <div className="relative px-3 pb-6">
               <div className="mx-auto max-w-2xl space-y-6">
-                <div className="mb-6" />
                 {labels.storyParagraphs.map((paragraph, idx) => (
                   <p
                     key={`story-${idx}`}
@@ -343,11 +375,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
           {communityPosts.length > 0 && (
             <CommunityGallery posts={communityPosts} language={language} />
           )}
-        </main>
 
-        <BottomNav active="home" />
-
-        <footer className="bg-background-light py-12 pb-32 text-center">
+          <footer className="bg-background-light py-12 pb-32 text-center">
           {/* Trust signals */}
           <div className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
             <span className="flex items-center gap-1.5">
@@ -400,6 +429,9 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
             </Link>
           </div>
         </footer>
+        </div>
+
+        <BottomNav active="home" />
       </div>
     </>
   );
