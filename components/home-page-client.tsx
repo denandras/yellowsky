@@ -56,7 +56,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
   // Reveal animation observer - based on hero scroll position
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-    if (!nodes.length) return;
 
     const checkVisibility = () => {
       // Target the image container, not the entire hero section
@@ -73,16 +72,18 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       // Debug: update line positions
       setHeroBottomDebug(heroBottom);
       setHeaderBottomDebug(headerBottom);
+      
+      // Debug logging
+      console.log('heroBottom:', Math.round(heroBottom), 'headerBottom:', Math.round(headerBottom), 'unfixed:', contentUnfixedRef.current);
 
       // When hero bottom reaches header bottom, unfixed content
-      // Add 1px buffer to prevent jitter at boundary
-      if (heroBottom <= headerBottom - 1 && !contentUnfixedRef.current) {
+      if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
         contentUnfixedRef.current = true;
         setContentUnfixed(true);
         // Calculate margin to keep content in same visual position
         const scrollY = window.scrollY;
         setUnfixedMarginTop(scrollY - 64);
-      } else if (heroBottom > headerBottom + 1 && contentUnfixedRef.current) {
+      } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
         contentUnfixedRef.current = false;
         setContentUnfixed(false);
         setUnfixedMarginTop(0);
@@ -264,8 +265,12 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       />
 
       <div className="bg-background-light text-text-dark">
-        {/* Purple vertical line for testing */}
-        <div className="fixed left-1/2 top-16 bottom-0 w-px bg-purple-500 z-10 pointer-events-none" style={{ transform: 'translateX(-50%)' }} />
+        {/* Vertical line for testing - turns red at transition point */}
+        <div 
+          className={`fixed left-1/2 top-16 bottom-0 w-px z-10 pointer-events-none ${contentUnfixed ? 'bg-red-500' : 'bg-purple-500'}`} 
+          style={{ transform: 'translateX(-50%)' }} 
+          suppressHydrationWarning
+        />
 
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
