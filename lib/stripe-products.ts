@@ -22,9 +22,9 @@ export type StripePrice = {
 
 let stripeInstance: Stripe | null = null;
 
-// Cache Stripe products with 5-minute TTL to avoid rate limits
+// Cache Stripe products with 30-minute TTL to avoid rate limits
 let productsCache: { data: StripeProduct[]; timestamp: number } | null = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
 // Also persist to localStorage for cross-tab/cross-session caching
 const CACHE_KEY = 'yellowsky_stripe_products';

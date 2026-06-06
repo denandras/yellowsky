@@ -9,8 +9,8 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-// ISR: regenerate every 60 seconds
-export const revalidate = 60;
+// ISR: regenerate every 30 minutes (avoid Stripe rate limits)
+export const revalidate = 1800;
 
 // Dynamic rendering - don't pre-render all pages (avoids Stripe rate limits during build)
 // Pages will be generated on-demand and cached
