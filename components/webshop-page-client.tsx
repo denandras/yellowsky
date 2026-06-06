@@ -40,10 +40,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   // Handle navigation with blur transition
   const handleNavigate = (imageUrl: string, slug: string) => {
     setIsTransitioning(true);
-    // Navigate after animation completes (300ms for full effect)
+    // Navigate after animation completes
     setTimeout(() => {
       router.push(`/artwork/${slug}`);
-    }, 300);
+    }, 150);
   };
 
   // Disable automatic scroll restoration
@@ -172,7 +172,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         <div 
           className="fixed inset-0 z-[100]"
           style={{
-            animation: 'blur-transition 300ms ease-out forwards',
+            animation: 'blur-transition 150ms ease-out forwards',
           }}
         />
       )}
