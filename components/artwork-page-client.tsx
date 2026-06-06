@@ -44,41 +44,34 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [titleFontSize, setTitleFontSize] = useState(36); // Start at mobile base
-  const [titleScale, setTitleScale] = useState(1);
+  const [titleFontSize, setTitleFontSize] = useState(36);
 
   useEffect(() => {
     if (!titleRef.current || !showTitle) return;
     
-    // Wait for next frame to ensure text is rendered
     requestAnimationFrame(() => {
       const el = titleRef.current;
       if (!el) return;
       
-      const container = el.parentElement;
-      if (!container) return;
+      // Calculate available width: viewport minus left/right padding
+      const leftPadding = window.innerWidth < 768 ? 24 : 8; // px-6 on mobile, px-2 on desktop
+      const rightMargin = window.innerWidth < 768 ? 24 : 16; // Extra right margin
+      const availableWidth = window.innerWidth - leftPadding - rightMargin;
       
-      // Get container width - account for padding and actual viewport
-      const padding = window.innerWidth < 768 ? 48 : 16; // Mobile: px-6 (24*2), Desktop: px-2 (8*2)
-      const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
-      const containerWidth = maxWidth - 16; // Extra safety margin
-      
-      // Start from max size and shrink until it fits
-      const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
-      let fontSize = baseSize;
-      el.style.fontSize = `${fontSize}px`;
-      
-      // Shrink until text fits (minimum 28px for mobile, 24px for desktop)
+      // Start from max size
+      const maxSize = window.innerWidth < 768 ? 42 : window.innerWidth < 1024 ? 48 : 60;
       const minSize = window.innerWidth < 768 ? 28 : 24;
-      while (el.scrollWidth > containerWidth && fontSize > minSize) {
+      
+      el.style.fontSize = `${maxSize}px`;
+      let fontSize = maxSize;
+      
+      // Shrink until text fits
+      while (el.scrollWidth > availableWidth && fontSize > minSize) {
         fontSize -= 1;
         el.style.fontSize = `${fontSize}px`;
       }
       
-      // Calculate scale to keep baseline fixed
-      const scale = fontSize / baseSize;
-      setTitleFontSize(baseSize);
-      setTitleScale(scale);
+      setTitleFontSize(fontSize);
     });
   }, [artwork.title, showTitle]);
 
@@ -90,26 +83,23 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       if (!titleRef.current) return;
       
       const el = titleRef.current;
-      const container = el.parentElement;
-      if (!container) return;
       
-      const padding = window.innerWidth < 768 ? 48 : 16;
-      const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
-      const containerWidth = maxWidth - 16;
+      const leftPadding = window.innerWidth < 768 ? 24 : 8;
+      const rightMargin = window.innerWidth < 768 ? 24 : 16;
+      const availableWidth = window.innerWidth - leftPadding - rightMargin;
       
-      const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
-      let fontSize = baseSize;
-      el.style.fontSize = `${fontSize}px`;
-      
+      const maxSize = window.innerWidth < 768 ? 42 : window.innerWidth < 1024 ? 48 : 60;
       const minSize = window.innerWidth < 768 ? 28 : 24;
-      while (el.scrollWidth > containerWidth && fontSize > minSize) {
+      
+      el.style.fontSize = `${maxSize}px`;
+      let fontSize = maxSize;
+      
+      while (el.scrollWidth > availableWidth && fontSize > minSize) {
         fontSize -= 1;
         el.style.fontSize = `${fontSize}px`;
       }
       
-      const scale = fontSize / baseSize;
-      setTitleFontSize(baseSize);
-      setTitleScale(scale);
+      setTitleFontSize(fontSize);
     };
     
     window.addEventListener('resize', handleResize);
@@ -347,10 +337,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[120px]">
             <div className="mx-auto w-full max-w-5xl">
-              <div className="px-6 md:px-2 max-w-[calc(100vw-48px)]">
+              <div className="px-6 md:px-2">
                 <h1
                   ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1', transform: `scale(${titleScale})`, transformOrigin: 'bottom left' }}
+                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
                   className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
