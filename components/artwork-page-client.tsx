@@ -58,12 +58,13 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     const containerWidth = container.clientWidth - padding;
     
     // Start from max size and shrink until it fits
-    const baseSize = window.innerWidth < 768 ? 42 : window.innerWidth < 1024 ? 48 : 60;
+    const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
     let fontSize = baseSize;
     el.style.fontSize = `${fontSize}px`;
     
-    // Shrink until text fits (minimum 24px)
-    while (el.scrollWidth > containerWidth && fontSize > 24) {
+    // Shrink until text fits (minimum 28px for mobile, 24px for desktop)
+    const minSize = window.innerWidth < 768 ? 28 : 24;
+    while (el.scrollWidth > containerWidth && fontSize > minSize) {
       fontSize -= 1;
       el.style.fontSize = `${fontSize}px`;
     }
@@ -300,7 +301,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Title overlay - sits just above purchase panel */}
         {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[140px]">
+          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[130px]">
             <div className="mx-auto w-full max-w-5xl">
               <div className="px-6 md:px-2">
                 <h1
