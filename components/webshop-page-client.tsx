@@ -259,7 +259,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                     comingSoon: labels.comingSoon,
                     selectSize: labels.selectSize,
                   }}
-                  onAddToCart={handleAddToCart}
+                  onAddToCart={(item: MediaItem, priceId: string) => handleAddToCart(item.productId || '', priceId)}
                   cartLoading={loading}
                 />
               </div>
