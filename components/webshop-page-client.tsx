@@ -7,9 +7,10 @@ import ImageGallery from "@/components/image-gallery";
 import { IconShoppingBag } from "@/components/icons";
 import { useCart } from "@/lib/cart-context";
 import type { SiteLanguage } from "@/lib/site-language";
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type MediaItem = {
   id: string;
@@ -31,15 +32,30 @@ type WebshopPageClientProps = {
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
   const { items: cartItems, addItem } = useCart();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const { language, setLanguage } = useSiteLanguage(initialLanguage);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
+
+  // Restore scroll position on mount (when navigating back)
+  useEffect(() => {
+    const scrollY = sessionStorage.getItem('yellowsky-scroll-y');
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY, 10));
+      sessionStorage.removeItem('yellowsky-scroll-y');
+    }
+  }, []);
 
   // Handle navigation with blur transition
   const handleNavigate = (imageUrl: string, slug: string) => {
+    // Save scroll position before navigating
+    if (galleryRef.current) {
+      sessionStorage.setItem('yellowsky-scroll-y', String(window.scrollY));
+    }
     setIsTransitioning(true);
     // Mark that we're transitioning so artwork page knows to animate out blur
     sessionStorage.setItem('yellowsky-transitioning', 'true');
@@ -276,21 +292,23 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                   </p>
                 </div>
 
-                <ImageGallery
-                  items={items}
-                  labels={{
-                    buyPrint: labels.buyPrint,
-                    loading: labels.loading,
-                    freeShipping: labels.freeShipping,
-                    addToCart: labels.addToCart,
-                    addedToCart: labels.addedToCart,
-                    comingSoon: labels.comingSoon,
-                    selectSize: labels.selectSize,
-                  }}
-                  onAddToCart={(item: MediaItem, priceId: string) => handleAddToCart(item.productId || '', priceId)}
-                  cartLoading={loading}
-                  onNavigate={handleNavigate}
-                />
+                <div ref={galleryRef}>
+                  <ImageGallery
+                    items={items}
+                    labels={{
+                      buyPrint: labels.buyPrint,
+                      loading: labels.loading,
+                      freeShipping: labels.freeShipping,
+                      addToCart: labels.addToCart,
+                      addedToCart: labels.addedToCart,
+                      comingSoon: labels.comingSoon,
+                      selectSize: labels.selectSize,
+                    }}
+                    onAddToCart={(item: MediaItem, priceId: string) => handleAddToCart(item.productId || '', priceId)}
+                    cartLoading={loading}
+                    onNavigate={handleNavigate}
+                  />
+                </div>
               </div>
             </div>
           </section>
