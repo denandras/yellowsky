@@ -104,6 +104,13 @@ function ImageCard({
           }}
         >
           <img
+            ref={(img) => {
+              // Check if image is already loaded (cached)
+              if (img && img.complete && img.naturalWidth) {
+                setAspectRatio(img.naturalWidth / img.naturalHeight);
+                setLoaded(true);
+              }
+            }}
             src={item.viewUrl}
             alt={item.alt}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
