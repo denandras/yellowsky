@@ -212,7 +212,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       <div className="relative z-10 min-h-screen">
         {/* Header - glass buttons like main page */}
         <header className="fixed top-0 left-0 right-0 z-50">
-          <div className="flex items-center justify-end px-6 pt-5">
+          <div className="flex items-center justify-between px-6 pt-5">
+            {/* Yellowsky title */}
+            <Link href="/" className="font-display text-xl text-white/90 hover:text-white transition-colors">
+              Yellowsky
+            </Link>
             <div className="flex items-center gap-3">
               {/* Language switcher - glass circle */}
               <button
