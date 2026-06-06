@@ -22,9 +22,12 @@ export type StripePrice = {
 
 let stripeInstance: Stripe | null = null;
 
-// Cache Stripe products with 10-minute TTL to avoid rate limits
+// Cache Stripe products with 5-minute TTL to avoid rate limits
 let productsCache: { data: StripeProduct[]; timestamp: number } | null = null;
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Also persist to localStorage for cross-tab/cross-session caching
+const CACHE_KEY = 'yellowsky_stripe_products';
 
 function getStripe(): Stripe | null {
   const key = getStripeSecretKey();
@@ -37,7 +40,24 @@ function getStripe(): Stripe | null {
 }
 
 export async function fetchStripeProducts(): Promise<StripeProduct[]> {
-  // Return cached data if still valid
+  // Check localStorage cache first (persists across reloads)
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(CACHE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as { data: StripeProduct[]; timestamp: number };
+        if (Date.now() - parsed.timestamp < CACHE_TTL) {
+          console.log('[Stripe] Using localStorage cache');
+          productsCache = parsed;
+          return parsed.data;
+        }
+      }
+    } catch (e) {
+      console.log('[Stripe] localStorage cache error:', e);
+    }
+  }
+  
+  // Return in-memory cached data if still valid
   if (productsCache && Date.now() - productsCache.timestamp < CACHE_TTL) {
     console.log('[Stripe] Using cached products');
     return productsCache.data;
@@ -118,10 +138,29 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
 
     // Cache the results
     productsCache = { data: results, timestamp: Date.now() };
+    
+    // Also persist to localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(productsCache));
+      } catch (e) {
+        console.log('[Stripe] localStorage save error:', e);
+      }
+    }
+    
     console.log(`[Stripe] Cached ${results.length} products`);
     return results;
   } catch (error: unknown) {
     console.error('[Stripe] Error fetching products:', error);
+    
+    // Check if it's a rate limit error
+    const isRateLimit = error && typeof error === 'object' && 'statusCode' in error && (error as { statusCode: number }).statusCode === 429;
+    
+    if (isRateLimit && productsCache) {
+      console.log('[Stripe] Rate limited, returning stale cache');
+      return productsCache.data;
+    }
+    
     return returnStaleIfAvailable();
   }
 }
