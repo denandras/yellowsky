@@ -54,7 +54,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           id: priceId,
           priceId,
           productId,
-          productName: product.slug,
+          productName: product.productName || product.title,
           productTitle: product.title,
           nickname: price.nickname || "Standard",
           unitAmount: price.unitAmount || 0,
