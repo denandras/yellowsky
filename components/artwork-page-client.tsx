@@ -341,7 +341,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Title overlay - sits just above purchase panel */}
         {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[120px]">
+          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[128px]">
             <div className="mx-auto w-full max-w-5xl">
               <div className="px-6 md:px-2 relative">
                 {/* Debug: show text area bounds */}
