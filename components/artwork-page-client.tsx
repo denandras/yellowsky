@@ -41,19 +41,33 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
-  const [isExitingBlur, setIsExitingBlur] = useState(false);
+  const [isExitingBlur, setIsExitingBlur] = useState(() => {
+    // Check synchronously during initial render
+    if (typeof window !== 'undefined') {
+      const transitioning = sessionStorage.getItem('yellowsky-transitioning');
+      if (transitioning) {
+        return true;
+      }
+    }
+    return false;
+  });
+  const [contentVisible, setContentVisible] = useState(() => {
+    // Check synchronously during initial render
+    if (typeof window !== 'undefined') {
+      const transitioning = sessionStorage.getItem('yellowsky-transitioning');
+      if (transitioning) {
+        return false; // Start hidden if transitioning
+      }
+    }
+    return true; // Visible by default for direct navigation
+  });
 
-  // Entrance animation - check if coming from blur transition
+  // Clean up sessionStorage
   useEffect(() => {
-    const isTransitioning = sessionStorage.getItem('yellowsky-transitioning');
-    
-    if (isTransitioning) {
-      // Coming from webshop - fade out blur overlay slowly
-      setIsExitingBlur(true);
-      sessionStorage.removeItem('yellowsky-transitioning');
-      
-      // Content slides in after blur starts clearing
+    sessionStorage.removeItem('yellowsky-transitioning');
+  
+    if (isExitingBlur) {
+      // Content fades in after blur starts clearing
       const contentTimer = setTimeout(() => {
         setContentVisible(true);
       }, 300);
@@ -67,9 +81,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         clearTimeout(contentTimer);
         clearTimeout(blurTimer);
       };
-    } else {
-      // Direct navigation - show immediately
-      setContentVisible(true);
     }
   }, []);
 
