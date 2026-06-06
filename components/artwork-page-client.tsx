@@ -275,7 +275,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             <div className="mx-auto w-full max-w-5xl">
               <div className="px-6 md:px-2 text-left">
                 <h1
-                  className={`font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`font-display text-[42px] md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 truncate ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
