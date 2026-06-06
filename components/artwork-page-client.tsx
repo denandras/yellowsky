@@ -312,7 +312,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                             : 'bg-white/10 text-white/80 border border-white/20 hover:bg-white/20'
                         }`}
                       >
-                        {price.nickname || "Standard"}
+                        <span className="sm:hidden">{price.nickname || "Standard"}<br/>{formatPrice(price.unitAmount || 0, price.currency)}</span>
+                        <span className="hidden sm:inline">{price.nickname || "Standard"} — {formatPrice(price.unitAmount || 0, price.currency)}</span>
                       </button>
                     ))}
                   </div>
