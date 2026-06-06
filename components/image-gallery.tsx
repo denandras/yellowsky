@@ -70,54 +70,59 @@ function ImageCard({
     <div
       className="overflow-hidden rounded-xl border border-neutral-border bg-white relative group"
       data-item-id={item.id}
-      style={{
-        opacity: loaded ? 1 : 0,
-        transform: loaded ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 0.4s ease-out, transform 0.4s ease-out",
-        transitionDelay: loaded ? `${Math.min(index * 30, 300)}ms` : "0ms",
-      }}
     >
-      {/* Skeleton placeholder */}
+      {/* Skeleton placeholder - always visible while loading */}
       {!loaded && !error && (
-        <div className="w-full bg-white/10 animate-pulse rounded-xl" style={{ aspectRatio: imageAspect }} />
+        <div className="w-full bg-neutral-100 animate-pulse" style={{ aspectRatio: imageAspect }} />
       )}
 
       {/* Error state */}
       {error && (
-        <div className="w-full bg-white/10 flex items-center justify-center rounded-xl" style={{ aspectRatio: imageAspect }}>
-          <p className="text-sm text-white/50">Image unavailable</p>
+        <div className="w-full bg-neutral-100 flex items-center justify-center" style={{ aspectRatio: imageAspect }}>
+          <p className="text-sm text-neutral-400">Image unavailable</p>
         </div>
       )}
 
-      {/* Image - clickable link to artwork page */}
-      <Link 
-        href={`/artwork/${slug}`} 
-        className="block relative rounded-lg overflow-hidden" 
-        style={{ aspectRatio: imageAspect }}
-        onClick={() => {
-          // Store the item ID for scroll restoration
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
-          }
+      {/* Image container - fades in when loaded */}
+      <div
+        style={{
+          opacity: loaded ? 1 : 0,
+          transform: loaded ? "translateY(0)" : "translateY(10px)",
+          transition: "opacity 0.4s ease-out, transform 0.4s ease-out",
+          transitionDelay: loaded ? `${Math.min(index * 30, 300)}ms` : "0ms",
         }}
       >
-        <img
-          src={item.viewUrl}
-          alt={item.alt}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
-          loading={index < 6 ? "eager" : "lazy"}
-          fetchPriority={index < 3 ? "high" : "low"}
-          decoding={index < 6 ? "sync" : "async"}
-          onLoad={(e) => {
-            const img = e.currentTarget;
-            if (img.naturalWidth && img.naturalHeight) {
-              setAspectRatio(img.naturalWidth / img.naturalHeight);
+        <Link
+          href={`/artwork/${slug}`}
+          className="block relative rounded-lg overflow-hidden"
+          style={{ aspectRatio: imageAspect }}
+          onClick={() => {
+            // Store the item ID for scroll restoration
+            if (typeof window !== "undefined") {
+              sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
             }
-            setLoaded(true);
           }}
-          onError={() => { setLoaded(true); setError(true); }}
-        />
-      </Link>
+        >
+          <img
+            src={item.viewUrl}
+            alt={item.alt}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
+            loading={index < 6 ? "eager" : "lazy"}
+            fetchPriority={index < 3 ? "high" : "low"}
+            decoding={index < 6 ? "sync" : "async"}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              if (img.naturalWidth && img.naturalHeight) {
+                setAspectRatio(img.naturalWidth / img.naturalHeight);
+              }
+              setLoaded(true);
+            }}
+            onError={() => { setLoaded(true); setError(true); }}
+          />
+        </Link>
+      </div>
+
+      {/* Basket button - separate from clickable area */}
 
       {/* Basket button - separate from clickable area */}
       {item.hasProduct && item.prices && item.prices.length > 0 && !error && (
