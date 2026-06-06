@@ -56,8 +56,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           productId,
           productName: product.productName || product.title,
           productTitle: product.title,
-          unitAmount: price.unitAmount || 0,
+          size: price.nickname || "Standard",
+          price: price.unitAmount || 0,
           currency: price.currency || "EUR",
+          viewUrl: product.viewUrl,
           quantity,
         });
       }
