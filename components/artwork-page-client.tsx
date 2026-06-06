@@ -271,7 +271,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       {/* Blur overlay that fades out on entrance */}
       {isExitingBlur && (
         <div 
-          className="fixed inset-0 z-[200]"
+          className="fixed inset-0 z-[200] pointer-events-none"
           style={{
             animation: 'blur-transition-reverse 600ms ease-out forwards',
           }}
