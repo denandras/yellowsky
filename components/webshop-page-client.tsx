@@ -35,6 +35,16 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const { language, setLanguage } = useSiteLanguage(initialLanguage);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Handle navigation with blur transition
+  const handleNavigate = (imageUrl: string, slug: string) => {
+    setIsTransitioning(true);
+    // Navigate after brief delay for blur animation
+    setTimeout(() => {
+      router.push(`/artwork/${slug}`);
+    }, 150);
+  };
 
   // Disable automatic scroll restoration
   useLayoutEffect(() => {
@@ -157,6 +167,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
   return (
     <>
+      {/* Blur overlay for transition */}
+      {isTransitioning && (
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-md transition-all duration-300" />
+      )}
+
       <CartDrawer
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
@@ -260,6 +275,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                   }}
                   onAddToCart={(item: MediaItem, priceId: string) => handleAddToCart(item.productId || '', priceId)}
                   cartLoading={loading}
+                  onNavigate={handleNavigate}
                 />
               </div>
             </div>

@@ -43,6 +43,7 @@ function ImageCard({
   closeItem,
   selectedPrice,
   setSelectedPrice,
+  onNavigate,
 }: {
   item: MediaItem;
   index: number;
@@ -55,6 +56,7 @@ function ImageCard({
   closeItem: () => void;
   selectedPrice: Record<string, string>;
   setSelectedPrice: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  onNavigate?: (imageUrl: string, slug: string) => void;
 }) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -97,6 +99,9 @@ function ImageCard({
         onClick={() => {
           if (typeof window !== "undefined") {
             sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
+          }
+          if (onNavigate) {
+            onNavigate(item.viewUrl, slug);
           }
         }}
       >
@@ -213,7 +218,7 @@ function ImageCard({
   );
 }
 
-export default function ImageGallery({ items, labels, onAddToCart, cartLoading }: ImageGalleryProps) {
+export default function ImageGallery({ items, labels, onAddToCart, cartLoading, onNavigate }: ImageGalleryProps & { onNavigate?: (imageUrl: string, slug: string) => void }) {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<Record<string, string>>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -334,6 +339,7 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading }
                 closeItem={closeItem}
                 selectedPrice={selectedPrice}
                 setSelectedPrice={setSelectedPrice}
+                onNavigate={onNavigate}
               />
             );
           })}
