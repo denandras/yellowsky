@@ -273,6 +273,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         <div 
           className="fixed inset-0 z-[200] pointer-events-none"
           style={{
+            backdropFilter: 'blur(12px)',
             animation: 'blur-transition-reverse 600ms ease-out forwards',
           }}
         />

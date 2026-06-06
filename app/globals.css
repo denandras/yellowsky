@@ -2,19 +2,19 @@
 
 @keyframes blur-transition {
   from {
-    backdrop-filter: blur(0);
+    backdrop-filter: blur(12px);
     background-color: rgba(0, 0, 0, 0);
   }
   to {
     backdrop-filter: blur(12px);
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 1);
   }
 }
 
 @keyframes blur-transition-reverse {
   from {
     backdrop-filter: blur(12px);
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 1);
   }
   to {
     backdrop-filter: blur(0);
