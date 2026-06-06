@@ -322,7 +322,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   <button
                     onClick={handleAddToCart}
                     disabled={!selectedSize}
-                    className={`flex-shrink-0 sm:hidden py-2 px-3 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
+                    className={`flex-shrink-0 sm:hidden py-4 px-3 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
                       showAddedMessage
                         ? 'bg-green-500/30 border border-green-400/50'
                         : selectedSize
