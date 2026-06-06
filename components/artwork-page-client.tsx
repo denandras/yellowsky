@@ -343,8 +343,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
             <div className="relative mx-auto max-w-5xl">
-              {/* Black stripe - ends where glass panel begins (currently hidden) */}
-              <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-black/50 pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1 hidden">
+              {/* Black stripe - ends where glass panel begins (background hidden) */}
+              <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-transparent pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1">
                 <h1
                   ref={titleRef}
                   style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
