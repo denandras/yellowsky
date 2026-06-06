@@ -281,7 +281,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 onClick={() => {
                   const newLang = language === 'en' ? 'hu' : 'en';
                   setLanguage(newLang);
-                  router.refresh();
                 }}
                 className="glass-circle relative size-10"
                 aria-label={language === 'en' ? 'Switch to Hungarian' : 'Switch to English'}
