@@ -259,10 +259,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       >
         {!heroLoaded && !heroError && (
           <div className="absolute inset-0">
-            {/* Blurred placeholder background */}
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl" />
+            {/* Blurred placeholder background - light base */}
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-xl" />
             {/* Subtle shimmer effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/10 animate-pulse" />
           </div>
         )}
         {heroError ? (
