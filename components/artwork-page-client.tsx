@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import BottomNav from "@/components/bottom-nav";
-import BrandMark from "@/components/brand-mark";
-import CartButton from "@/components/cart-button";
 import CartDrawer from "@/components/cart-drawer";
-import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
+import { useSiteLanguage } from "@/components/language-switcher";
 import { useCart } from "@/lib/cart-context";
 import type { Artwork } from "@/lib/artwork-data";
 import type { SiteLanguage } from "@/lib/site-language";
 import ImageZoomModal from "@/components/image-zoom-modal";
+import { IconShoppingBag } from "@/components/icons";
+import Link from "next/link";
 
 type ArtworkPageClientProps = {
   artwork: Artwork;
@@ -30,8 +29,8 @@ function formatPrice(amount: number, currency: string): string {
 
 export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkPageClientProps) {
   const router = useRouter();
-  const { language } = useSiteLanguage(initialLanguage);
-  const { items, addItem, getTotal } = useCart();
+  const { language, setLanguage } = useSiteLanguage(initialLanguage);
+  const { items, addItem, getTotal, getItemCount } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -41,22 +40,21 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [imageAspect, setImageAspect] = useState<number | null>(null);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-  const [artworkZoomOpen, setArtworkZoomOpen] = useState(false);
-  // Staggered fade-in states for purchase section
-  const [showSelectSize, setShowSelectSize] = useState(false);
-  const [showSizeButtons, setShowSizeButtons] = useState(false);
-  const [showAddButton, setShowAddButton] = useState(false);
-  const [showTrustSignals, setShowTrustSignals] = useState(false);
+
+  const currentYear = new Date().getFullYear();
+
+  // Track if we came from webshop for back button
+  const [cameFromWebshop, setCameFromWebshop] = useState(false);
+  useEffect(() => {
+    // Check if referrer is webshop
+    if (typeof document !== 'undefined') {
+      const referrer = document.referrer;
+      setCameFromWebshop(referrer.includes('/webshop'));
+    }
+  }, []);
 
   const heroUrl = artwork.heroUrl ?? artwork.viewUrl;
-  const hasJpg = !!artwork.heroUrl;
-
-  const cameFromWebshop = typeof window !== "undefined" &&
-    document.referrer.includes("/webshop");
 
   const labels = language === "hu"
     ? {
@@ -67,7 +65,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         proceedToCheckout: "Tovább a pénztárhoz",
         continueShopping: "Vásárlás folytatása",
         selectSize: "Válassz méretet",
-        selectSizeFirst: "Először válassz méretet",
+        selectSizeFirst: "Előszőr válassz méretet",
         notForSale: "Jelenleg nem megvásárolható",
         cart: {
           title: "Kosár",
@@ -165,22 +163,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     return () => clearTimeout(timer);
   }, [heroLoaded]);
 
-  // Staggered reveal of purchase section elements after image loads
-  useEffect(() => {
-    if (imageLoaded) {
-      const t1 = setTimeout(() => setShowSelectSize(true), 100);
-      const t2 = setTimeout(() => setShowSizeButtons(true), 200);
-      const t3 = setTimeout(() => setShowAddButton(true), 300);
-      const t4 = setTimeout(() => setShowTrustSignals(true), 400);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-        clearTimeout(t4);
-      };
-    }
-  }, [imageLoaded]);
-
   return (
     <>
       <ImageZoomModal
@@ -188,12 +170,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         alt={`${artwork.alt} (preview)`}
         isOpen={heroZoomOpen}
         onClose={() => setHeroZoomOpen(false)}
-      />
-      <ImageZoomModal
-        src={artwork.viewUrl}
-        alt={artwork.alt}
-        isOpen={artworkZoomOpen}
-        onClose={() => setArtworkZoomOpen(false)}
       />
 
       <CartDrawer
@@ -204,10 +180,43 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         loading={checkoutLoading}
       />
 
-      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-        {/* Header */}
-        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-          <div className="flex h-16 w-full items-center justify-between px-6">
+      {/* Full-screen hero image - clickable for zoom */}
+      <div
+        className="fixed inset-0 bg-neutral-900 cursor-zoom-in"
+        onClick={() => setHeroZoomOpen(true)}
+      >
+        {!heroLoaded && !heroError && (
+          <div className="absolute inset-0 animate-pulse bg-white/10" />
+        )}
+        {heroError ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-sm text-white/50">Image unavailable</p>
+          </div>
+        ) : (
+          <Image
+            src={heroUrl}
+            alt={artwork.alt}
+            fill
+            className="object-cover transition-opacity duration-500 object-[center_75%] md:object-[center_60%]"
+            priority
+            sizes="100vw"
+            unoptimized
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onLoad={() => setHeroLoaded(true)}
+            onError={() => setHeroError(true)}
+          />
+        )}
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40 pointer-events-none" />
+      </div>
+
+      {/* Main content - pointer-events-none so clicks pass through to hero */}
+      <div className="relative z-10 min-h-screen pointer-events-none">
+        {/* Header - glass buttons */}
+        <header className="fixed top-0 left-0 right-0 z-50 pointer-events-auto">
+          <div className="flex items-center justify-between px-6 pt-5">
+            {/* Back button - glass circle */}
             <button
               onClick={() => {
                 if (cameFromWebshop) {
@@ -216,284 +225,241 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   router.push("/webshop");
                 }
               }}
-              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity cursor-pointer"
+              className="glass-circle relative size-10"
+              aria-label={labels.back}
             >
-              {labels.webshop}
+              <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+              <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+              <div className="relative flex items-center justify-center h-full">
+                <svg className="size-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </div>
             </button>
+
             <div className="flex items-center gap-3">
-              <LanguageSwitcher initialLanguage={initialLanguage} />
-              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
+              {/* Language switcher - glass circle */}
+              <button
+                onClick={() => {
+                  const newLang = language === 'en' ? 'hu' : 'en';
+                  setLanguage(newLang);
+                  router.refresh();
+                }}
+                className="glass-circle relative size-10"
+                aria-label={language === 'en' ? 'Switch to Hungarian' : 'Switch to English'}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full">
+                  <span className="text-xs font-bold tracking-widest text-white">{language === 'en' ? 'HU' : 'EN'}</span>
+                </div>
+              </button>
+              {/* Cart button - glass circle */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="glass-circle relative size-10"
+                aria-label={labels.cart.ariaLabel}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full pt-1">
+                  <IconShoppingBag className="size-5 text-[var(--color-primary)]" />
+                </div>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Hero Section */}
-        <section className="relative w-full">
-          <div className="relative w-full h-[calc(60vh-7px)] md:h-[calc(78vh-7px)] overflow-hidden bg-neutral-100">
-            {/* Fade gradient overlay */}
-            <div
-              className="absolute inset-0 z-10 pointer-events-none"
-              style={{
-                backgroundImage: hasJpg
-                  ? "linear-gradient(to bottom, transparent 88%, rgba(250,249,247,0.95) 96%, rgba(250,249,247,1) 100%)"
-                  : "linear-gradient(to bottom, transparent 0%, transparent 100%)"
-              }}
-            />
-
-            {/* Title overlay */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 pb-8 pt-20 bg-gradient-to-t from-background-light via-background-light/80 to-transparent">
-              <div className="mx-auto w-full max-w-6xl px-6">
+        {/* Title overlay - sits just above purchase panel */}
+        {artwork.prices && artwork.prices.length > 0 && (
+          <div className="fixed left-0 right-0 z-[15] bottom-[155px] md:bottom-[140px]">
+            <div className="mx-auto w-full max-w-5xl">
+              <div className="px-6 md:px-2 text-left">
                 <h1
-                  className={`font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`font-display text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
               </div>
             </div>
-
-            {/* Hero Image */}
-            {!heroLoaded && !heroError && (
-              <div className="absolute inset-0 animate-pulse bg-neutral-100" />
-            )}
-            {heroError ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
-                <p className="text-sm text-text-muted">Image unavailable</p>
-              </div>
-            ) : (
-              <div
-                className={`absolute inset-0 ${heroLoaded ? 'cursor-zoom-in' : 'cursor-default'}`}
-                onClick={(e) => {
-                  if (!heroLoaded) return;
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const y = e.clientY - rect.top;
-                  const fadeStart = rect.height * 0.88;
-                  if (y < fadeStart) {
-                    setHeroZoomOpen(true);
-                  }
-                }}
-              >
-                <Image
-                  src={heroUrl}
-                  alt={artwork.alt}
-                  fill
-                  className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  style={{ objectPosition: 'center 41%' }}
-                  priority
-                  sizes="100vw"
-                  unoptimized
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onLoad={() => setHeroLoaded(true)}
-                  onError={() => setHeroError(true)}
-                />
-              </div>
-            )}
           </div>
-        </section>
+        )}
 
-        {/* Content Section */}
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-            {/* Left: Artwork image */}
-            <div className="relative">
-              {/* Skeleton while loading */}
-              {!imageLoaded && !imageError && (
-                <div
-                  className="w-full animate-pulse bg-neutral-100 rounded-lg"
-                  style={{ aspectRatio: imageAspect ?? 0.707 }}
-                />
-              )}
+        {/* Purchase panel - fixed bottom */}
+        {artwork.prices && artwork.prices.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
+            <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
+              {/* Glass overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+              {/* Specular highlight */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+              </div>
 
-              {/* Image container - always rendered to trigger onLoad, opacity transition when loaded */}
-              {!imageError && (
-                <div
-                  className={`relative overflow-hidden rounded-lg transition-opacity duration-500 ${imageLoaded ? 'opacity-100 cursor-zoom-in' : 'opacity-0'}`}
-                  style={{ aspectRatio: imageAspect ?? 0.707 }}
-                  onClick={() => imageLoaded && setArtworkZoomOpen(true)}
-                >
-                  <Image
-                    src={artwork.viewUrl}
-                    alt={artwork.alt}
-                    fill
-                    className="object-contain bg-white"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    unoptimized
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onLoad={(e) => {
-                      const img = e.currentTarget;
-                      if (img.naturalWidth && img.naturalHeight) {
-                        setImageAspect(img.naturalWidth / img.naturalHeight);
-                      }
-                      setImageLoaded(true);
-                    }}
-                    onError={() => setImageError(true)}
-                  />
-                </div>
-              )}
-
-              {/* Error state */}
-              {imageError && (
-                <div className="flex items-center justify-center bg-neutral-100 rounded-lg" style={{ aspectRatio: 0.707 }}>
-                  <p className="text-sm text-text-muted">Image unavailable</p>
-                </div>
-              )}
-            </div>
-
-            {/* Right: Purchase options */}
-            <div className="flex flex-col">
-              {/* Container - skeleton, purchase UI, or coming soon */}
-              <div className="bg-white rounded-lg border border-neutral-border p-6">
-                {/* Skeleton while image loads */}
-                {!showSelectSize && !imageError && (
-                  <div className="animate-pulse">
-                    <div className="h-6 bg-neutral-200 rounded w-32 mb-4" />
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <div className="h-20 bg-neutral-200 rounded-lg" />
-                      <div className="h-20 bg-neutral-200 rounded-lg" />
-                    </div>
-                    <div className="h-12 bg-neutral-200 rounded-lg" />
+              {/* Content */}
+              <div className="relative p-4 md:p-6">
+                {/* Mobile: sizes + basket icon in one row */}
+                <div className="sm:hidden flex flex-row items-center gap-3">
+                  {/* Size buttons */}
+                  <div className="flex-1 flex gap-2">
+                    {artwork.prices?.map((price) => (
+                      <button
+                        key={price.id}
+                        onClick={() => setSelectedSize(price.id)}
+                        className={`min-w-[100px] px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          selectedSize === price.id
+                            ? 'bg-[var(--color-primary)]/30 backdrop-blur-xl border border-[var(--color-primary)]/50 shadow-[inset_0_1px_2px_rgba(255,203,42,0.3)] text-[var(--color-primary)]'
+                            : 'bg-white/10 text-white/80 border border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {price.nickname || "Standard"} — {formatPrice(price.unitAmount || 0, price.currency)}
+                      </button>
+                    ))}
                   </div>
-                )}
 
-                {/* Coming soon message */}
-                {showSelectSize && !artwork.hasProduct && (
-                  <div className={`text-center transition-all duration-300 ${showSelectSize ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                    <p className="text-text-muted">
-                      {language === "hu" ? "Hamarosan" : "Coming soon"}
-                    </p>
+                  {/* Basket icon - mobile only - adds to cart */}
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!selectedSize}
+                    className={`flex-shrink-0 sm:hidden p-2 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
+                      showAddedMessage
+                        ? 'bg-green-500/30 border border-green-400/50'
+                        : selectedSize
+                          ? 'bg-white/10 border border-white/20'
+                          : 'bg-white/5 border border-white/10 cursor-not-allowed'
+                    }`}
+                  >
+                    {showAddedMessage ? (
+                      <svg className="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                {/* Desktop: sizes + Kosárba in same row */}
+                <div className="hidden sm:flex flex-row items-center gap-4">
+                  {/* Size buttons */}
+                  <div className="flex-1 flex gap-2">
+                    {artwork.prices?.map((price) => (
+                      <button
+                        key={price.id}
+                        onClick={() => setSelectedSize(price.id)}
+                        className={`min-w-[100px] px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                          selectedSize === price.id
+                            ? 'bg-[var(--color-primary)]/30 backdrop-blur-xl border border-[var(--color-primary)]/50 shadow-[inset_0_1px_2px_rgba(255,203,42,0.3)] text-[var(--color-primary)]'
+                            : 'bg-white/10 text-white/80 border border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {price.nickname || "Standard"} — {formatPrice(price.unitAmount || 0, price.currency)}
+                      </button>
+                    ))}
                   </div>
-                )}
 
-                {/* Purchase UI */}
-                {artwork.hasProduct && artwork.prices && artwork.prices.length > 0 && showSelectSize && (
-                  <>
-                    {/* Title */}
-                    <h3 className="font-display text-lg font-semibold mb-4 transition-all duration-300 opacity-0 translate-y-2 animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
-                      {labels.selectSize}
-                    </h3>
-
-                    {/* Size buttons */}
-                    <div className="grid grid-cols-2 gap-3 mb-6 transition-all duration-300 opacity-0 translate-y-2 animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
-                      {[...artwork.prices].sort((a, b) => {
-                        return (b.nickname || '').localeCompare(a.nickname || '');
-                      }).map(price => (
-                        <button
-                          key={price.id}
-                          type="button"
-                          onClick={() => setSelectedSize(price.id)}
-                          className={`rounded-lg border-2 px-4 py-3 text-center transition-all ${
-                            selectedSize === price.id
-                              ? 'border-primary bg-primary/5 text-primary font-semibold'
-                              : 'border-neutral-border hover:border-neutral-300'
-                          }`}
-                        >
-                          <div className="font-display text-sm">{price.nickname || 'Standard'}</div>
-                          <div className="text-lg font-bold mt-1">
-                            {formatPrice(price.unitAmount || 0, price.currency)}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Add to cart button */}
+                  {/* Add to cart + Checkout buttons */}
+                  <div className="flex gap-3">
+                    {/* Checkout button - appears when added to cart */}
+                    {showPostAddOptions && (
+                      <button
+                        onClick={() => setCartOpen(true)}
+                        className="relative py-3 px-6 rounded-lg font-medium text-sm overflow-hidden transition-all duration-300"
+                      >
+                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-xl" />
+                        <div className="absolute inset-0 rounded-lg border border-white/20 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]" />
+                        <span className="relative text-white font-semibold">{language === "hu" ? "Pénztár" : "Checkout"} ({getItemCount()})</span>
+                      </button>
+                    )}
                     <button
-                      type="button"
                       onClick={handleAddToCart}
                       disabled={!selectedSize}
-                      className={`w-full rounded-lg py-3 font-display font-semibold text-white transition-all duration-300 opacity-0 translate-y-2 animate-fade-in mb-4 ${
-                        showAddedMessage
-                          ? 'bg-green-600'
-                          : selectedSize
-                            ? 'bg-primary hover:bg-primary/90'
-                            : 'bg-neutral-300 cursor-not-allowed'
+                      className={`relative min-w-[140px] py-3 px-6 rounded-lg font-medium text-sm overflow-hidden ${
+                        selectedSize
+                          ? 'cursor-pointer'
+                          : 'bg-white/5 backdrop-blur-xl border border-white/10 cursor-not-allowed'
                       }`}
-                      style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
                     >
-                      {showAddedMessage ? labels.addedToCart : labels.addToCart}
+                      {selectedSize && (
+                        <>
+                          <div className={`absolute inset-0 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
+                            showAddedMessage ? 'bg-green-500/30' : 'bg-[var(--color-primary)]/30'
+                          }`} />
+                          <div className={`absolute inset-0 rounded-lg transition-colors duration-300 ${
+                            showAddedMessage
+                              ? 'border border-green-400/50 shadow-[inset_0_1px_2px_rgba(74,222,128,0.3)]'
+                              : 'border border-[var(--color-primary)]/50 shadow-[inset_0_1px_2px_rgba(255,203,42,0.3)]'
+                          }`} />
+                        </>
+                      )}
+                      <span className={`relative z-10 font-semibold transition-colors duration-300 ${
+                        showAddedMessage ? 'text-green-300' : selectedSize ? 'text-[var(--color-primary)]' : 'text-white/50'
+                      }`}>
+                        {selectedSize ? (showAddedMessage ? labels.addedToCart : labels.addToCart) : labels.selectSize}
+                      </span>
                     </button>
+                  </div>
+                </div>
 
-                    {showPostAddOptions && (
-                      <div className="mt-4 flex gap-3 animate-fadeIn">
-                        <button
-                          type="button"
-                          onClick={() => router.push("/webshop")}
-                          className="flex-1 rounded-lg border border-neutral-border bg-white px-4 py-3 text-center text-sm font-medium hover:bg-neutral-50 transition-colors"
-                        >
-                          {labels.continueShopping}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCartOpen(true)}
-                          className="flex-1 rounded-lg bg-text-dark px-4 py-3 text-center text-sm font-medium text-white hover:bg-text-dark/90 transition-colors"
-                        >
-                          {labels.proceedToCheckout}
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Trust signals */}
-              <div className={`mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted transition-all duration-300 ${showTrustSignals ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                <span className="flex items-center gap-1.5">
-                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {language === "hu" ? "Ingyenes szállítás" : "Free shipping"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {language === "hu" ? "7-14 nap" : "7-14 calendar days"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  {language === "hu" ? "Biztonságos fizetés" : "Secure checkout"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                  </svg>
-                  {language === "hu" ? "Keret nélkül" : "Unframed"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                  </svg>
-                  {language === "hu" ? "Giclée nyomat kender papírra" : "Giclée art print on hemp paper"}
-                </span>
+                {/* Trust signals */}
+                <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[10px] sm:text-xs text-white">
+                  <div className="flex gap-x-3">
+                    <span className="flex items-center gap-1">
+                      <svg className="size-3 sm:size-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>{language === "hu" ? "Ingyenes szállítás" : "Free shipping"}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="size-3 sm:size-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{language === "hu" ? "7-14 nap" : "7-14 calendar days"}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <svg className="size-3 sm:size-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      <span>{language === "hu" ? "Biztonságos fizetés" : "Secure checkout"}</span>
+                    </span>
+                  </div>
+                  <span className="flex items-center gap-1">
+                    <svg className="size-3 sm:size-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                    </svg>
+                    <span>{language === "hu" ? "Giclée minőség: 80 évig garantáltan nem fakul" : "Giclée quality: guaranteed not to fade for 80 years"}</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </main>
+        )}
 
-        <footer className="bg-background-light py-8 pb-32 text-center">
-          <div className="mb-4 flex justify-center">
-            <BrandMark size={32} />
-          </div>
-          <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
-            © {new Date().getFullYear()} {language === "hu" ? "Dénes András" : "András Dénes"}
-          </p>
-          <p className="text-[10px] text-text-muted/60">
-            Yellowsky • {language === "hu" ? "Építészeti grafikák" : "Architectural graphics"}
-          </p>
-        </footer>
-
-        <BottomNav active="webshop" />
+        {/* Footer - hidden on artwork page (full-screen hero experience) */}
       </div>
 
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
+      <style jsx global>{`
+        /* Lock body scroll on artwork page - iOS Safari fix */
+        html, body {
+          overflow: hidden;
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          overscroll-behavior: none;
+          -webkit-overflow-scrolling: auto;
         }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
+
+        .glass-circle {
+          overflow: hidden;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+
+        .glass-circle:hover {
+          transform: scale(1.05);
         }
       `}</style>
     </>

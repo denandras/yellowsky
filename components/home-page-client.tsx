@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import BottomNav from "@/components/bottom-nav";
 import BrandMark from "@/components/brand-mark";
 import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
 import CartButton from "@/components/cart-button";
@@ -12,6 +11,7 @@ import { useCart } from "@/lib/cart-context";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type CommunityPost = {
   id: string;
@@ -28,14 +28,47 @@ type HomePageClientProps = {
 };
 
 export default function HomePageClient({ initialLanguage, communityPosts = [] }: HomePageClientProps) {
-  const { language } = useSiteLanguage(initialLanguage);
+  const router = useRouter();
+  const { language, setLanguage } = useSiteLanguage(initialLanguage);
   const { items: cartItems } = useCart();
   const [mounted, setMounted] = useState(false);
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [heroOpacity, setHeroOpacity] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
   useEffect(() => setMounted(true), []);
+
+  // Detect mobile on client
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const checkMobile = () => setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Scroll tracking for mobile fade
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Mobile-only: linear fade from 0 to 160px
+      if (isMobile) {
+        const opacity = Math.max(0, 1 - scrollY / 160);
+        setHeroOpacity(opacity);
+      } else {
+        setHeroOpacity(1); // No fade on desktop
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Call immediately to set initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
 
   // Show title after hero loads or after 300ms
   useEffect(() => {
@@ -46,82 +79,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
     const timer = setTimeout(() => setShowTitle(true), 300);
     return () => clearTimeout(timer);
   }, [heroLoaded]);
-
-  const [heroBottomDebug, setHeroBottomDebug] = useState(0);
-  const [headerBottomDebug, setHeaderBottomDebug] = useState(0);
-  const [contentUnfixed, setContentUnfixed] = useState(false);
-  const contentUnfixedRef = useRef(false);
-  const [ctaTopDebug, setCtaTopDebug] = useState(0);
-
-  // Reveal animation observer - based on hero scroll position
-  useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
-
-    const checkVisibility = () => {
-      // Target the image container, not the entire hero section
-      const heroImage = document.querySelector('section[class*="z-20"] > div[class*="absolute"]');
-      if (!heroImage) return;
-
-      const heroRect = heroImage.getBoundingClientRect();
-      const heroBottom = heroRect.bottom;
-      
-      // Get header bottom for debug
-      const header = document.querySelector('header');
-      const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
-      
-      // Debug: update line positions
-      setHeroBottomDebug(heroBottom);
-      setHeaderBottomDebug(headerBottom);
-      
-      // Debug logging
-      console.log('heroBottom:', Math.round(heroBottom), 'headerBottom:', Math.round(headerBottom), 'unfixed:', contentUnfixedRef.current);
-
-      // Track CTA position
-      const cta = document.querySelector('[data-cta]');
-      if (cta) {
-        const ctaRect = cta.getBoundingClientRect();
-        setCtaTopDebug(ctaRect.top);
-      }
-
-      // When hero bottom reaches header bottom, unfixed content
-      if (heroBottom <= headerBottom && !contentUnfixedRef.current) {
-        contentUnfixedRef.current = true;
-        setContentUnfixed(true);
-      } else if (heroBottom > headerBottom && contentUnfixedRef.current) {
-        contentUnfixedRef.current = false;
-        setContentUnfixed(false);
-      }
-
-      nodes.forEach((node) => {
-        const rect = node.getBoundingClientRect();
-        
-        // Fade in when hero has scrolled away enough that paragraph is fully exposed
-        // Fade out when scrolling back and hero covers the paragraph again
-        if (heroBottom < rect.top) {
-          // Hero bottom is above paragraph top → paragraph exposed → fade in
-          if (!node.classList.contains("is-visible")) {
-            node.classList.add("is-visible");
-          }
-        } else {
-          // Hero bottom is below paragraph top → paragraph covered → fade out
-          if (node.classList.contains("is-visible")) {
-            node.classList.remove("is-visible");
-          }
-        }
-      });
-    };
-
-    // Check on scroll and resize, slight delay for initial load
-    const timer = setTimeout(checkVisibility, 100);
-    window.addEventListener("scroll", checkVisibility, { passive: true });
-    window.addEventListener("resize", checkVisibility, { passive: true });
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", checkVisibility);
-      window.removeEventListener("resize", checkVisibility);
-    };
-  }, []);
 
   const currentYear = new Date().getFullYear();
 
@@ -147,7 +104,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       <button
         type="button"
         onClick={openInstagram}
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
       >
         #yellowskychallenge
       </button>
@@ -157,7 +114,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         href="https://andrasdenes.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300"
       >
         előadóművészetre
       </a>{" "}
@@ -170,7 +127,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       <button
         type="button"
         onClick={openInstagram}
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 cursor-pointer"
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
       >
         #yellowskychallenge
       </button>
@@ -180,7 +137,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         href="https://andrasdenes.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80"
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300"
       >
         playing the trombone
       </a>, but sometimes I sketched a bit.</>,
@@ -193,7 +150,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         subtitle: "Dénes András",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
-        ctaLabel: "giclée nyomatok elérhetők",
+        ctaLabel: "minőségi printek vásárlása",
         ctaTitle: "A galériához",
         footerTagline: "Yellowsky • Építészeti grafikák",
         cart: {
@@ -267,232 +224,326 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         loading={checkoutLoading}
       />
 
-      <div className="bg-background-light text-text-dark">
-        {/* Vertical line for testing - turns red at transition point */}
-        <div 
-          className={`fixed left-1/2 top-16 bottom-0 w-px z-10 pointer-events-none ${contentUnfixed ? 'bg-red-500' : 'bg-purple-500'}`} 
-          style={{ transform: 'translateX(-50%)' }} 
-          suppressHydrationWarning
-        />
+      {/* SVG Filter Definition for Liquid Glass Effect */}
+      <svg className="absolute w-0 h-0" aria-hidden="true">
+        <defs>
+          <filter id="liquid-glass-distortion" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.012 0.012"
+              numOctaves="3"
+              seed="42"
+              result="noise"
+            />
+            <feGaussianBlur in="noise" stdDeviation="1.5" result="blurred" />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="blurred"
+              scale="25"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
 
-        {/* Header */}
-        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-          <div className="flex h-16 w-full items-center justify-between px-6">
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity cursor-pointer"
-            >
-              Yellowsky
-            </button>
+      {/* Fixed background - hero image stays static */}
+      <div className="fixed inset-0 z-0 bg-neutral-900 h-screen w-screen">
+        <div className="relative w-full h-full">
+          {mounted && (
+            <Image
+              alt="Yellowsky German Street sketch - yellow architectural illustration"
+              className={`transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+              style={{ objectFit: 'cover', objectPosition: 'center center' }}
+              src="/hero.jpg"
+              fill
+              priority
+              sizes="100vw"
+              unoptimized
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              onLoad={() => setHeroLoaded(true)}
+            />
+          )}
+        </div>
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      </div>
+
+      {/* Content layer - scrolls over fixed background */}
+      <div className="relative z-10 min-h-screen">
+        {/* Header - minimal, glass buttons only */}
+        <header className="fixed top-0 left-0 right-0 z-50">
+          <div className="flex items-center justify-end px-6 pt-5">
             <div className="flex items-center gap-3">
-              <LanguageSwitcher initialLanguage={initialLanguage} />
-              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} hrefWhenEmpty="/webshop" />
+              {/* Language switcher - glass circle */}
+              <button
+                onClick={() => {
+                  const newLang = language === 'en' ? 'hu' : 'en';
+                  setLanguage(newLang);
+                  router.refresh();
+                }}
+                className="glass-circle relative size-10"
+                aria-label={language === 'en' ? 'Switch to Hungarian' : 'Switch to English'}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full">
+                  <span className="text-xs font-bold tracking-widest text-white">{language === 'en' ? 'HU' : 'EN'}</span>
+                </div>
+              </button>
+              {/* Cart button - glass circle */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="glass-circle relative size-10"
+                aria-label={labels.cart.ariaLabel}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full pt-1">
+                  <IconShoppingBag className="size-5 text-yellow-400" />
+                </div>
+              </button>
             </div>
           </div>
         </header>
 
-        {/* Hero section - scrolls up and away, in front of purple line */}
-        <section className="relative w-full z-20 h-[calc(60vh-13px+40px-13.25rem)] sm:h-[calc(60vh-13px+40px-13.25rem)] md:h-[calc(78vh-14px+42px-13.75rem)] lg:h-[calc(78vh-7px+42px-14.5rem)]">
-          {/* Image - full width, positioned at top */}
-          <div className="absolute top-0 left-0 right-0 h-[calc(60vh-7px)] md:h-[calc(78vh-7px)] overflow-hidden bg-neutral-100">
-            {mounted && (
-                <Image
-                  alt="Yellowsky German Street sketch - yellow architectural illustration"
-                  className={`object-cover transition-opacity duration-500 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  style={{ objectPosition: 'center 36%' }}
-                  src="/hero.jpg"
-                  fill
-                  priority
-                  sizes="100vw"
-                  unoptimized
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onLoad={() => setHeroLoaded(true)}
-                />
-              )}
-            </div>
-          </section>
-
-        {/* Sticky title - stays at top while hero scrolls away */}
-        <div className="sticky top-[calc(64px+1.25rem+3px)] md:top-[calc(64px+1.25rem-1px)] z-20 pointer-events-none">
-          <div className="flex flex-col items-start px-6">
-            <div className="relative -mt-[1px] md:mt-0">
-              {/* Yellow offset text behind */}
-              <h1
-                className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0"
-                style={{
-                  fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)',
-                  transform: 'translateX(4px) translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
-                  color: '#ffcb2a'
-                }}
+        {/* Hero title section - no glass, just text */}
+        <section ref={heroRef} className="relative min-h-screen flex items-end pb-24 px-6">
+          <div className="w-full max-w-2xl">
+            <div className="p-6 md:p-8">
+              <div
+                className="relative"
+                style={{ opacity: showTitle ? (isMobile ? heroOpacity : 1) : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
               >
-                {labels.title}
-              </h1>
-              {/* Dark text on top */}
-              <h1
-                className="font-display font-bold leading-none tracking-tighter relative"
-                style={{
-                  fontSize: 'clamp(4.5rem, 4rem + 3vw, 5.75rem)',
-                  transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
-                  color: '#1a1a1a'
-                }}
+                {/* Yellow offset text behind */}
+                <h1
+                  className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
+                  style={{
+                    fontSize: 'clamp(3.5rem, 3rem + 4vw, 5.5rem)',
+                    transform: 'translateX(4px) translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                  }}
+                >
+                  {labels.title}
+                </h1>
+                {/* White text on top */}
+                <h1
+                  className="font-display font-bold leading-none tracking-tighter relative text-white drop-shadow-lg"
+                  style={{
+                    fontSize: 'clamp(3.5rem, 3rem + 4vw, 5.5rem)',
+                    transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                  }}
+                >
+                  {labels.title}
+                </h1>
+              </div>
+              <div
+                className="mt-3 ml-[20px] flex items-center gap-3"
+                style={{ opacity: showTitle ? (isMobile ? heroOpacity : 1) : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
               >
-                {labels.title}
-              </h1>
-            </div>
-            <div className={`mt-2 ml-[24px] flex items-center gap-3 transition-all duration-700 delay-150 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              <div className="h-px w-12 bg-text-dark" />
-              <a
-                href="https://andrasdenes.com"
-                className="font-display text-[1.0625rem] font-bold tracking-[0.1em] text-text-dark underline decoration-primary underline-offset-2 transition-colors hover:text-text-muted uppercase pointer-events-auto"
-              >
-                {labels.subtitle}
-              </a>
+                <div className="h-px w-10 bg-white/60" />
+                <a
+                  href="https://andrasdenes.com"
+                  className="font-display text-sm font-bold tracking-[0.1em] text-white/90 underline decoration-yellow-400/60 underline-offset-2 transition-colors hover:text-white"
+                >
+                  {labels.subtitle}
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Scroll spacer - creates scroll height for hero reveal */}
-        {!contentUnfixed && <div className="h-[100vh]" />}
+        {/* Content section */}
+        <div className="relative px-4 pb-24">
+          <div className="max-w-2xl mx-auto space-y-6">
+            {/* Story Glass Card */}
+            <section>
+              <div className="glass-panel !rounded-2xl">
+                {/* Distortion filter layer */}
+                <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
+                {/* Glass overlay - darker tone */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/20 via-black/15 to-black/10 backdrop-blur-2xl" />
+                {/* Specular highlight */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                  <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_3px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+                </div>
+                {/* Content */}
+                <div className="relative p-6 md:p-8 space-y-5">
+                  {labels.storyParagraphs.map((paragraph, idx) => (
+                    <p
+                      key={`story-${idx}`}
+                      className="text-base leading-relaxed text-white/85 text-left md:text-justify drop-shadow-sm"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-        {/* Debug: Hero bottom indicator */}
-        {heroBottomDebug > 0 && (
-          <>
-            {/* Header bottom line */}
-            <div 
-              className="fixed left-0 right-0 h-0.5 bg-green-500 z-50 pointer-events-none"
-              style={{ top: `${headerBottomDebug}px` }}
-            />
-            {/* Hero bottom line */}
-            <div 
-              className="fixed left-0 right-0 h-0.5 bg-purple-500 z-50 pointer-events-none"
-              style={{ top: `${heroBottomDebug}px` }}
-            />
-            {/* Gap display */}
-            <div 
-              className="fixed left-4 z-50 pointer-events-none bg-black/70 text-white px-2 py-1 rounded text-xs font-mono"
-              style={{ top: `${(headerBottomDebug + heroBottomDebug) / 2}px` }}
-            >
-              Gap: {Math.round(heroBottomDebug - headerBottomDebug)}px
-            </div>
-            {/* CTA position display */}
-            <div 
-              className="fixed right-4 z-50 pointer-events-none bg-blue-500/70 text-white px-2 py-1 rounded text-xs font-mono"
-              style={{ top: '80px' }}
-            >
-              CTA from header: {Math.round(ctaTopDebug - headerBottomDebug)}px
-            </div>
-          </>
-        )}
-
-        {/* Content - fixed until hero sticks, then unfixed */}
-        <div 
-          className={`${contentUnfixed ? 'relative pt-[118px]' : 'fixed inset-x-0 top-16 bottom-0'} z-0`}
-        >
-          {!contentUnfixed && <div className="h-[calc(9vh+65px)] md:h-[calc(11vh+65px)] lg:h-[calc(12vh+65px)]" />}
-          {/* CTA - Gallery button */}
-          <section data-cta className="px-3 pt-8 pb-3">
-            <div className="mx-auto max-w-2xl opacity-0 transition-opacity duration-700" data-reveal>
+            {/* CTA Glass Card */}
+            <section>
               <a
                 href="/webshop"
                 className="block w-full"
               >
-                <div className="group flex items-center gap-4 rounded-xl border border-neutral-border bg-white p-5 transition-all hover:border-primary/40 hover:shadow-md">
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary transition-all group-hover:bg-primary group-hover:text-white">
-                    <IconShoppingBag className="size-6" />
+                <div className={`glass-panel !rounded-2xl group hover:scale-[1.01] transition-transform duration-300 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
+                  {/* Distortion filter layer */}
+                  <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
+                  {/* Glass overlay - darker tone */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/25 via-black/18 to-black/12 backdrop-blur-xl" />
+                  {/* Specular highlight */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                    <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.25),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
                   </div>
-                  <div>
-                    <h3 className="font-display text-xl font-semibold">
-                      {labels.ctaTitle}
-                    </h3>
-                    <p className="mt-1 text-xs font-medium tracking-widest text-text-muted">
-                      {labels.ctaLabel}
-                    </p>
+                  {/* Content */}
+                  <div className="relative flex items-center gap-4 p-5">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/10 backdrop-blur-lg text-yellow-400 transition-all group-hover:bg-yellow-400 group-hover:text-neutral-900 shadow-lg border border-white/20">
+                      <IconShoppingBag className="size-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-xl font-semibold text-white drop-shadow-sm">
+                        {labels.ctaTitle}
+                      </h3>
+                      <p className="mt-1 text-xs font-medium tracking-widest text-white/70">
+                        {labels.ctaLabel}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </a>
-            </div>
-          </section>
+            </section>
 
-          {/* Story - behind purple line */}
-          <section className="relative bg-background-light pt-4">
-            <div className="relative px-3 pb-6">
-              <div className="mx-auto max-w-2xl space-y-6">
-                {labels.storyParagraphs.map((paragraph, idx) => (
-                  <p
-                    key={`story-${idx}`}
-                    className="text-base leading-relaxed text-text-muted text-justify opacity-0 transition-opacity duration-700"
-                    data-reveal
-                  >
-                    {paragraph}
+            {/* Community Gallery - inside glass card */}
+            {communityPosts.length > 0 && (
+              <section>
+                <div className={`glass-panel !rounded-2xl ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
+                  {/* Distortion filter layer */}
+                  <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
+                  {/* Glass overlay - darker tone */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/20 via-black/15 to-black/10 backdrop-blur-xl" />
+                  {/* Specular highlight */}
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                    <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_3px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+                  </div>
+                  {/* Content */}
+                  <div className="relative p-6 md:p-8">
+                    <CommunityGallery posts={communityPosts} language={language} />
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Footer Glass Card */}
+            <footer>
+              <div className={`glass-panel !rounded-2xl ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
+                {/* Distortion filter layer */}
+                <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
+                {/* Glass overlay - darker tone */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/18 via-black/12 to-black/8 backdrop-blur-xl" />
+                {/* Specular highlight */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 rounded-2xl border border-white/15" />
+                  <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2)]" />
+                </div>
+                {/* Content */}
+                <div className="relative py-8 px-6 text-center">
+                  {/* Trust signals */}
+                  <div className="mb-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-white">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="size-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {language === "hu" ? "Ingyenes szállítás" : "Free shipping"}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="size-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {language === "hu" ? "7-14 nap" : "7-14 days"}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="size-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      {language === "hu" ? "Biztonságos fizetés" : "Secure checkout"}
+                    </span>
+                  </div>
+                  <div className="mb-6 flex justify-center">
+                    <BrandMark size={28} className="text-white/80" />
+                  </div>
+                  <p className="mb-1 text-xs font-medium tracking-widest text-white uppercase">
+                    © {currentYear} {language === "hu" ? "Dénes András" : "András Dénes"}
                   </p>
-                ))}
+                  <p className="mb-3 text-[10px] text-white/50">
+                    {labels.footerTagline}
+                  </p>
+                  <div className="flex justify-center gap-4 text-[10px] text-white/50">
+                    <Link href="/privacy" className="hover:text-white transition-colors">
+                      {language === "hu" ? "Adatvédelem" : "Privacy"}
+                    </Link>
+                    <span>•</span>
+                    <Link href="/terms" className="hover:text-white transition-colors">
+                      {language === "hu" ? "ÁSZF" : "Terms"}
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
-          </section>
-
-          {/* Community Gallery - only show if posts exist */}
-          {communityPosts.length > 0 && (
-            <CommunityGallery posts={communityPosts} language={language} />
-          )}
-
-          <footer className="bg-background-light py-12 pb-32 text-center">
-          {/* Trust signals */}
-          <div className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {language === "hu" ? "Ingyenes szállítás" : "Free shipping"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {language === "hu" ? "7-14 nap" : "7-14 calendar days"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              {language === "hu" ? "Biztonságos fizetés" : "Secure checkout"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-              {language === "hu" ? "Keret nélkül" : "Unframed"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-              </svg>
-              {language === "hu" ? "Giclée nyomat kender papírra" : "Giclée art print on hemp paper"}
-            </span>
+            </footer>
           </div>
-          <div className="mb-9 flex justify-center">
-            <BrandMark size={32} />
-          </div>
-          <p className="mb-1.5 text-xs font-medium tracking-widest text-text-muted uppercase">
-            © {currentYear} {language === "hu" ? "Dénes András" : "András Dénes"}
-          </p>
-          <p className="mb-4 text-[10px] text-text-muted/60">
-            {labels.footerTagline}
-          </p>
-          <div className="flex justify-center gap-4 text-[10px] text-text-muted/60">
-            <Link href="/privacy" className="hover:text-primary transition-colors">
-              {language === "hu" ? "Adatvédelem" : "Privacy"}
-            </Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-primary transition-colors">
-              {language === "hu" ? "ÁSZF" : "Terms"}
-            </Link>
-          </div>
-        </footer>
         </div>
-
-        <BottomNav active="home" />
       </div>
+
+      {/* Global styles for glass effect */}
+      <style jsx global>{`
+        .glass-panel {
+          position: relative;
+          border-radius: 1.5rem;
+          overflow: hidden;
+        }
+        
+        .glass-panel::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          padding: 1px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.15) 100%);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          pointer-events: none;
+        }
+
+        /* Glass pill for header elements */
+        .glass-pill {
+          position: relative;
+          border-radius: 9999px;
+          overflow: hidden;
+        }
+
+        /* Glass circle for buttons */
+        .glass-circle {
+          position: relative;
+          border-radius: 9999px;
+          overflow: hidden;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        }
+
+        .glass-circle:hover {
+          transform: scale(1.05);
+        }
+
+        /* Smooth glass panel transition */
+        .glass-panel {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+      `}</style>
     </>
   );
 }

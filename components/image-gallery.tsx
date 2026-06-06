@@ -79,13 +79,13 @@ function ImageCard({
     >
       {/* Skeleton placeholder */}
       {!loaded && !error && (
-        <div className="w-full bg-neutral-100 animate-pulse" style={{ aspectRatio: imageAspect }} />
+        <div className="w-full bg-white/10 animate-pulse rounded-xl" style={{ aspectRatio: imageAspect }} />
       )}
 
       {/* Error state */}
       {error && (
-        <div className="w-full bg-neutral-100 flex items-center justify-center" style={{ aspectRatio: imageAspect }}>
-          <p className="text-sm text-text-muted">Image unavailable</p>
+        <div className="w-full bg-white/10 flex items-center justify-center rounded-xl" style={{ aspectRatio: imageAspect }}>
+          <p className="text-sm text-white/50">Image unavailable</p>
         </div>
       )}
 

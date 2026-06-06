@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate every 2 minutes - ISR caching (faster refresh for product availability)
-export const revalidate = 120;
+// Revalidate every 10 minutes - ISR caching (longer to avoid Stripe rate limits)
+export const revalidate = 600;
 
 // Webshop images: PNG/WebP/AVIF only (no JPG/JPEG)
 // JPG files are reserved for product page previews

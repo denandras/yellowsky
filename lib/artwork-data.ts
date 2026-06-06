@@ -141,21 +141,8 @@ export async function getArtworks(): Promise<Artwork[]> {
     }
   }
 
-  // Sort by year.number
-  const sortedBasenames = [...basenameMap.keys()].sort((a, b) => {
-    const matchA = a.match(/^(\d{4})\.(\d+)/);
-    const matchB = b.match(/^(\d{4})\.(\d+)/);
-
-    if (!matchA || !matchB) return b.localeCompare(a);
-
-    const yearA = parseInt(matchA[1], 10);
-    const yearB = parseInt(matchB[1], 10);
-    if (yearA !== yearB) return yearB - yearA;
-
-    const numA = parseInt(matchA[2], 10);
-    const numB = parseInt(matchB[2], 10);
-    return numB - numA;
-  });
+  // Sort by basename descending (a4, a3, a2, a1 - reverse ABC)
+  const sortedBasenames = [...basenameMap.keys()].sort((a, b) => b.localeCompare(a));
 
   // Map artworks to Stripe products
   const filenames = sortedBasenames.map(basename => {
@@ -203,7 +190,12 @@ export async function getArtworks(): Promise<Artwork[]> {
       ...(hasProduct && product ? {
         productId: product.id,
         productName: product.name,
-        prices: product.prices.map(p => ({
+        prices: [...product.prices].sort((a, b) => {
+          const sizeOrder: Record<string, number> = { 'A4': 1, 'A3': 2, 'A2': 3, 'A1': 4 };
+          const sizeA = a.nickname ?? '';
+          const sizeB = b.nickname ?? '';
+          return (sizeOrder[sizeA] || 99) - (sizeOrder[sizeB] || 99);
+        }).map(p => ({
           id: p.id,
           nickname: p.nickname ?? undefined,
           unitAmount: p.unitAmount ?? undefined,

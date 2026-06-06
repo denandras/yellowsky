@@ -1,15 +1,15 @@
 "use client";
 
-import BottomNav from "@/components/bottom-nav";
-import BrandMark from "@/components/brand-mark";
-import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switcher";
-import CartButton from "@/components/cart-button";
+import Image from "next/image";
+import { useSiteLanguage } from "@/components/language-switcher";
 import CartDrawer from "@/components/cart-drawer";
 import ImageGallery from "@/components/image-gallery";
+import { IconShoppingBag } from "@/components/icons";
 import { useCart } from "@/lib/cart-context";
-import Link from "next/link";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useState, useLayoutEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type MediaItem = {
   id: string;
@@ -25,78 +25,51 @@ type MediaItem = {
 type WebshopPageClientProps = {
   items: MediaItem[];
   hasConfig: boolean;
-  initialLanguage: SiteLanguage;
+  initialLanguage?: SiteLanguage;
 };
 
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
   const { items: cartItems, addItem } = useCart();
+  const router = useRouter();
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
-  const { language } = useSiteLanguage(initialLanguage);
+  const { language, setLanguage } = useSiteLanguage(initialLanguage);
 
-  // Disable automatic scroll restoration - we handle it manually in ImageGallery
+  // Disable automatic scroll restoration
   useLayoutEffect(() => {
-    if (typeof window !== "undefined" && 'scrollRestoration' in history) {
+    if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
   }, []);
 
-  const handleCheckout = async () => {
-    if (cartItems.length === 0) return;
+  const handleAddToCart = async (productId: string, priceId: string, quantity: number = 1) => {
+    setLoading((prev) => ({ ...prev, [priceId]: true }));
+    try {
+      await addItem(productId, priceId, quantity);
+    } finally {
+      setLoading((prev) => ({ ...prev, [priceId]: false }));
+    }
+  };
 
+  const handleCheckout = async () => {
     setCheckoutLoading(true);
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: cartItems.map(item => ({ priceId: item.priceId, quantity: item.quantity })),
-        }),
+        body: JSON.stringify({ cartItems }),
       });
-
       const data = await response.json();
-      if (!response.ok) {
-        console.error("Checkout failed:", data);
-        alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout failed. Please try again.");
-        return;
-      }
       if (data.url) {
         window.location.href = data.url;
       }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert(language === "hu" ? "Hiba történt a fizetésnél. Kérlek próbáld újra." : "Checkout error. Please try again.");
     } finally {
       setCheckoutLoading(false);
     }
   };
 
-  const handleAddToCart = (item: MediaItem, priceId: string) => {
-    const selectedPriceObj = item.prices?.find(p => p.id === priceId);
-    if (!selectedPriceObj) return;
-
-    setLoading(prev => ({ ...prev, [item.id]: true }));
-
-    addItem({
-      id: `${item.id}-${priceId}`,
-      priceId,
-      productId: item.productId || item.id,
-      productName: item.productName || item.title,
-      productTitle: item.title,
-      size: selectedPriceObj.nickname || "Standard",
-      price: selectedPriceObj.unitAmount || 0,
-      currency: selectedPriceObj.currency,
-      viewUrl: item.viewUrl,
-    });
-
-    setTimeout(() => {
-      setLoading(prev => {
-        const { [item.id]: _, ...rest } = prev;
-        return rest;
-      });
-    }, 300);
-  };
+  const currentYear = new Date().getFullYear();
 
   const labels = language === "hu"
     ? {
@@ -125,6 +98,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           loading: "Feldolgozás...",
           ariaLabel: "Kosár megnyitása",
         },
+        footer: {
+          copyright: "Dénes András",
+          tagline: "Yellowsky",
+          privacy: "Adatvédelem",
+          terms: "ÁSZF",
+        },
       }
     : {
         title: "Webshop",
@@ -152,6 +131,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           loading: "Processing...",
           ariaLabel: "Open cart",
         },
+        footer: {
+          copyright: "András Dénes",
+          tagline: "Yellowsky",
+          privacy: "Privacy",
+          terms: "Terms",
+        },
       };
 
   return (
@@ -163,117 +148,154 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         labels={labels.cart}
         loading={checkoutLoading}
       />
-      <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-        <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
-          <div className="flex h-16 w-full items-center justify-between px-6">
-            <Link
-              href="/"
-              className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity"
-            >
-              YELLOWSKY
-            </Link>
+
+      {/* Fixed background - hero image */}
+      <div className="fixed inset-0 z-0 bg-neutral-900">
+        <div className="absolute inset-0">
+          <Image
+            alt="Yellowsky German Street sketch - yellow architectural illustration"
+            className="transition-opacity duration-1000 opacity-100"
+            style={{ objectFit: 'cover', objectPosition: 'center center' }}
+            src="/hero.jpg"
+            fill
+            priority
+            sizes="100vw"
+            unoptimized
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen">
+        {/* Header - glass buttons like main page */}
+        <header className="fixed top-0 left-0 right-0 z-50">
+          <div className="flex items-center justify-end px-6 pt-5">
             <div className="flex items-center gap-3">
-              <LanguageSwitcher initialLanguage={initialLanguage} />
-              <CartButton onClick={() => setCartOpen(true)} labels={{ ariaLabel: labels.cart.ariaLabel }} />
+              {/* Language switcher - glass circle */}
+              <button
+                onClick={() => {
+                  const newLang = language === 'en' ? 'hu' : 'en';
+                  setLanguage(newLang);
+                  router.refresh();
+                }}
+                className="glass-circle relative size-10"
+                aria-label={language === 'en' ? 'Switch to Hungarian' : 'Switch to English'}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full">
+                  <span className="text-xs font-bold tracking-widest text-white">{language === 'en' ? 'HU' : 'EN'}</span>
+                </div>
+              </button>
+              {/* Cart button - glass circle */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="glass-circle relative size-10"
+                aria-label={labels.cart.ariaLabel}
+              >
+                <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+                <div className="relative flex items-center justify-center h-full pt-1">
+                  <IconShoppingBag className="size-5 text-yellow-400" />
+                </div>
+              </button>
             </div>
           </div>
         </header>
 
-        <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8 pb-24">
-          <section className="pt-6 pb-10">
-            <div className="animate-fade-in">
-              <h2 className="font-display mb-2 text-2xl font-bold tracking-tight">
-                {labels.subtitle}
-              </h2>
-              <p className="text-sm text-text-muted">
-                {labels.description}
-              </p>
+        {/* Gallery section - full width on desktop */}
+        {hasConfig && items.length > 0 && (
+          <section className="relative px-4 pb-24 pt-20 md:px-8 lg:px-12 md:pt-24">
+            {/* Glass panel wrapper */}
+            <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
+              {/* Glass overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+              {/* Specular highlight */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+              </div>
+
+              {/* Content */}
+              <div className="relative p-4 md:p-6 lg:p-8">
+                {/* Header */}
+                <div className="mb-6">
+                  <h2 className="font-display text-2xl font-bold text-white mb-2">
+                    {labels.subtitle}
+                  </h2>
+                  <p className="text-white/70 text-sm">
+                    {labels.description}
+                  </p>
+                </div>
+
+                <ImageGallery
+                  items={items}
+                  labels={{
+                    buyPrint: labels.buyPrint,
+                    loading: labels.loading,
+                    freeShipping: labels.freeShipping,
+                    addToCart: labels.addToCart,
+                    addedToCart: labels.addedToCart,
+                    comingSoon: labels.comingSoon,
+                    selectSize: labels.selectSize,
+                  }}
+                  onAddToCart={handleAddToCart}
+                  cartLoading={loading}
+                />
+              </div>
             </div>
           </section>
+        )}
 
-          {hasConfig && items.length > 0 && (
-            <section className="pb-10">
-              <ImageGallery
-                items={items}
-                labels={{
-                  buyPrint: labels.buyPrint,
-                  loading: labels.loading,
-                  freeShipping: labels.freeShipping,
-                  addToCart: labels.addToCart,
-                  addedToCart: labels.addedToCart,
-                  comingSoon: labels.comingSoon,
-                  selectSize: labels.selectSize,
-                }}
-                onAddToCart={handleAddToCart}
-                cartLoading={loading}
-              />
-            </section>
-          )}
-
-          {!hasConfig && (
-            <section className="pb-10">
-              <div className="rounded-xl border border-neutral-border bg-white p-6">
-                <p className="text-text-muted">
-                  {labels.description}
-                </p>
+        {!hasConfig && (
+          <section className="relative px-4 pb-24 pt-20 md:px-8 lg:px-12">
+            <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+              <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
               </div>
-            </section>
-          )}
-        </main>
+              <div className="relative p-6 md:p-8">
+                <p className="text-white/70 text-center">{labels.description}</p>
+              </div>
+            </div>
+          </section>
+        )}
 
-        <BottomNav active="webshop" />
+        {/* Footer */}
+        <footer className="relative px-4 pb-8 pt-4 md:px-8 lg:px-12">
+          {/* Glass panel wrapper */}
+          <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
+            {/* Glass overlay */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+            {/* Specular highlight */}
+            <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+              <div className="absolute inset-0 rounded-2xl border border-white/20" />
+              <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+            </div>
 
-        <footer className="bg-background-light py-12 pb-32 text-center">
-          {/* Trust signals */}
-          <div className="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-2 px-4 text-xs text-text-muted">
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {language === "hu" ? "Ingyenes szállítás világszerte" : "Free worldwide shipping"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {language === "hu" ? "7-14 munkanapon belül" : "Ships in 7-14 calendar days"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              {language === "hu" ? "Biztonságos fizetés Stripe-pal" : "Secure checkout via Stripe"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-              {language === "hu" ? "Keret nélkül" : "Unframed"}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="size-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-              </svg>
-              {language === "hu" ? "Giclée nyomat kender papírra" : "Giclée art print on hemp paper"}
-            </span>
-          </div>
-          <div className="mb-9 flex justify-center">
-            <BrandMark size={32} />
-          </div>
-          <p className="mb-2 text-xs font-medium tracking-widest text-text-muted uppercase">
-            © {new Date().getFullYear()} {language === "hu" ? "Dénes András" : "András Dénes"}
-          </p>
-          <p className="mb-4 text-[10px] text-text-muted/60">
-            {language === "hu" ? "Yellowsky • Vázlatok Budapestről" : "Yellowsky • Sketches from Budapest"}
-          </p>
-          <div className="flex justify-center gap-4 text-[10px] text-text-muted/60">
-            <Link href="/privacy" className="hover:text-primary transition-colors">
-              {language === "hu" ? "Adatvédelem" : "Privacy"}
-            </Link>
-            <span>•</span>
-            <Link href="/terms" className="hover:text-primary transition-colors">
-              {language === "hu" ? "ÁSZF" : "Terms"}
-            </Link>
+            {/* Content */}
+            <div className="relative p-6 md:p-8 text-center">
+              <p className="mb-1 text-xs font-medium tracking-widest text-white uppercase">
+                © {currentYear} {labels.footer.copyright}
+              </p>
+              <p className="mb-3 text-[10px] text-white/50">
+                {labels.footer.tagline}
+              </p>
+              <div className="flex justify-center gap-4 text-[10px] text-white/50">
+                <Link href="/privacy" className="hover:text-white transition-colors">
+                  {labels.footer.privacy}
+                </Link>
+                <span>•</span>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  {labels.footer.terms}
+                </Link>
+              </div>
+            </div>
           </div>
         </footer>
       </div>

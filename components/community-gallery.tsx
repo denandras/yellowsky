@@ -36,10 +36,10 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
     <section className="px-6 py-8">
       <div className="mx-auto max-w-2xl">
         <div className="mb-6 text-center">
-          <h2 className="font-display text-2xl font-bold tracking-tight">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-white">
             {labels.title}
           </h2>
-          <p className="mt-1 text-sm text-text-muted">
+          <p className="mt-1 text-sm text-white/70">
             {labels.subtitle}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function CommunityGallery({ posts, language }: CommunityGalleryPr
             href="https://www.instagram.com/explore/tags/yellowskychallenge"
             target="_blank"
             rel="noreferrer"
-            className="text-sm text-text-muted underline decoration-text-muted/30 underline-offset-2 transition-colors hover:text-primary"
+            className="text-sm text-white/70 underline decoration-white/30 underline-offset-2 transition-colors hover:text-white"
           >
             {language === "hu" ? "További művek az Instagramon →" : "More on Instagram →"}
           </a>

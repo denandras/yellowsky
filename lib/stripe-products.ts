@@ -22,9 +22,9 @@ export type StripePrice = {
 
 let stripeInstance: Stripe | null = null;
 
-// Cache Stripe products with 5-minute TTL to avoid rate limits
+// Cache Stripe products with 10-minute TTL to avoid rate limits
 let productsCache: { data: StripeProduct[]; timestamp: number } | null = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
 function getStripe(): Stripe | null {
   const key = getStripeSecretKey();
@@ -39,68 +39,91 @@ function getStripe(): Stripe | null {
 export async function fetchStripeProducts(): Promise<StripeProduct[]> {
   // Return cached data if still valid
   if (productsCache && Date.now() - productsCache.timestamp < CACHE_TTL) {
+    console.log('[Stripe] Using cached products');
     return productsCache.data;
   }
 
   const stripe = getStripe();
-  if (!stripe) return [];
+  if (!stripe) {
+    console.log('[Stripe] No Stripe instance available');
+    return [];
+  }
 
-  // First, fetch all products
-  const rawProducts: Stripe.Product[] = [];
-  let hasMore = true;
-  let startingAfter: string | undefined;
-
-  while (hasMore) {
-    const response = await stripe.products.list({
-      active: true,
-      limit: 100,
-      expand: ["data.default_price"],
-      ...(startingAfter ? { starting_after: startingAfter } : {}),
-    });
-
-    rawProducts.push(...response.data);
-
-    hasMore = response.has_more;
-    if (response.data.length > 0) {
-      startingAfter = response.data[response.data.length - 1].id;
+  // Return stale cache if available during rate limiting
+  const returnStaleIfAvailable = () => {
+    if (productsCache) {
+      console.log('[Stripe] Returning stale cache due to error');
+      return productsCache.data;
     }
-  }
+    return [];
+  };
 
-  // Then, fetch all prices in parallel (avoid N+1) with concurrency limit
-  const concurrencyLimit = 5;
-  const results: StripeProduct[] = [];
-  
-  for (let i = 0; i < rawProducts.length; i += concurrencyLimit) {
-    const batch = rawProducts.slice(i, i + concurrencyLimit);
-    const batchResults = await Promise.all(
-      batch.map(async (product) => {
-        const prices = await stripe!.prices.list({
-          product: product.id,
-          active: true,
-          limit: 100,
-        });
-        return {
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          images: product.images,
-          active: product.active,
-          metadata: product.metadata,
-          prices: prices.data.map((price) => ({
-            id: price.id,
-            productId: product.id,
-            nickname: price.nickname,
-            unitAmount: price.unit_amount,
-            currency: price.currency,
-            active: price.active,
-          })),
-        };
-      })
-    );
-    results.push(...batchResults);
-  }
+  console.log('[Stripe] Fetching products from API...');
 
-  // Cache the results
+  try {
+    // First, fetch all products
+    const rawProducts: Stripe.Product[] = [];
+    let hasMore = true;
+    let startingAfter: string | undefined;
+
+    while (hasMore) {
+      const response = await stripe.products.list({
+        active: true,
+        limit: 100,
+        expand: ["data.default_price"],
+        ...(startingAfter ? { starting_after: startingAfter } : {}),
+      });
+
+      rawProducts.push(...response.data);
+
+      hasMore = response.has_more;
+      if (response.data.length > 0) {
+        startingAfter = response.data[response.data.length - 1].id;
+      }
+    }
+
+    // Then, fetch all prices in parallel (avoid N+1) with concurrency limit
+    const concurrencyLimit = 3; // Reduced to avoid rate limits
+    const results: StripeProduct[] = [];
+    
+    for (let i = 0; i < rawProducts.length; i += concurrencyLimit) {
+      const batch = rawProducts.slice(i, i + concurrencyLimit);
+      const batchResults = await Promise.all(
+        batch.map(async (product) => {
+          const prices = await stripe!.prices.list({
+            product: product.id,
+            active: true,
+            limit: 100,
+          });
+          return {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            images: product.images,
+            active: product.active,
+            metadata: product.metadata,
+            prices: prices.data.map((price) => ({
+              id: price.id,
+              productId: product.id,
+              nickname: price.nickname,
+              unitAmount: price.unit_amount,
+              currency: price.currency,
+              active: price.active,
+            })),
+          };
+        })
+      );
+      results.push(...batchResults);
+    }
+
+    // Cache the results
+    productsCache = { data: results, timestamp: Date.now() };
+    console.log(`[Stripe] Cached ${results.length} products`);
+    return results;
+  } catch (error: unknown) {
+    console.error('[Stripe] Error fetching products:', error);
+    return returnStaleIfAvailable();
+  }
   productsCache = { data: results, timestamp: Date.now() };
 
   return results;
