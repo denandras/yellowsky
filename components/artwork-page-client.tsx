@@ -313,7 +313,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                             : 'bg-white/10 text-white/80 border border-white/20 hover:bg-white/20'
                         }`}
                       >
-                        {price.nickname || "Standard"} — {formatPrice(price.unitAmount || 0, price.currency)}
+                        {price.nickname || "Standard"}
                       </button>
                     ))}
                   </div>
@@ -322,7 +322,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   <button
                     onClick={handleAddToCart}
                     disabled={!selectedSize}
-                    className={`flex-shrink-0 sm:hidden p-2 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
+                    className={`flex-shrink-0 sm:hidden p-[10px] rounded-lg backdrop-blur-xl transition-colors duration-300 ${
                       showAddedMessage
                         ? 'bg-green-500/30 border border-green-400/50'
                         : selectedSize
