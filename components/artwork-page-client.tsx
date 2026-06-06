@@ -45,6 +45,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [titleFontSize, setTitleFontSize] = useState(36); // Start at mobile base
+  const [titleScale, setTitleScale] = useState(1);
 
   useEffect(() => {
     if (!titleRef.current || !showTitle) return;
@@ -74,7 +75,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         el.style.fontSize = `${fontSize}px`;
       }
       
-      setTitleFontSize(fontSize);
+      // Calculate scale to keep baseline fixed
+      const scale = fontSize / baseSize;
+      setTitleFontSize(baseSize);
+      setTitleScale(scale);
     });
   }, [artwork.title, showTitle]);
 
@@ -103,7 +107,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         el.style.fontSize = `${fontSize}px`;
       }
       
-      setTitleFontSize(fontSize);
+      const scale = fontSize / baseSize;
+      setTitleFontSize(baseSize);
+      setTitleScale(scale);
     };
     
     window.addEventListener('resize', handleResize);
@@ -344,8 +350,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               <div className="px-6 md:px-2 max-w-[calc(100vw-48px)]">
                 <h1
                   ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1' }}
-                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap origin-bottom-left ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1', transform: `scale(${titleScale})`, transformOrigin: 'bottom left' }}
+                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
