@@ -41,6 +41,15 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
+
+  // Entrance animation - content fades in after blur transition
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setContentVisible(true);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -289,7 +298,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       </div>
 
       {/* Main content - pointer-events-none so clicks pass through to hero */}
-      <div className="relative z-10 min-h-screen pointer-events-none">
+      <div 
+        className={`relative z-10 min-h-screen pointer-events-none transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
+      >
         {/* Header - glass buttons */}
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-auto">
           <div className="flex items-center justify-between px-6 pt-5">
