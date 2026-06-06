@@ -53,10 +53,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       const el = titleRef.current;
       if (!el) return;
       
-      // Calculate available width: viewport minus left/right padding
-      const leftPadding = window.innerWidth < 768 ? 24 : 8; // px-6 on mobile, px-2 on desktop
-      const rightMargin = window.innerWidth < 768 ? 24 : 16; // Extra right margin
-      const availableWidth = window.innerWidth - leftPadding - rightMargin;
+      // Calculate available width: viewport minus stripe margins
+      // Stripe has left-1 right-1 (8px total) on mobile, left-2 right-2 (16px total) on desktop
+      // Plus text padding px-2 (16px total) on mobile, px-4 (32px total) on desktop
+      const stripeInset = window.innerWidth < 768 ? 8 : 16;
+      const textPadding = window.innerWidth < 768 ? 16 : 32;
+      const availableWidth = window.innerWidth - stripeInset - textPadding - 32; // 32px safety margin
       
       // Start from max size
       const maxSize = window.innerWidth < 768 ? 42 : window.innerWidth < 1024 ? 48 : 60;
@@ -344,11 +346,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
             <div className="relative mx-auto max-w-5xl">
               {/* Black stripe - ends where glass panel begins (background hidden) */}
-              <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-transparent pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1">
+              <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-transparent pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1 overflow-hidden">
                 <h1
                   ref={titleRef}
                   style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
-                  className={`px-2 md:px-4 font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`px-2 md:px-4 font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap overflow-hidden text-ellipsis ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
