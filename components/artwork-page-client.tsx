@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import CartDrawer from "@/components/cart-drawer";
@@ -41,33 +41,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-
-  // Auto-shrink title to fit on one line
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const [titleFontSize, setTitleFontSize] = useState(42); // Start at mobile base
-
-  useEffect(() => {
-    if (!titleRef.current || !showTitle) return;
-    
-    const el = titleRef.current;
-    const container = el.parentElement;
-    if (!container) return;
-    
-    // Get container width minus padding
-    const containerWidth = container.clientWidth - 48; // Account for px-6
-    
-    // Start from max size and shrink until it fits
-    let fontSize = window.innerWidth < 768 ? 42 : window.innerWidth < 1024 ? 48 : 60; // Base sizes
-    el.style.fontSize = `${fontSize}px`;
-    
-    // Shrink until text fits
-    while (el.scrollWidth > containerWidth && fontSize > 20) {
-      fontSize -= 2;
-      el.style.fontSize = `${fontSize}px`;
-    }
-    
-    setTitleFontSize(fontSize);
-  }, [artwork.title, showTitle]);
 
   const currentYear = new Date().getFullYear();
 
@@ -302,9 +275,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             <div className="mx-auto w-full max-w-5xl">
               <div className="px-6 md:px-2 text-left">
                 <h1
-                  ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px` }}
-                  className={`block font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`block font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap overflow-hidden text-ellipsis ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
