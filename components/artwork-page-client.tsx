@@ -331,8 +331,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
       {/* Main content - pointer-events-none so clicks pass through to hero */}
       <div 
-        className={`relative z-10 min-h-screen pointer-events-none transition-all duration-500 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+        className={`relative z-10 min-h-screen pointer-events-none transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
       >
         {/* Header - glass buttons */}
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-auto">
@@ -398,8 +397,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-transparent pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1 overflow-hidden">
                 <h1
                   ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2', transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-                  className={`px-2 md:px-4 font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-500 whitespace-nowrap overflow-hidden text-ellipsis ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
+                  className={`px-2 md:px-4 font-display font-bold tracking-tight text-white drop-shadow-lg transition-opacity duration-500 whitespace-nowrap overflow-hidden text-ellipsis ${showTitle ? 'opacity-100' : 'opacity-0'}`}
                 >
                   {artwork.title}
                 </h1>
