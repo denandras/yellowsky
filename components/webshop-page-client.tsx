@@ -214,8 +214,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         <header className="fixed top-0 left-0 right-0 z-50">
           <div className="flex items-center justify-between px-6 pt-5">
             {/* Yellowsky title */}
-            <Link href="/" className="font-display text-xl text-white/90 hover:text-white transition-colors">
-              Yellowsky
+            <Link href="/" className="relative px-4 py-2">
+              <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
+              <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
+              <span className="relative font-display text-lg text-white/90 hover:text-white transition-colors">Yellowsky</span>
             </Link>
             <div className="flex items-center gap-3">
               {/* Language switcher - glass circle */}
