@@ -41,31 +41,22 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-  const [isExitingBlur, setIsExitingBlur] = useState(() => {
-    // Check synchronously during initial render
-    if (typeof window !== 'undefined') {
-      const transitioning = sessionStorage.getItem('yellowsky-transitioning');
-      if (transitioning) {
-        return true;
-      }
-    }
-    return false;
-  });
-  const [contentVisible, setContentVisible] = useState(() => {
-    // Check synchronously during initial render
-    if (typeof window !== 'undefined') {
-      const transitioning = sessionStorage.getItem('yellowsky-transitioning');
-      if (transitioning) {
-        return false; // Start hidden if transitioning
-      }
-    }
-    return true; // Visible by default for direct navigation
-  });
+  const [isExitingBlur, setIsExitingBlur] = useState(false);
+  const [contentVisible, setContentVisible] = useState(true);
 
-  // Clean up sessionStorage
+  // Check for transition state after hydration
   useEffect(() => {
-    sessionStorage.removeItem('yellowsky-transitioning');
-  
+    const transitioning = sessionStorage.getItem('yellowsky-transitioning');
+    if (transitioning) {
+      // Coming from webshop - start hidden, fade in after transition
+      setContentVisible(false);
+      setIsExitingBlur(true);
+      sessionStorage.removeItem('yellowsky-transitioning');
+    }
+  }, []);
+
+  // Handle blur exit animation
+  useEffect(() => {
     if (isExitingBlur) {
       // Content fades in after blur starts clearing
       const contentTimer = setTimeout(() => {
@@ -82,7 +73,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         clearTimeout(blurTimer);
       };
     }
-  }, []);
+  }, [isExitingBlur]);
 
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
