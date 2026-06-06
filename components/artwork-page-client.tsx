@@ -53,9 +53,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
     const container = el.parentElement;
     if (!container) return;
     
-    // Get container width minus padding
+    // Get container width - account for padding and actual viewport
     const padding = window.innerWidth < 768 ? 48 : 16; // Mobile: px-6 (24*2), Desktop: px-2 (8*2)
-    const containerWidth = container.clientWidth - padding;
+    const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
+    const containerWidth = maxWidth - 16; // Extra safety margin
     
     // Start from max size and shrink until it fits
     const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
@@ -303,11 +304,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[120px]">
             <div className="mx-auto w-full max-w-5xl">
-              <div className="px-6 md:px-2">
+              <div className="px-6 md:px-2 max-w-[calc(100vw-48px)]">
                 <h1
                   ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.1' }}
-                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1' }}
+                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap origin-bottom-left ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
