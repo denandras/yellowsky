@@ -339,36 +339,29 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </header>
 
-        {/* Title overlay - sits just above purchase panel */}
+        {/* Title overlay + Purchase panel */}
         {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[128px]">
-            <div className="mx-auto w-full max-w-5xl">
-              <div className="px-6 md:px-2 relative">
-                {/* Debug: show text area bounds */}
-                <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+          <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
+            <div className="relative mx-auto max-w-5xl">
+              {/* Black stripe - ends where glass panel begins */}
+              <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-black/50 pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1">
                 <h1
                   ref={titleRef}
                   style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
-                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`px-2 md:px-4 font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Purchase panel - fixed bottom */}
-        {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
-            <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
-              {/* Glass overlay */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
-              {/* Specular highlight */}
-              <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-                <div className="absolute inset-0 rounded-2xl border border-white/20" />
-                <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
-              </div>
+              {/* Glass panel */}
+              <div className="relative rounded-2xl overflow-hidden">
+                {/* Glass overlay */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+                {/* Specular highlight */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 rounded-2xl border border-white/20" />
+                  <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
+                </div>
 
               {/* Content */}
               <div className="relative p-4 md:p-6">
@@ -510,6 +503,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
               </div>
             </div>
           </div>
+        </div>
         )}
 
         {/* Footer - hidden on artwork page (full-screen hero experience) */}
