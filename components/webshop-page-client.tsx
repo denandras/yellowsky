@@ -169,7 +169,12 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     <>
       {/* Blur overlay for transition */}
       {isTransitioning && (
-        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-md transition-all duration-300" />
+        <div 
+          className="fixed inset-0 z-[100]"
+          style={{
+            animation: 'blur-transition 150ms ease-out forwards',
+          }}
+        />
       )}
 
       <CartDrawer

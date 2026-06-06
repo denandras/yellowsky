@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@keyframes blur-transition {
+  from {
+    backdrop-filter: blur(0);
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
 @theme inline {
   --color-primary: #ffcb2a;
   --color-background-light: #fafafa;
