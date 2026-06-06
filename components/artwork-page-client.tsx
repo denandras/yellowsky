@@ -322,7 +322,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   <button
                     onClick={handleAddToCart}
                     disabled={!selectedSize}
-                    className={`flex-shrink-0 sm:hidden p-[10px] rounded-lg backdrop-blur-xl transition-colors duration-300 ${
+                    className={`flex-shrink-0 sm:hidden py-2 px-3 rounded-lg backdrop-blur-xl transition-colors duration-300 ${
                       showAddedMessage
                         ? 'bg-green-500/30 border border-green-400/50'
                         : selectedSize
@@ -367,7 +367,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     {showPostAddOptions && (
                       <button
                         onClick={() => setCartOpen(true)}
-                        className="relative py-3 px-6 rounded-lg font-medium text-sm overflow-hidden transition-all duration-300"
+                        className="relative py-2 px-6 rounded-lg font-medium text-sm overflow-hidden transition-all duration-300"
                       >
                         <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-xl" />
                         <div className="absolute inset-0 rounded-lg border border-white/20 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]" />
@@ -377,7 +377,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     <button
                       onClick={handleAddToCart}
                       disabled={!selectedSize}
-                      className={`relative min-w-[140px] py-3 px-6 rounded-lg font-medium text-sm overflow-hidden ${
+                      className={`relative min-w-[140px] py-2 px-6 rounded-lg font-medium text-sm overflow-hidden ${
                         selectedSize
                           ? 'cursor-pointer'
                           : 'bg-white/5 backdrop-blur-xl border border-white/10 cursor-not-allowed'
