@@ -273,9 +273,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed left-0 right-0 z-[15] bottom-[141px] md:bottom-[135px]">
             <div className="mx-auto w-full max-w-5xl">
-              <div className="px-6 md:px-2 text-left">
+              <div className="overflow-hidden px-6 md:px-2">
                 <h1
-                  className={`inline-block max-w-full font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap overflow-hidden text-ellipsis ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  className={`truncate font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
