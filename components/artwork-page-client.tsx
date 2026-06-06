@@ -258,7 +258,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         onClick={() => setHeroZoomOpen(true)}
       >
         {!heroLoaded && !heroError && (
-          <div className="absolute inset-0 animate-pulse bg-white/10" />
+          <div className="absolute inset-0">
+            {/* Blurred placeholder background */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl" />
+            {/* Subtle shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 animate-pulse" />
+          </div>
         )}
         {heroError ? (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -269,7 +274,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             src={heroUrl}
             alt={artwork.alt}
             fill
-            className="object-cover transition-opacity duration-500 object-[center_75%] md:object-[center_60%]"
+            className={`object-cover transition-all duration-700 object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'blur-0 opacity-100' : 'blur-lg opacity-0'}`}
             priority
             sizes="100vw"
             unoptimized
