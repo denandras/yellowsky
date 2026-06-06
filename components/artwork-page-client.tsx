@@ -301,12 +301,12 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
         {/* Title overlay - sits just above purchase panel */}
         {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[130px]">
+          <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[120px]">
             <div className="mx-auto w-full max-w-5xl">
               <div className="px-6 md:px-2">
                 <h1
                   ref={titleRef}
-                  style={{ fontSize: `${titleFontSize}px` }}
+                  style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.1' }}
                   className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
