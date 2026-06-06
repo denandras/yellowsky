@@ -392,11 +392,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     onClick={handleAddToCart}
                     disabled={!selectedSize}
                     className={`flex-shrink-0 sm:hidden relative py-4 px-3 rounded-lg overflow-hidden transition-colors duration-300 ${
-                      showAddedMessage
+                      selectedSize
                         ? 'cursor-pointer'
-                        : selectedSize
-                          ? 'cursor-pointer'
-                          : 'bg-white/5 border border-white/10 cursor-not-allowed'
+                        : 'bg-white/5 backdrop-blur-xl border border-white/10 cursor-not-allowed'
                     }`}
                   >
                     {selectedSize && (
@@ -416,7 +414,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
-                      <svg className={`relative z-10 w-6 h-6 transition-colors duration-300 ${selectedSize ? 'text-[var(--color-primary)]' : 'text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg className={`relative z-10 w-6 h-6 transition-colors duration-300 ${selectedSize ? 'text-[var(--color-primary)]' : 'text-white/50'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     )}
