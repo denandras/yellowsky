@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import CartDrawer from "@/components/cart-drawer";
@@ -41,6 +41,33 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
+
+  // Auto-shrink title to fit
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [titleFontSize, setTitleFontSize] = useState(36); // Start at mobile base
+
+  useEffect(() => {
+    if (!titleRef.current || !showTitle) return;
+    
+    const el = titleRef.current;
+    const container = el.parentElement;
+    if (!container) return;
+    
+    // Get container width minus padding
+    const containerWidth = container.clientWidth - 48; // Account for px-6
+    
+    // Start from max size and shrink until it fits
+    let fontSize = window.innerWidth < 768 ? 36 : window.innerWidth < 1024 ? 48 : 60;
+    el.style.fontSize = `${fontSize}px`;
+    
+    // Shrink until text fits (minimum 16px)
+    while (el.scrollWidth > containerWidth && fontSize > 16) {
+      fontSize -= 1;
+      el.style.fontSize = `${fontSize}px`;
+    }
+    
+    setTitleFontSize(fontSize);
+  }, [artwork.title, showTitle]);
 
   const currentYear = new Date().getFullYear();
 
@@ -273,9 +300,11 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[135px]">
             <div className="mx-auto w-full max-w-5xl">
-              <div className="overflow-hidden px-6 md:px-2">
+              <div className="px-6 md:px-2">
                 <h1
-                  className={`truncate font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  ref={titleRef}
+                  style={{ fontSize: `${titleFontSize}px` }}
+                  className={`font-display font-bold tracking-tight text-white drop-shadow-lg transition-all duration-700 whitespace-nowrap ${showTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   {artwork.title}
                 </h1>
