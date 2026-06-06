@@ -330,8 +330,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       </div>
 
       {/* Main content - pointer-events-none so clicks pass through to hero */}
-      <div 
-        className={`relative z-10 min-h-screen pointer-events-none transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
+      <div className="relative z-10 min-h-screen pointer-events-none"
       >
         {/* Header - glass buttons */}
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-auto">
@@ -414,7 +413,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 </div>
 
               {/* Content */}
-              <div className="relative p-4 md:p-6">
+              <div className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
                 {/* Mobile: sizes + basket icon in one row */}
                 <div className="sm:hidden flex flex-row items-center gap-3">
                   {/* Size buttons */}
