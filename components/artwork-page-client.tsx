@@ -42,13 +42,35 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
+  const [isExitingBlur, setIsExitingBlur] = useState(false);
 
-  // Entrance animation - content fades in after blur transition
+  // Entrance animation - check if coming from blur transition
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const isTransitioning = sessionStorage.getItem('yellowsky-transitioning');
+    
+    if (isTransitioning) {
+      // Coming from webshop - fade out blur overlay slowly
+      setIsExitingBlur(true);
+      sessionStorage.removeItem('yellowsky-transitioning');
+      
+      // Content fades in after blur starts clearing
+      const contentTimer = setTimeout(() => {
+        setContentVisible(true);
+      }, 300);
+      
+      // Blur fully clears
+      const blurTimer = setTimeout(() => {
+        setIsExitingBlur(false);
+      }, 600);
+      
+      return () => {
+        clearTimeout(contentTimer);
+        clearTimeout(blurTimer);
+      };
+    } else {
+      // Direct navigation - show immediately
       setContentVisible(true);
-    }, 200);
-    return () => clearTimeout(timer);
+    }
   }, []);
 
   // Auto-shrink title to fit
@@ -246,6 +268,16 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
   return (
     <>
+      {/* Blur overlay that fades out on entrance */}
+      {isExitingBlur && (
+        <div 
+          className="fixed inset-0 z-[200]"
+          style={{
+            animation: 'blur-transition-reverse 600ms ease-out forwards',
+          }}
+        />
+      )}
+
       <ImageZoomModal
         src={heroUrl}
         alt={`${artwork.alt} (preview)`}

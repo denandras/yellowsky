@@ -11,6 +11,17 @@
   }
 }
 
+@keyframes blur-transition-reverse {
+  from {
+    backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  to {
+    backdrop-filter: blur(0);
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
 @theme inline {
   --color-primary: #ffcb2a;
   --color-background-light: #fafafa;

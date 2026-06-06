@@ -36,10 +36,13 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const { language, setLanguage } = useSiteLanguage(initialLanguage);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   // Handle navigation with blur transition
   const handleNavigate = (imageUrl: string, slug: string) => {
     setIsTransitioning(true);
+    // Mark that we're transitioning so artwork page knows to animate out blur
+    sessionStorage.setItem('yellowsky-transitioning', 'true');
     // Navigate after animation completes
     setTimeout(() => {
       router.push(`/artwork/${slug}`);
