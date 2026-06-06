@@ -101,7 +101,7 @@ async function handleSuccessfulOrder(
     // Extract order details
     const customerEmail = session.customer_details?.email || session.customer_email || "unknown";
     const customerName = session.customer_details?.name || "Unknown";
-    const shippingAddress = session.shipping_details?.address || session.customer_details?.address;
+    const shippingAddress = session.customer_details?.address;
 
     // Format order details for notification
     const items = lineItems.data.map((item) => {
