@@ -65,6 +65,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       el.style.fontSize = `${maxSize}px`;
       let fontSize = maxSize;
       
+      // Force reflow to get accurate scrollWidth
+      void el.offsetWidth;
+      
       // Shrink until text fits
       while (el.scrollWidth > availableWidth && fontSize > minSize) {
         fontSize -= 1;
@@ -93,6 +96,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       
       el.style.fontSize = `${maxSize}px`;
       let fontSize = maxSize;
+      
+      // Force reflow to get accurate scrollWidth
+      void el.offsetWidth;
       
       while (el.scrollWidth > availableWidth && fontSize > minSize) {
         fontSize -= 1;
