@@ -49,29 +49,66 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   useEffect(() => {
     if (!titleRef.current || !showTitle) return;
     
-    const el = titleRef.current;
-    const container = el.parentElement;
-    if (!container) return;
-    
-    // Get container width - account for padding and actual viewport
-    const padding = window.innerWidth < 768 ? 48 : 16; // Mobile: px-6 (24*2), Desktop: px-2 (8*2)
-    const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
-    const containerWidth = maxWidth - 16; // Extra safety margin
-    
-    // Start from max size and shrink until it fits
-    const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
-    let fontSize = baseSize;
-    el.style.fontSize = `${fontSize}px`;
-    
-    // Shrink until text fits (minimum 28px for mobile, 24px for desktop)
-    const minSize = window.innerWidth < 768 ? 28 : 24;
-    while (el.scrollWidth > containerWidth && fontSize > minSize) {
-      fontSize -= 1;
+    // Wait for next frame to ensure text is rendered
+    requestAnimationFrame(() => {
+      const el = titleRef.current;
+      if (!el) return;
+      
+      const container = el.parentElement;
+      if (!container) return;
+      
+      // Get container width - account for padding and actual viewport
+      const padding = window.innerWidth < 768 ? 48 : 16; // Mobile: px-6 (24*2), Desktop: px-2 (8*2)
+      const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
+      const containerWidth = maxWidth - 16; // Extra safety margin
+      
+      // Start from max size and shrink until it fits
+      const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
+      let fontSize = baseSize;
       el.style.fontSize = `${fontSize}px`;
-    }
-    
-    setTitleFontSize(fontSize);
+      
+      // Shrink until text fits (minimum 28px for mobile, 24px for desktop)
+      const minSize = window.innerWidth < 768 ? 28 : 24;
+      while (el.scrollWidth > containerWidth && fontSize > minSize) {
+        fontSize -= 1;
+        el.style.fontSize = `${fontSize}px`;
+      }
+      
+      setTitleFontSize(fontSize);
+    });
   }, [artwork.title, showTitle]);
+
+  // Recalculate on resize
+  useEffect(() => {
+    if (!showTitle) return;
+    
+    const handleResize = () => {
+      if (!titleRef.current) return;
+      
+      const el = titleRef.current;
+      const container = el.parentElement;
+      if (!container) return;
+      
+      const padding = window.innerWidth < 768 ? 48 : 16;
+      const maxWidth = Math.min(container.clientWidth, window.innerWidth - padding);
+      const containerWidth = maxWidth - 16;
+      
+      const baseSize = window.innerWidth < 768 ? 48 : window.innerWidth < 1024 ? 48 : 60;
+      let fontSize = baseSize;
+      el.style.fontSize = `${fontSize}px`;
+      
+      const minSize = window.innerWidth < 768 ? 28 : 24;
+      while (el.scrollWidth > containerWidth && fontSize > minSize) {
+        fontSize -= 1;
+        el.style.fontSize = `${fontSize}px`;
+      }
+      
+      setTitleFontSize(fontSize);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showTitle]);
 
   const currentYear = new Date().getFullYear();
 
