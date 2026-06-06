@@ -343,7 +343,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
         {artwork.prices && artwork.prices.length > 0 && (
           <div className="fixed left-0 right-0 z-[15] bottom-[147px] md:bottom-[120px]">
             <div className="mx-auto w-full max-w-5xl">
-              <div className="px-6 md:px-2">
+              <div className="px-6 md:px-2 relative">
+                {/* Debug: show text area bounds */}
+                <div className="absolute inset-0 bg-black/50 pointer-events-none" />
                 <h1
                   ref={titleRef}
                   style={{ fontSize: `${titleFontSize}px`, lineHeight: '1.2' }}
