@@ -46,7 +46,22 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const handleAddToCart = async (productId: string, priceId: string, quantity: number = 1) => {
     setLoading((prev) => ({ ...prev, [priceId]: true }));
     try {
-      await addItem(productId, priceId, quantity);
+      // Find the product and add to cart
+      const product = artworks.find(a => a.prices?.some(p => p.id === priceId));
+      const price = product?.prices?.find(p => p.id === priceId);
+      if (product && price) {
+        addItem({
+          id: priceId,
+          priceId,
+          productId,
+          productName: product.slug,
+          productTitle: product.title,
+          nickname: price.nickname || "Standard",
+          unitAmount: price.unitAmount || 0,
+          currency: price.currency || "EUR",
+          quantity,
+        });
+      }
     } finally {
       setLoading((prev) => ({ ...prev, [priceId]: false }));
     }
