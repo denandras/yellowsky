@@ -47,7 +47,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     setLoading((prev) => ({ ...prev, [priceId]: true }));
     try {
       // Find the product and add to cart
-      const product = artworks.find(a => a.prices?.some(p => p.id === priceId));
+      const product = items.find(a => a.prices?.some(p => p.id === priceId));
       const price = product?.prices?.find(p => p.id === priceId);
       if (product && price) {
         addItem({
