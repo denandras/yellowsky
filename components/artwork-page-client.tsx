@@ -450,7 +450,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                       >
                         <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-xl" />
                         <div className="absolute inset-0 rounded-lg border border-white/20 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2)]" />
-                        <span className="relative text-white font-semibold">{language === "hu" ? "Pénztár" : "Checkout"} ({getItemCount()})</span>
+                        <span className="relative text-white font-semibold">{language === "hu" ? "Pénztár" : "Checkout"}{getItemCount() > 0 ? ` (${getItemCount()})` : ''}</span>
                       </button>
                     )}
                     <button
