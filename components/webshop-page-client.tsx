@@ -173,7 +173,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       {/* Blur overlay for transition */}
       {isTransitioning && (
         <div 
-          className="fixed inset-0 z-[100] backdrop-blur-xl"
+          className="fixed inset-0 z-[100]"
           style={{
             animation: 'blur-transition 150ms ease-out forwards',
           }}
