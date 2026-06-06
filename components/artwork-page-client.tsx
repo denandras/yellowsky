@@ -283,7 +283,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             src={heroUrl}
             alt={artwork.alt}
             fill
-            className={`object-cover transition-all duration-700 ease-out object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'blur-0 opacity-100 scale-100' : 'blur-xl opacity-80 scale-105'}`}
+            className="object-cover object-[center_75%] md:object-[center_60%]"
             priority
             sizes="100vw"
             unoptimized
