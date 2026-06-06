@@ -124,9 +124,6 @@ export async function fetchStripeProducts(): Promise<StripeProduct[]> {
     console.error('[Stripe] Error fetching products:', error);
     return returnStaleIfAvailable();
   }
-  productsCache = { data: results, timestamp: Date.now() };
-
-  return results;
 }
 
 /**
