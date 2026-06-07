@@ -43,7 +43,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [isExitingBlur, setIsExitingBlur] = useState(false);
   const [contentVisible, setContentVisible] = useState(false); // Start hidden until hydration check
-  const [hydrated, setHydrated] = useState(false);
 
   // Check for transition state after hydration
   useEffect(() => {
@@ -59,7 +58,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       // Direct access - show immediately
       setContentVisible(true);
     }
-    setHydrated(true);
   }, []);
 
   // Handle blur exit animation
@@ -407,10 +405,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 </div>
 
               {/* Content */}
-              <div 
-                data-content="artwork-glass"
-                className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'} ${hydrated ? 'hydrated' : ''}`}
-              >
+              <div className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
                 {/* Mobile: sizes + basket icon in one row */}
                 <div className="sm:hidden flex flex-row items-center gap-3">
                   {/* Size buttons */}
