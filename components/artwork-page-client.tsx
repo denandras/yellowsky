@@ -425,9 +425,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   {/* Basket icon - mobile only - adds to cart */}
                   <button
                     onClick={handleAddToCart}
-                    disabled={!selectedSize}
+                    disabled={!selectedSize || showAddedMessage}
                     className={`flex-shrink-0 sm:hidden relative py-4 px-3 rounded-lg overflow-hidden transition-colors duration-300 ${
-                      selectedSize
+                      selectedSize && !showAddedMessage
                         ? 'cursor-pointer'
                         : 'bg-white/5 backdrop-blur-xl border border-white/10 cursor-not-allowed'
                     }`}
@@ -490,9 +490,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                     )}
                     <button
                       onClick={handleAddToCart}
-                      disabled={!selectedSize}
+                      disabled={!selectedSize || showAddedMessage}
                       className={`relative min-w-[140px] py-2 px-6 rounded-lg font-medium text-sm overflow-hidden ${
-                        selectedSize
+                        selectedSize && !showAddedMessage
                           ? 'cursor-pointer'
                           : 'bg-white/5 backdrop-blur-xl border border-white/10 cursor-not-allowed'
                       }`}
