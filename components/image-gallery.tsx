@@ -72,30 +72,24 @@ function ImageCard({
     <div
       className="overflow-hidden rounded-xl border border-neutral-border bg-white relative group"
       data-item-id={item.id}
-      style={{
-        opacity: loaded ? 1 : 0,
-        transform: loaded ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 0.4s ease-out, transform 0.4s ease-out",
-        transitionDelay: loaded ? `${Math.min(index * 30, 300)}ms` : "0ms",
-      }}
+      style={{ aspectRatio: imageAspect }}
     >
-      {/* Skeleton placeholder */}
+      {/* Skeleton placeholder - always show while loading */}
       {!loaded && !error && (
-        <div className="w-full bg-white/10 animate-pulse rounded-xl" style={{ aspectRatio: imageAspect }} />
+        <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
       )}
 
       {/* Error state */}
       {error && (
-        <div className="w-full bg-white/10 flex items-center justify-center rounded-xl" style={{ aspectRatio: imageAspect }}>
-          <p className="text-sm text-white/50">Image unavailable</p>
+        <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
+          <p className="text-sm text-neutral-400">Image unavailable</p>
         </div>
       )}
 
       {/* Image - clickable link to artwork page */}
       <Link
         href={`/artwork/${slug}`}
-        className="block relative rounded-lg overflow-hidden"
-        style={{ aspectRatio: imageAspect }}
+        className="block absolute inset-0 rounded-lg overflow-hidden"
         onClick={() => {
           if (typeof window !== "undefined") {
             sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
@@ -114,7 +108,8 @@ function ImageCard({
           }}
           src={item.viewUrl}
           alt={item.alt}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer"
+          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          style={{ transition: 'opacity 0.5s ease-out' }}
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}

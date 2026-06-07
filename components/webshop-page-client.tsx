@@ -148,6 +148,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           tagline: "Yellowsky",
           privacy: "Adatvédelem",
           terms: "ÁSZF",
+          contact: "Kapcsolat",
         },
       }
     : {
@@ -181,6 +182,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           tagline: "Yellowsky",
           privacy: "Privacy",
           terms: "Terms",
+          contact: "Contact",
         },
       };
 
@@ -233,7 +235,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
             <Link href="/" className="relative px-4 py-2">
               <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />
               <div className="absolute inset-0 rounded-full border border-white/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
-              <span className="relative font-display text-lg text-white/90 hover:text-white transition-colors">Yellowsky</span>
+              <span className="relative font-display font-bold text-lg text-white/90 hover:text-white transition-colors">Yellowsky</span>
             </Link>
             <div className="flex items-center gap-3">
               {/* Language switcher - glass circle */}
@@ -357,6 +359,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
                 <Link href="/terms" className="hover:text-white transition-colors">
                   {labels.footer.terms}
                 </Link>
+                <span>•</span>
+                <a href="mailto:contact@andrasdenes.com" className="hover:text-white transition-colors">
+                  {labels.footer.contact}
+                </a>
               </div>
             </div>
           </div>
