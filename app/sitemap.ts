@@ -1,29 +1,30 @@
-import type { MetadataRoute } from "next";
+import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://yellowsky.andrasdenes.com",
+      url: SITE_URL,
       lastModified: new Date(),
-      changeFrequency: "monthly",
+      changeFrequency: 'monthly',
       priority: 1,
     },
     {
-      url: "https://yellowsky.andrasdenes.com/webshop",
+      url: `${SITE_URL}/webshop`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
+      changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: "https://yellowsky.andrasdenes.com/contact",
+      url: `${SITE_URL}/contact`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
+      changeFrequency: 'monthly',
       priority: 0.5,
     },
     {
-      url: "https://yellowsky.andrasdenes.com/legal",
+      url: `${SITE_URL}/legal`,
       lastModified: new Date(),
-      changeFrequency: "yearly",
+      changeFrequency: 'yearly',
       priority: 0.3,
     },
   ];

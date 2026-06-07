@@ -1,7 +1,8 @@
-import type { SiteLanguage } from "@/lib/site-language";
+import type { SiteLanguage } from '@/lib/site-language';
+import { SITE_URL, AUTHOR_NAME, AUTHOR_URL } from '@/lib/config';
 
 type JsonLdProps = {
-  type: "website" | "artist" | "product" | "breadcrumb";
+  type: 'website' | 'artist' | 'product' | 'breadcrumb';
   language?: SiteLanguage;
   productData?: {
     name: string;
@@ -13,60 +14,58 @@ type JsonLdProps = {
   };
 };
 
-export default function JsonLd({ type, language = "en", productData }: JsonLdProps) {
-  const baseUrl = "https://yellowsky.andrasdenes.com";
-  
+export default function JsonLd({ type, language = 'en', productData }: JsonLdProps) {
   const artistSchema = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "András Dénes",
-    alternateName: "Andras Denes",
-    url: "https://andrasdenes.com",
-    jobTitle: language === "hu" ? "Képzőművész, Harsonaművész" : "Visual Artist, Trombonist",
-    nationality: language === "hu" ? "Magyar" : "Hungarian",
-    knowsAbout: ["yellow sketches", "giclée prints", "art posters", "contemporary art", "trombone"],
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+    alternateName: 'Andras Denes',
+    url: AUTHOR_URL,
+    jobTitle: language === 'hu' ? 'Képzőművész, Harsonaművész' : 'Visual Artist, Trombonist',
+    nationality: language === 'hu' ? 'Magyar' : 'Hungarian',
+    knowsAbout: ['yellow sketches', 'giclée prints', 'art posters', 'contemporary art', 'trombone'],
     sameAs: [
-      "https://instagram.com/yellowsky.sketches",
-      "https://instagram.com/abstract.sketcher",
-      "https://andrasdenes.com",
+      'https://instagram.com/yellowsky.sketches',
+      'https://instagram.com/abstract.sketcher',
+      AUTHOR_URL,
     ],
   };
 
   const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Yellowsky",
-    url: baseUrl,
-    description: language === "hu" 
-      ? "Sárga grafikák, giclée nyomatok kenderpapíron és poszterek Dénes Andrástól" 
-      : "Yellow sketches, giclée prints on hemp paper, and art posters by András Dénes",
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Yellowsky',
+    url: SITE_URL,
+    description: language === 'hu'
+      ? 'Sárga grafikák, giclée nyomatok kenderpapíron és poszterek Dénes Andrástól'
+      : 'Yellow sketches, giclée prints on hemp paper, and art posters by András Dénes',
     publisher: {
-      "@type": "Person",
-      name: "András Dénes",
-      url: "https://andrasdenes.com",
+      '@type': 'Person',
+      name: AUTHOR_NAME,
+      url: AUTHOR_URL,
     },
     potentialAction: {
-      "@type": "SearchAction",
-      target: `${baseUrl}/webshop`,
-      "query-input": "required name=search_term_string",
+      '@type': 'SearchAction',
+      target: `${SITE_URL}/webshop`,
+      'query-input': 'required name=search_term_string',
     },
   };
 
   const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
     itemListElement: [
       {
-        "@type": "ListItem",
+        '@type': 'ListItem',
         position: 1,
-        name: "Home",
-        item: baseUrl,
+        name: 'Home',
+        item: SITE_URL,
       },
       {
-        "@type": "ListItem",
+        '@type': 'ListItem',
         position: 2,
-        name: language === "hu" ? "Webshop" : "Webshop",
-        item: `${baseUrl}/webshop`,
+        name: language === 'hu' ? 'Webshop' : 'Webshop',
+        item: `${SITE_URL}/webshop`,
       },
     ],
   };

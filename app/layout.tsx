@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { CartProvider } from "@/lib/cart-context";
 import JsonLd from "@/components/json-ld";
+import { SITE_URL, AUTHOR_NAME, AUTHOR_URL } from "@/lib/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,16 +17,16 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://yellowsky.andrasdenes.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     template: "%s | Yellowsky",
   },
   description: "Discover and purchase original yellow sketches and giclée prints on hemp paper by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
   keywords: ["yellow sketches", "giclée prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
-  authors: [{ name: "András Dénes", url: "https://andrasdenes.com" }],
-  creator: "András Dénes",
-  publisher: "András Dénes",
+  authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
+  creator: AUTHOR_NAME,
+  publisher: AUTHOR_NAME,
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     description: "Discover and purchase original yellow sketches and giclée prints on hemp paper. A unique art collection that started during lockdown – free worldwide shipping.",
-    url: "https://yellowsky.andrasdenes.com",
+    url: SITE_URL,
     siteName: "Yellowsky",
     locale: "en_US",
     type: "website",
@@ -54,10 +55,10 @@ export const metadata: Metadata = {
     images: ["/hero.jpg"],
   },
   alternates: {
-    canonical: "https://yellowsky.andrasdenes.com",
+    canonical: SITE_URL,
     languages: {
-      "en-US": "https://yellowsky.andrasdenes.com",
-      "hu-HU": "https://yellowsky.andrasdenes.com",
+      "en-US": SITE_URL,
+      "hu-HU": SITE_URL,
     },
   },
   robots: {

@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
-import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from "@/lib/s4-config";
-import { createMediaAccessToken } from "@/lib/media-access-token";
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
-import { fetchStripeProducts, mapArtworksToProducts } from "@/lib/stripe-products";
-import WebshopPageClient from "@/components/webshop-page-client";
-import JsonLd from "@/components/json-ld";
+import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
+import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from '@/lib/s4-config';
+import { createMediaAccessToken } from '@/lib/media-access-token';
+import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from '@/lib/site-language';
+import { fetchStripeProducts, mapArtworksToProducts } from '@/lib/stripe-products';
+import { SITE_URL } from '@/lib/config';
+import WebshopPageClient from '@/components/webshop-page-client';
+import JsonLd from '@/components/json-ld';
 
 type MediaItem = {
   id: string;
@@ -20,13 +21,13 @@ type MediaItem = {
 };
 
 export const metadata: Metadata = {
-  title: "Webshop – Buy Giclée Prints & Art Posters",
-  description: "Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.",
+  title: 'Webshop – Buy Giclée Prints & Art Posters',
+  description: 'Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
   openGraph: {
-    title: "Webshop – Buy Giclée Prints | Yellowsky",
-    description: "Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.",
-    url: "https://yellowsky.andrasdenes.com/webshop",
-    type: "website",
+    title: 'Webshop – Buy Giclée Prints | Yellowsky',
+    description: 'Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
+    url: `${SITE_URL}/webshop`,
+    type: 'website',
   },
 };
 
@@ -215,7 +216,7 @@ export default async function WebshopPage() {
           productData={{
             name: firstProduct.productName || firstProduct.title,
             description: `Giclée print on hemp paper — "${firstProduct.productName || firstProduct.title}" by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
-            image: `https://yellowsky.andrasdenes.com${firstProduct.viewUrl}`,
+            image: `${SITE_URL}${firstProduct.viewUrl}`,
             priceA4: firstProduct.prices?.find(p => p.nickname === "A4")?.unitAmount,
             priceA3: firstProduct.prices?.find(p => p.nickname === "A3")?.unitAmount,
             currency: firstProduct.prices?.[0]?.currency,

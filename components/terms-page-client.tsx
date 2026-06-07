@@ -15,7 +15,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
     ? {
         title: "Általános Szerződési Feltételek",
         lastUpdated: "Hatályos: 2026. május 20-tól",
-        intro: "Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) a yellowsky.andrasdenes.com webáruházban történő vásárlásra vonatkoznak. A megrendeléssel a Felhasználó elfogadja jelen ÁSZF rendelkezéseit.",
+        intro: "Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) a yellowsky.cc webáruházban történő vásárlásra vonatkoznak. A megrendeléssel a Felhasználó elfogadja jelen ÁSZF rendelkezéseit.",
         definitions: {
           title: "I. Fogalmi meghatározások",
           items: [

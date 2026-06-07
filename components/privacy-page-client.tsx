@@ -15,7 +15,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
     ? {
         title: "Adatvédelmi Tájékoztató",
         lastUpdated: "Hatályos: 2026. május 20-tól",
-        intro: "Jelen Adatvédelmi Tájékoztató (a továbbiakban: Tájékoztató) a yellowsky.andrasdenes.com weboldal (a továbbiakban: Weboldal) látogatói és a Webáruház vásárlói személyes adatainak kezelésére vonatkozik. A Tájékoztató megfelel az Európai Parlament és a Tanács 2016/679. rendeletének (Általános Adatvédelmi Rendelet, GDPR) és a magyar adatvédelmi jogszabályoknak.",
+        intro: "Jelen Adatvédelmi Tájékoztató (a továbbiakban: Tájékoztató) a yellowsky.cc weboldal (a továbbiakban: Weboldal) látogatói és a Webáruház vásárlói személyes adatainak kezelésére vonatkozik. A Tájékoztató megfelel az Európai Parlament és a Tanács 2016/679. rendeletének (Általános Adatvédelmi Rendelet, GDPR) és a magyar adatvédelmi jogszabályoknak.",
         controller: {
           title: "I. Adatkezelő",
           text: "A Weboldalt és a Webáruházat Dénes András magánszemély, független művész üzemelteti (a továbbiakban: Adatkezelő).",
@@ -131,7 +131,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
     : {
         title: "Privacy Policy",
         lastUpdated: "Effective: May 20, 2026",
-        intro: "This Privacy Policy applies to visitors of the yellowsky.andrasdenes.com website (hereinafter: \"Website\") and customers of the Webshop, regarding the processing of their personal data. This Policy complies with Regulation (EU) 2016/679 of the European Parliament and of the Council (General Data Protection Regulation, GDPR) and Hungarian data protection laws.",
+        intro: "This Privacy Policy applies to visitors of the yellowsky.cc website (hereinafter: \"Website\") and customers of the Webshop, regarding the processing of their personal data. This Policy complies with Regulation (EU) 2016/679 of the European Parliament and of the Council (General Data Protection Regulation, GDPR) and Hungarian data protection laws.",
         controller: {
           title: "I. Data Controller",
           text: "The Website and Webshop are operated by András Dénes, independent artist (hereinafter: \"Data Controller\").",

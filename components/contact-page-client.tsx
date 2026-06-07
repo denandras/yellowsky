@@ -89,7 +89,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
         placeholderEmail: "Email címed",
         placeholderMessage: "Miben segíthetek?",
         send: "Üzenet küldése",
-        subject: "Új üzenet a yellowsky.andrasdenes.com oldalról",
+        subject: "Új üzenet a yellowsky.cc oldalról",
         formTitle: "Űrlap",
         cart: {
           title: "Kosár",
@@ -113,7 +113,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
         placeholderEmail: "Your email",
         placeholderMessage: "How can I help you?",
         send: "Send Message",
-        subject: "New inquiry from yellowsky.andrasdenes.com",
+        subject: "New inquiry from yellowsky.cc",
         formTitle: "Form",
         cart: {
           title: "Cart",
@@ -230,7 +230,7 @@ export default function ContactPageClient({ initialLanguage }: ContactPageClient
                       <input type="hidden" name="_subject" value={labels.subject} />
                       <input type="hidden" name="_template" value="table" />
                       <input type="hidden" name="_captcha" value="false" />
-                      <input type="hidden" name="_next" value="https://yellowsky.andrasdenes.com/contact?sent=1" />
+                      <input type="hidden" name="_next" value="https://yellowsky.cc/contact?sent=1" />
                       <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
 
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

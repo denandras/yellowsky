@@ -7,7 +7,7 @@
 
 const https = require('https');
 
-const HOSTNAME = process.env.YELLOWSKY_HOST || 'yellowsky.andrasdenes.com';
+const HOSTNAME = process.env.YELLOWSKY_HOST || 'yellowsky.cc';
 const LIMIT = parseInt(process.env.YELLOWSKY_SYNC_LIMIT || '50', 10);
 
 const data = JSON.stringify({ dryRun: false, limit: LIMIT });
