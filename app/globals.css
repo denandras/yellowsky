@@ -196,6 +196,15 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* Hide content before hydration to prevent flash */
+[data-content="artwork-glass"] {
+  opacity: 0;
+}
+
+[data-content="artwork-glass"].hydrated {
+  opacity: 1;
+}
+
 /* Shimmer animation for skeleton loading */
 @keyframes shimmer {
   0% {

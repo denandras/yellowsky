@@ -42,37 +42,29 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
   const [isExitingBlur, setIsExitingBlur] = useState(false);
-  const [contentVisible, setContentVisible] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false); // Start hidden until hydration check
+  const [hydrated, setHydrated] = useState(false);
 
   // Check for transition state after hydration
   useEffect(() => {
     const transitioning = sessionStorage.getItem('yellowsky-transitioning');
     if (transitioning) {
-      // Coming from webshop - start hidden, fade in after transition
-      setContentVisible(false);
+      // Coming from webshop - keep hidden, start blur exit animation
       setIsExitingBlur(true);
       sessionStorage.removeItem('yellowsky-transitioning');
+      // Content fades in after blur starts clearing
+      setTimeout(() => setContentVisible(true), 300);
+      setTimeout(() => setIsExitingBlur(false), 600);
+    } else {
+      // Direct access - show immediately
+      setContentVisible(true);
     }
+    setHydrated(true);
   }, []);
 
   // Handle blur exit animation
   useEffect(() => {
-    if (isExitingBlur) {
-      // Content fades in after blur starts clearing
-      const contentTimer = setTimeout(() => {
-        setContentVisible(true);
-      }, 300);
-      
-      // Blur fully clears
-      const blurTimer = setTimeout(() => {
-        setIsExitingBlur(false);
-      }, 600);
-      
-      return () => {
-        clearTimeout(contentTimer);
-        clearTimeout(blurTimer);
-      };
-    }
+    // Blur exit is handled in the first useEffect now
   }, [isExitingBlur]);
 
   // Auto-shrink title to fit
@@ -415,7 +407,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 </div>
 
               {/* Content */}
-              <div className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <div 
+                data-content="artwork-glass"
+                className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'} ${hydrated ? 'hydrated' : ''}`}
+              >
                 {/* Mobile: sizes + basket icon in one row */}
                 <div className="sm:hidden flex flex-row items-center gap-3">
                   {/* Size buttons */}
