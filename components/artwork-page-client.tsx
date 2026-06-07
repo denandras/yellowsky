@@ -55,8 +55,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       setTimeout(() => setContentVisible(true), 300);
       setTimeout(() => setIsExitingBlur(false), 600);
     } else {
-      // Direct access - show immediately
-      setContentVisible(true);
+      // Direct access - small delay to ensure fade transition works
+      setTimeout(() => setContentVisible(true), 50);
     }
   }, []);
 
@@ -307,7 +307,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             src={heroUrl}
             alt={artwork.alt}
             fill
-            className={`object-cover object-[center_75%] md:object-[center_60%] transition-all duration-700 ${heroLoaded ? 'blur-0 opacity-100' : 'blur-xl opacity-80'}`}
+            className={`object-cover object-[center_75%] md:object-[center_60%] transition-all duration-1000 ease-out ${heroLoaded ? 'blur-0 opacity-100' : 'blur-xl opacity-60'}`}
             priority
             sizes="100vw"
             unoptimized
