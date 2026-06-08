@@ -30,7 +30,7 @@ type WebshopPageClientProps = {
 };
 
 export default function WebshopPageClient({ items, hasConfig, initialLanguage }: WebshopPageClientProps) {
-  const { items: cartItems, addItem } = useCart();
+  const { items: cartItems, addItem, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [cartOpen, setCartOpen] = useState(false);
@@ -40,6 +40,29 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showCanceled, setShowCanceled] = useState(false);
+
+  // Handle success/canceled redirect from Stripe
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    
+    if (success === '1') {
+      clearCart();
+      setShowSuccess(true);
+      // Clean URL
+      router.replace('/webshop');
+      // Auto-hide after 5 seconds
+      setTimeout(() => setShowSuccess(false), 5000);
+    } else if (canceled === '1') {
+      setShowCanceled(true);
+      // Clean URL
+      router.replace('/webshop');
+      // Auto-hide after 5 seconds
+      setTimeout(() => setShowCanceled(false), 5000);
+    }
+  }, [searchParams, clearCart, router]);
 
   // Restore scroll position on mount (when navigating back)
   useEffect(() => {
@@ -103,7 +126,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cartItems }),
+        body: JSON.stringify({ items: cartItems.map(item => ({ priceId: item.priceId, quantity: item.quantity })) }),
       });
       const data = await response.json();
       if (data.url) {
@@ -188,6 +211,22 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
 
   return (
     <>
+      {/* Success/Canceled notifications */}
+      {showSuccess && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[150] animate-[fadeIn_0.3s_ease-out]">
+          <div className="bg-green-500/90 backdrop-blur-md text-white px-6 py-3 rounded-xl shadow-lg font-display font-medium">
+            {language === "hu" ? "Sikeres rendelés! Köszönjük a vásárlást." : "Order successful! Thank you for your purchase."}
+          </div>
+        </div>
+      )}
+      {showCanceled && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[150] animate-[fadeIn_0.3s_ease-out]">
+          <div className="bg-neutral-800/90 backdrop-blur-md text-white px-6 py-3 rounded-xl shadow-lg font-display font-medium">
+            {language === "hu" ? "A fizetés megszakítva. A kosár megmaradt." : "Payment canceled. Your cart has been saved."}
+          </div>
+        </div>
+      )}
+
       {/* Blur overlay for transition */}
       {isTransitioning && (
         <div 
