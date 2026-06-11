@@ -39,19 +39,16 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scroll tracking for mobile fade
+  // Scroll tracking for hero fade
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      // Mobile-only: linear fade from 0 to 160px
-      if (isMobile) {
-        const opacity = Math.max(0, 1 - scrollY / 160);
-        setHeroOpacity(opacity);
-      } else {
-        setHeroOpacity(1); // No fade on desktop
-      }
+      // Linear fade from 0 to 160px (or 200px on desktop)
+      const fadeDistance = isMobile ? 160 : 200;
+      const opacity = Math.max(0, 1 - scrollY / fadeDistance);
+      setHeroOpacity(opacity);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -236,7 +233,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </defs>
       </svg>
 
-      {/* Fixed background - hero image stays static */}
+      {/* Fixed background - hero image with title overlay */}
       <div className="fixed inset-0 z-0 bg-neutral-900 h-screen w-screen">
         <div className="relative w-full h-full">
           {mounted && (
@@ -257,6 +254,51 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </div>
         {/* Subtle gradient overlay for depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+        
+        {/* Hero text - static position relative to image, scales from center */}
+        <div 
+          className="absolute top-[62%] left-1/2"
+          style={{ opacity: showTitle ? heroOpacity : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
+        >
+          <div 
+            className="w-max"
+            style={{ transform: 'translateX(-50%) translateY(4px)', transformOrigin: 'center center' }}
+          >
+            {/* Title */}
+            <div className="relative">
+              {/* Yellow offset text behind */}
+              <h1
+                className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
+                style={{
+                  fontSize: 'clamp(4rem, 8vw, 7rem)',
+                  transform: 'translateX(0.5vw) translateY(0.5vw)',
+                }}
+              >
+                {labels.title}
+              </h1>
+              {/* White text on top */}
+              <h1
+                className="font-display font-bold leading-none tracking-tighter relative text-white drop-shadow-lg"
+                style={{
+                  fontSize: 'clamp(4rem, 8vw, 7rem)',
+                  transform: 'translateY(0.5vw)',
+                }}
+              >
+                {labels.title}
+              </h1>
+            </div>
+            {/* Subtitle */}
+            <div className="mt-[1.5vw] flex items-center gap-[1vw]">
+              <div className="h-px w-[4vw] min-w-[2rem] max-w-[4rem] bg-white/60" />
+              <a
+                href="https://andrasdenes.com"
+                className="font-display text-[clamp(1rem,2vw,1.5rem)] font-bold tracking-[0.1em] text-white/90 underline decoration-yellow-400/60 underline-offset-2 transition-colors hover:text-white"
+              >
+                {labels.subtitle}
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Content layer - scrolls over fixed background */}
@@ -296,50 +338,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           </div>
         </header>
 
-        {/* Hero title section - no glass, just text */}
-        <section ref={heroRef} className="relative min-h-screen flex items-end pb-12 md:pb-16 px-6">
-          <div className="w-full max-w-2xl">
-            <div className="p-6 md:p-8">
-              <div
-                className="relative"
-                style={{ opacity: showTitle ? (isMobile ? heroOpacity : 1) : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
-              >
-                {/* Yellow offset text behind */}
-                <h1
-                  className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
-                  style={{
-                    fontSize: 'clamp(4.5rem, 4rem + 6vw, 8rem)',
-                    transform: 'translateX(5px) translateY(clamp(4px, 2px + 0.3vw, 7px))',
-                  }}
-                >
-                  {labels.title}
-                </h1>
-                {/* White text on top */}
-                <h1
-                  className="font-display font-bold leading-none tracking-tighter relative text-white drop-shadow-lg"
-                  style={{
-                    fontSize: 'clamp(4.5rem, 4rem + 6vw, 8rem)',
-                    transform: 'translateY(clamp(4px, 2px + 0.3vw, 7px))',
-                  }}
-                >
-                  {labels.title}
-                </h1>
-              </div>
-              <div
-                className="mt-4 ml-[24px] flex items-center gap-3"
-                style={{ opacity: showTitle ? (isMobile ? heroOpacity : 1) : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
-              >
-                <div className="h-px w-12 bg-white/60" />
-                <a
-                  href="https://andrasdenes.com"
-                  className="font-display text-base font-bold tracking-[0.1em] text-white/90 underline decoration-yellow-400/60 underline-offset-2 transition-colors hover:text-white"
-                >
-                  {labels.subtitle}
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Hero spacer - leaves room for the background image */}
+        <section ref={heroRef} className="h-screen" />
 
         {/* Content section */}
         <div className="relative px-4 pb-24">
