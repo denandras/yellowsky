@@ -246,19 +246,33 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
       };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
-      {/* Background gradient overlay */}
-      <div className="fixed inset-0 bg-gradient-to-t from-primary/5 via-transparent to-primary/3 pointer-events-none" />
-      
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-900/60 backdrop-blur-xl">
-        <div className="flex h-16 w-full items-center justify-between px-6">
-          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-white hover:text-white/80 transition-colors">
-            YELLOWSKY
-          </Link>
-          <LanguageSwitcher initialLanguage={initialLanguage} />
+    <div className="min-h-screen">
+      {/* Fixed background - hero image */}
+      <div className="fixed inset-0 z-0 bg-neutral-900">
+        <div className="relative w-full h-full">
+          <img
+            alt="Yellowsky German Street sketch - yellow architectural illustration"
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/hero.jpg"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
         </div>
-      </header>
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      </div>
+
+      {/* Content layer */}
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-900/60 backdrop-blur-xl">
+          <div className="flex h-16 w-full items-center justify-between px-6">
+            <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-white hover:text-white/80 transition-colors">
+              YELLOWSKY
+            </Link>
+            <LanguageSwitcher initialLanguage={initialLanguage} />
+          </div>
+        </header>
 
       <main className="relative px-4 py-12 pb-24 md:px-6">
         <article className="mx-auto max-w-2xl">
@@ -414,6 +428,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
           </footer>
         </article>
       </main>
+      </div>
     </div>
   );
 }
