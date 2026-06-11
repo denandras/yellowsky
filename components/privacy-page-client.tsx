@@ -253,7 +253,7 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-900/60 backdrop-blur-xl">
         <div className="flex h-16 w-full items-center justify-between px-6">
-          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-primary hover:text-yellow-300 transition-colors">
+          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-white hover:text-white/80 transition-colors">
             YELLOWSKY
           </Link>
           <LanguageSwitcher initialLanguage={initialLanguage} />
