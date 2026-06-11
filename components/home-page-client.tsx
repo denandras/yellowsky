@@ -297,7 +297,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </header>
 
         {/* Hero title section - no glass, just text */}
-        <section ref={heroRef} className="relative min-h-screen flex items-end pb-24 px-6">
+        <section ref={heroRef} className="relative min-h-screen flex items-end pb-12 md:pb-16 px-6">
           <div className="w-full max-w-2xl">
             <div className="p-6 md:p-8">
               <div
@@ -308,8 +308,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 <h1
                   className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
                   style={{
-                    fontSize: 'clamp(3.5rem, 3rem + 4vw, 5.5rem)',
-                    transform: 'translateX(4px) translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                    fontSize: 'clamp(4.5rem, 4rem + 6vw, 8rem)',
+                    transform: 'translateX(5px) translateY(clamp(4px, 2px + 0.3vw, 7px))',
                   }}
                 >
                   {labels.title}
@@ -318,21 +318,21 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 <h1
                   className="font-display font-bold leading-none tracking-tighter relative text-white drop-shadow-lg"
                   style={{
-                    fontSize: 'clamp(3.5rem, 3rem + 4vw, 5.5rem)',
-                    transform: 'translateY(clamp(3.5px, 1.5px + 0.25vw, 5.5px))',
+                    fontSize: 'clamp(4.5rem, 4rem + 6vw, 8rem)',
+                    transform: 'translateY(clamp(4px, 2px + 0.3vw, 7px))',
                   }}
                 >
                   {labels.title}
                 </h1>
               </div>
               <div
-                className="mt-3 ml-[20px] flex items-center gap-3"
+                className="mt-4 ml-[24px] flex items-center gap-3"
                 style={{ opacity: showTitle ? (isMobile ? heroOpacity : 1) : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
               >
-                <div className="h-px w-10 bg-white/60" />
+                <div className="h-px w-12 bg-white/60" />
                 <a
                   href="https://andrasdenes.com"
-                  className="font-display text-sm font-bold tracking-[0.1em] text-white/90 underline decoration-yellow-400/60 underline-offset-2 transition-colors hover:text-white"
+                  className="font-display text-base font-bold tracking-[0.1em] text-white/90 underline decoration-yellow-400/60 underline-offset-2 transition-colors hover:text-white"
                 >
                   {labels.subtitle}
                 </a>
