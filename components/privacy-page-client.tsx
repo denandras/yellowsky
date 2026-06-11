@@ -246,89 +246,95 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
       };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-      <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
+      {/* Background gradient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-t from-primary/5 via-transparent to-primary/3 pointer-events-none" />
+      
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-900/60 backdrop-blur-xl">
         <div className="flex h-16 w-full items-center justify-between px-6">
-          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity">
-            {labels.title.split(" | ")[0]}
+          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-primary hover:text-yellow-300 transition-colors">
+            YELLOWSKY
           </Link>
           <LanguageSwitcher initialLanguage={initialLanguage} />
         </div>
       </header>
 
-      <main className="flex-1 px-6 py-12 pb-24">
+      <main className="relative px-4 py-12 pb-24 md:px-6">
         <article className="mx-auto max-w-2xl">
-          <header className="mb-12">
-            <h1 className="font-outfit text-3xl font-semibold text-primary">
+          {/* Glass card header */}
+          <header className="mb-10 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
+            <h1 className="font-outfit text-2xl md:text-3xl font-semibold text-primary">
               {labels.title}
             </h1>
-            <p className="mt-2 text-sm text-neutral-400">
+            <p className="mt-2 text-sm text-white/70">
               {labels.lastUpdated}
             </p>
           </header>
 
-          <section className="space-y-10 text-neutral-700">
+          {/* Content sections wrapped in glass card */}
+          <div className="p-6 md:p-8 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 space-y-8 text-white/90">
             <p className="leading-relaxed">{labels.intro}</p>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.controller.title}
               </h2>
               <p className="leading-relaxed">{labels.controller.text}</p>
-              <p className="mt-2 text-sm"><strong>{labels.controller.contact}</strong> {labels.controller.email}</p>
-              <p className="text-sm">{labels.controller.location}</p>
+              <p className="mt-2 text-sm text-white/80"><strong className="text-white">{labels.controller.contact}</strong> {labels.controller.email}</p>
+              <p className="text-sm text-white/80">{labels.controller.location}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.data.title}
               </h2>
-              <p className="font-medium mb-2">{labels.data.intro}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm mb-4">
+              <p className="font-medium mb-2 text-white">{labels.data.intro}</p>
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80 mb-4">
                 {labels.data.collected.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="font-medium mb-2">{language === "hu" ? "Nem gyűjtött adatok:" : "Data not collected:"}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <p className="font-medium mb-2 text-white">{language === "hu" ? "Nem gyűjtött adatok:" : "Data not collected:"}</p>
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.data.notCollected.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.legalBasis.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.legalBasis.text}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.legalBasis.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.purpose.title}
               </h2>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.purpose.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.retention.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.retention.text}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.retention.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="mt-3 leading-relaxed text-sm">{labels.retention.deletion}</p>
+              <p className="mt-3 leading-relaxed text-sm text-white/80">{labels.retention.deletion}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.thirdParty.title}
               </h2>
               <p className="leading-relaxed mb-3">{labels.thirdParty.text}</p>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-sm text-white/80">
                 {labels.thirdParty.services.map((service, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <strong className="text-primary">{service.name}:</strong>
@@ -338,71 +344,71 @@ export default function PrivacyPageClient({ initialLanguage }: PrivacyPageClient
               </div>
               <div className="mt-3 space-y-1">
                 {labels.thirdParty.services.map((service, i) => (
-                  <a key={i} href={service.policy} target="_blank" rel="noopener noreferrer" className="block text-sm text-primary underline hover:opacity-80">
+                  <a key={i} href={service.policy} target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:text-yellow-300 transition-colors">
                     {language === "hu" ? `${service.name} adatvédelmi irányelvek` : `${service.name} Privacy Policy`}
                   </a>
                 ))}
               </div>
-              <p className="mt-3 leading-relaxed text-sm">{labels.thirdParty.note}</p>
+              <p className="mt-3 leading-relaxed text-sm text-white/80">{labels.thirdParty.note}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.rights.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.rights.text}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.rights.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="mt-4 font-medium">{labels.rights.complaint}</p>
-              <p className="text-sm">{labels.rights.authority}</p>
-              <p className="text-sm">{labels.rights.authorityAddress}</p>
+              <p className="mt-4 font-medium text-white">{labels.rights.complaint}</p>
+              <p className="text-sm text-white/80">{labels.rights.authority}</p>
+              <p className="text-sm text-white/80">{labels.rights.authorityAddress}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.security.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.security.text}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.security.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="mt-3 leading-relaxed text-sm">{labels.security.disclaimer}</p>
+              <p className="mt-3 leading-relaxed text-sm text-white/80">{labels.security.disclaimer}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.cookies.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.cookies.text}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.cookies.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="mt-3 leading-relaxed text-sm">{labels.cookies.control}</p>
+              <p className="mt-3 leading-relaxed text-sm text-white/80">{labels.cookies.control}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.changes.title}
               </h2>
               <p className="leading-relaxed">{labels.changes.text}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.contact.title}
               </h2>
               <p className="leading-relaxed mb-2">{labels.contact.text}</p>
-              <p className="text-sm"><strong>Email:</strong> {labels.contact.email}</p>
-              <p className="text-sm">{labels.contact.response}</p>
+              <p className="text-sm text-white/80"><strong className="text-white">Email:</strong> {labels.contact.email}</p>
+              <p className="text-sm text-white/80">{labels.contact.response}</p>
             </section>
-          </section>
+          </div>
 
-          <footer className="mt-12 pt-8 border-t border-neutral-200 flex items-center justify-between">
-            <Link href="/" className="text-sm text-neutral-400 hover:text-primary transition-colors">
+          <footer className="mt-8 flex items-center justify-between">
+            <Link href="/" className="text-sm text-neutral-500 hover:text-primary transition-colors">
               {labels.backToHome}
             </Link>
-            <Link href="/terms" className="text-sm text-primary underline hover:opacity-80 transition-opacity">
+            <Link href="/terms" className="text-sm text-primary hover:text-yellow-300 transition-colors">
               {labels.terms}
             </Link>
           </footer>

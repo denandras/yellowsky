@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with András Dénes for inquiries about yellow sketches, giclée prints, or collaborations. Email and Instagram contact available.',
+  description: 'Get in touch with András Dénes for inquiries about yellow sketches, fine art prints, or collaborations. Email and Instagram contact available.',
   openGraph: {
     title: 'Contact | Yellowsky',
     description: 'Get in touch for inquiries about prints or collaborations.',

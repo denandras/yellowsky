@@ -17,7 +17,10 @@ export default function LegalPageClient({ initialLanguage }: LegalPageClientProp
         title: "Jogi Nyilatkozat & Adatvédelmi Irányelvek",
         lastUpdated: "Utoljára frissítve: 2025. május",
         dataController: "Adatkezelő",
-        dataControllerText: "Ez a weboldalt András Dénes, Budapesten élő független művész működteti. Az adatvédelemmel kapcsolatos kérdésekért kérlek, lépj kapcsolatba:",
+        dataControllerText: "Ez a weboldalt Dénes András Szilveszter egyéni vállalkozó működteti.",
+        dataControllerName: "Név:",
+        dataControllerAddress: "Székhely:",
+        dataControllerTaxId: "Adószám:",
         email: "Email:",
         location: "Helyszín:",
         whatDataTitle: "Milyen adatokat gyűjtök",
@@ -54,7 +57,10 @@ export default function LegalPageClient({ initialLanguage }: LegalPageClientProp
         title: "Legal Notice & Privacy Policy",
         lastUpdated: "Last updated: May 2025",
         dataController: "Data Controller",
-        dataControllerText: "This website is operated by András Dénes, an independent artist based in Budapest, Hungary. For any inquiries regarding data protection, please contact:",
+        dataControllerText: "This website is operated by Dénes András Szilveszter, sole proprietor (egyéni vállalkozó).",
+        dataControllerName: "Name:",
+        dataControllerAddress: "Address:",
+        dataControllerTaxId: "Tax ID:",
         email: "Email:",
         location: "Location:",
         whatDataTitle: "What Data I Collect",
@@ -120,8 +126,10 @@ export default function LegalPageClient({ initialLanguage }: LegalPageClientProp
                 {labels.dataControllerText}
               </p>
               <ul className="mt-3 space-y-1 text-sm">
+                <li><strong>{labels.dataControllerName}</strong> Dénes András Szilveszter</li>
+                <li><strong>{labels.dataControllerAddress}</strong> 1133 Budapest, Garam u. 23. I./9.</li>
+                <li><strong>{labels.dataControllerTaxId}</strong> 90416576-1-41</li>
                 <li><strong>{labels.email}</strong> denandras@gmail.com</li>
-                <li><strong>{labels.location}</strong> Budapest, Hungary</li>
               </ul>
             </section>
 

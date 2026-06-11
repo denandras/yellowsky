@@ -21,11 +21,11 @@ type MediaItem = {
 };
 
 export const metadata: Metadata = {
-  title: 'Webshop – Buy Giclée Prints & Art Posters',
-  description: 'Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
+  title: 'Webshop – Buy Fine Art Prints & Art Posters',
+  description: 'Browse and purchase fine art prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
   openGraph: {
-    title: 'Webshop – Buy Giclée Prints | Yellowsky',
-    description: 'Browse and purchase giclée prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
+    title: 'Webshop – Buy Fine Art Prints | Yellowsky',
+    description: 'Browse and purchase fine art prints on hemp paper — architectural sketches by András Dénes. Free worldwide shipping. A4 and A3 sizes available.',
     url: `${SITE_URL}/webshop`,
     type: 'website',
   },
@@ -49,7 +49,7 @@ function extractFilename(key: string): string {
 
 /**
  * Generate alt text from filename.
- * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — giclée print on hemp paper"
+ * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — fine art print on hemp paper"
  */
 function generateAltText(filename: string): string {
   // Remove extension
@@ -65,7 +65,7 @@ function generateAltText(filename: string): string {
   
   // Build alt text
   const yearPart = year ? `, ${year}` : "";
-  return `Architectural sketch of ${subject}${yearPart} — giclée print on hemp paper`;
+  return `Architectural sketch of ${subject}${yearPart} — fine art print on hemp paper`;
 }
 
 async function getArtItems(): Promise<MediaItem[]> {
@@ -215,7 +215,7 @@ export default async function WebshopPage() {
           type="product"
           productData={{
             name: firstProduct.productName || firstProduct.title,
-            description: `Giclée print on hemp paper — "${firstProduct.productName || firstProduct.title}" by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
+            description: `Fine art print on hemp paper — "${firstProduct.productName || firstProduct.title}" by András Dénes. Museum-quality art print available in A4 and A3 sizes.`,
             image: `${SITE_URL}${firstProduct.viewUrl}`,
             priceA4: firstProduct.prices?.find(p => p.nickname === "A4")?.unitAmount,
             priceA3: firstProduct.prices?.find(p => p.nickname === "A3")?.unitAmount,

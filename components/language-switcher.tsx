@@ -127,39 +127,20 @@ export default function LanguageSwitcher({
     };
   }, []);
 
+  const otherLang = language === "hu" ? "EN" : "HU";
+  const otherLangValue = language === "hu" ? "en" : "hu";
+
   return (
-    <div
-      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-bold tracking-wider ${
+    <button
+      type="button"
+      onClick={() => setAndRefresh(otherLangValue)}
+      className={`font-display text-sm font-semibold tracking-wide transition-colors ${
         light
-          ? "bg-white/10 text-white"
-          : "bg-neutral-100 text-text-dark"
+          ? "text-white/80 hover:text-white"
+          : "text-text-dark hover:text-primary"
       }`}
     >
-      <button
-        type="button"
-        disabled={language === "hu"}
-        onClick={() => setAndRefresh("hu")}
-        className={`px-1.5 py-0.5 transition-opacity ${
-          language === "hu"
-            ? "cursor-default font-semibold"
-            : "cursor-pointer opacity-60 hover:opacity-100"
-        }`}
-      >
-        HU
-      </button>
-      <span className={`px-1 ${light ? "text-white/50" : "text-text-muted"}`}>|</span>
-      <button
-        type="button"
-        disabled={language === "en"}
-        onClick={() => setAndRefresh("en")}
-        className={`px-1.5 py-0.5 transition-opacity ${
-          language === "en"
-            ? "cursor-default font-semibold"
-            : "cursor-pointer opacity-60 hover:opacity-100"
-        }`}
-      >
-        EN
-      </button>
-    </div>
+      {otherLang}
+    </button>
   );
 }

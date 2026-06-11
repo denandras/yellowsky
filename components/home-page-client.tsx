@@ -6,28 +6,17 @@ import LanguageSwitcher, { useSiteLanguage } from "@/components/language-switche
 import CartButton from "@/components/cart-button";
 import CartDrawer from "@/components/cart-drawer";
 import { IconShoppingBag } from "@/components/icons";
-import CommunityGallery from "@/components/community-gallery";
 import { useCart } from "@/lib/cart-context";
 import type { SiteLanguage } from "@/lib/site-language";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-type CommunityPost = {
-  id: string;
-  image: string;
-  author: string;
-  likes: number;
-  caption?: string;
-  link?: string;
-};
-
 type HomePageClientProps = {
   initialLanguage: SiteLanguage;
-  communityPosts?: CommunityPost[];
 };
 
-export default function HomePageClient({ initialLanguage, communityPosts = [] }: HomePageClientProps) {
+export default function HomePageClient({ initialLanguage }: HomePageClientProps) {
   const router = useRouter();
   const { language, setLanguage } = useSiteLanguage(initialLanguage);
   const { items: cartItems } = useCart();
@@ -119,7 +108,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         előadóművészetre
       </a>{" "}
       kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
-    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni, ezért létrehoztam ezt az oldalt, hogy a közeli ismerősökön túlra is eljuthassanak grafikáim, melyek egyenként készülnek kenderpapírra, giclée minőségben.",
+    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni, ezért létrehoztam ezt az oldalt, hogy a közeli ismerősökön túlra is eljuthassanak grafikáim, melyek egyenként készülnek kenderpapírra, fine art minőségben.",
   ];
 
   const storyParagraphsEn = [
@@ -141,7 +130,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
       >
         playing the trombone
       </a>, but sometimes I sketched a bit.</>,
-    "Now that I've completed my master's degree at the Franz Liszt Academy of Budapest, I have more time to create. I created this site so my sketches can reach beyond my close circle — each one is printed on hemp paper, giclée quality.",
+    "Now that I've completed my master's degree at the Franz Liszt Academy of Budapest, I have more time to create. I created this site so my sketches can reach beyond my close circle — each one is printed on hemp paper, fine art quality.",
   ];
 
   const labels = isHungarian
@@ -169,7 +158,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
         subtitle: "by András Dénes",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsEn,
-        ctaLabel: "giclée prints available",
+        ctaLabel: "fine art prints available",
         ctaTitle: "To the Gallery",
         footerTagline: "Yellowsky • Architectural graphics",
         cart: {
@@ -387,7 +376,7 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 href="/webshop"
                 className="block w-full"
               >
-                <div className={`glass-panel !rounded-2xl group hover:scale-[1.01] transition-transform duration-300 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
+                <div className={`glass-panel !rounded-2xl group ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
                   {/* Distortion filter layer */}
                   <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
                   {/* Glass overlay - darker tone */}
@@ -398,8 +387,8 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                     <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.25),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
                   </div>
                   {/* Content */}
-                  <div className="relative flex items-center gap-4 p-5">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/10 backdrop-blur-lg text-yellow-400 transition-all group-hover:bg-yellow-400 group-hover:text-neutral-900 shadow-lg border border-white/20">
+                  <div className="relative flex items-center gap-4 p-5 transition-transform duration-500 ease-out group-hover:scale-[1.02]">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white text-neutral-900 transition-all duration-500 ease-out group-hover:bg-yellow-400 shadow-lg border border-white/20">
                       <IconShoppingBag className="size-6" />
                     </div>
                     <div>
@@ -414,27 +403,6 @@ export default function HomePageClient({ initialLanguage, communityPosts = [] }:
                 </div>
               </a>
             </section>
-
-            {/* Community Gallery - inside glass card */}
-            {communityPosts.length > 0 && (
-              <section>
-                <div className={`glass-panel !rounded-2xl ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
-                  {/* Distortion filter layer */}
-                  <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
-                  {/* Glass overlay - darker tone */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/20 via-black/15 to-black/10 backdrop-blur-xl" />
-                  {/* Specular highlight */}
-                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-                    <div className="absolute inset-0 rounded-2xl border border-white/20" />
-                    <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_3px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
-                  </div>
-                  {/* Content */}
-                  <div className="relative p-6 md:p-8">
-                    <CommunityGallery posts={communityPosts} language={language} />
-                  </div>
-                </div>
-              </section>
-            )}
 
             {/* Footer Glass Card */}
             <footer>

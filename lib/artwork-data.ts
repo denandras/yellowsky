@@ -29,7 +29,7 @@ export type ImageDimensions = {
 
 /**
  * Generate alt text from filename.
- * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — giclée print on hemp paper"
+ * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — fine art print on hemp paper"
  */
 function generateAltText(filename: string): string {
   const title = filename.replace(/\.[^.]+$/, "");
@@ -38,7 +38,7 @@ function generateAltText(filename: string): string {
   const subjectMatch = title.match(/^\d{4}\.\d+\s+(.+)$/);
   const subject = subjectMatch ? subjectMatch[1] : title;
   const yearPart = year ? `, ${year}` : "";
-  return `Architectural sketch of ${subject}${yearPart} — giclée print on hemp paper`;
+  return `Architectural sketch of ${subject}${yearPart} — fine art print on hemp paper`;
 }
 
 /**

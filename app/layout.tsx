@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     default: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
     template: "%s | Yellowsky",
   },
-  description: "Discover and purchase original yellow sketches and giclée prints on hemp paper by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
-  keywords: ["yellow sketches", "giclée prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
+  description: "Discover and purchase original yellow sketches and fine art prints on hemp paper by András Dénes. A unique art collection that started during lockdown – free worldwide shipping available.",
+  keywords: ["yellow sketches", "fine art prints", "art posters", "architectural posters", "András Dénes", "contemporary art", "Budapest artist", "digital art", "architectural sketches", "abstract art", "yellowsky challenge", "poszterek", "művészeti poszterek"],
   authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
   creator: AUTHOR_NAME,
   publisher: AUTHOR_NAME,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Yellowsky | Yellow Sketches, Prints & Art Posters by András Dénes",
-    description: "Discover and purchase original yellow sketches and giclée prints on hemp paper. A unique art collection that started during lockdown – free worldwide shipping.",
+    description: "Discover and purchase original yellow sketches and fine art prints on hemp paper. A unique art collection that started during lockdown – free worldwide shipping.",
     url: SITE_URL,
     siteName: "Yellowsky",
     locale: "en_US",
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yellowsky | Yellow Sketches & Giclée Prints",
-    description: "Discover and purchase original yellow sketches and giclée prints on hemp paper – free worldwide shipping.",
+    title: "Yellowsky | Yellow Sketches & Fine Art Prints",
+    description: "Discover and purchase original yellow sketches and fine art prints on hemp paper – free worldwide shipping.",
     images: ["/hero.jpg"],
   },
   alternates: {

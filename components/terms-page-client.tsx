@@ -19,27 +19,28 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         definitions: {
           title: "I. Fogalmi meghatározások",
           items: [
-            "Szolgáltató: a webáruházat üzemeltető Dénes András egyéni vállalkozó (Budapest, Magyarország)",
+            "Szolgáltató: a webáruházat üzemeltető Dénes András Szilveszter egyéni vállalkozó (1133 Budapest, Garam u. 23. I./9.)",
             "Felhasználó: az a természetes személy, aki a webáruházban terméket rendel",
             "Fogyasztó: a Polgári Törvénykönyv szerinti fogyasztó, az a Felhasználó, aki a terméket nem szakmai tevékenységéhez kapcsolódóan vásárolja",
             "Webáruház: a Szolgáltató által üzemeltetett online értékesítési felület",
-            "Termék: a webáruházban kínált giclée minőségű művészeti nyomat",
+            "Termék: a webáruházban kínált fine art minőségű művészeti nyomat",
             "Szerződés: a Felhasználó és a Szolgáltató között létrejött adásvételi szerződés",
           ],
         },
         parties: {
           title: "II. Szerződő felek",
           provider: "Szolgáltató:",
-          providerName: "Dénes András",
-          providerType: "magánszemély, független művész",
-          providerAddress: "Székhely: Budapest, Magyarország",
+          providerName: "Dénes András Szilveszter",
+          providerType: "egyéni vállalkozó",
+          providerAddress: "Székhely: 1133 Budapest, Garam u. 23. I./9.",
+          providerTaxId: "Adószám: 90416576-1-41",
           providerEmail: "E-mail: contact@andrasdenes.com",
           user: "Felhasználó:",
           userText: "A vásárló, aki a webáruházban rendelést helyez el.",
         },
         products: {
           title: "III. A termékek ismertetése",
-          text: "A webáruházban giclée minőségű művészeti nyomatok kaphatók kenderpapíron. A termékek a megrendeléskor megadott méretben készülnek, egyedi gyártásúak.",
+          text: "A webáruházban fine art minőségű művészeti nyomatok kaphatók kenderpapíron. A termékek a megrendeléskor megadott méretben készülnek, egyedi gyártásúak.",
           images: "A weboldalon található képek tájékoztató jellegűek; a tényleges színek a képernyő beállításaitól függően eltérhetnek.",
         },
         ordering: {
@@ -87,7 +88,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Jótállás",
-          text: "A giclée nyomatokat archív minőségű kenderpapíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) akár 80 évig is megőrzik minőségüket.",
+          text: "A fine art nyomatokat archív minőségű kenderpapíron készítjük. A nyomatok megfelelő tárolás mellett (közvetlen napfénytől, nedvességtől védve) hosszú ideig megőrzik minőségüket.",
           defects: "Gyártási hiba vagy szállítási sérülés esetén a Szolgáltató a terméket ingyen kicseréli vagy visszatéríti a vételárat, a hibás termék visszaküldése mellett.",
         },
         intellectual: {
@@ -125,27 +126,28 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         definitions: {
           title: "I. Definitions",
           items: [
-            "Provider: Dénes András, independent artist operating the webshop (Budapest, Hungary)",
+            "Provider: Dénes András Szilveszter, sole proprietor operating the webshop (1133 Budapest, Garam u. 23. I./9., Hungary)",
             "User: any natural person placing an order in the webshop",
             "Consumer: a User purchasing products for personal, non-professional use",
             "Webshop: the online sales platform operated by the Provider",
-            "Product: giclée quality art prints offered in the webshop",
+            "Product: fine art quality prints offered in the webshop",
             "Contract: the purchase agreement between User and Provider",
           ],
         },
         parties: {
           title: "II. Parties",
           provider: "Provider:",
-          providerName: "András Dénes",
-          providerType: "independent artist",
-          providerAddress: "Location: Budapest, Hungary",
+          providerName: "Dénes András Szilveszter",
+          providerType: "sole proprietor (egyéni vállalkozó)",
+          providerAddress: "Address: 1133 Budapest, Garam u. 23. I./9.",
+          providerTaxId: "Tax ID: 90416576-1-41",
           providerEmail: "Email: contact@andrasdenes.com",
           user: "User:",
           userText: "The customer placing an order through the webshop.",
         },
         products: {
           title: "III. Products",
-          text: "The webshop offers giclée quality art prints on hemp paper. Products are made to order in the specified size.",
+          text: "The webshop offers fine art quality prints on hemp paper. Products are made to order in the specified size.",
           images: "Images on the website are illustrative; actual colors may vary depending on screen settings.",
         },
         ordering: {
@@ -193,7 +195,7 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
         },
         warranty: {
           title: "VIII. Warranty",
-          text: "Giclée prints are made on archival quality hemp paper. With proper storage (protected from direct sunlight and moisture), prints can retain their quality for up to 80 years.",
+          text: "Fine art prints are made on archival quality hemp paper. With proper storage (protected from direct sunlight and moisture), prints will retain their quality for a long time.",
           defects: "In case of manufacturing defects or shipping damage, the Provider will replace the product free of charge or refund the purchase price, upon return of the defective item.",
         },
         intellectual: {
@@ -226,160 +228,167 @@ export default function TermsPageClient({ initialLanguage }: TermsPageClientProp
       };
 
   return (
-    <div className="flex min-h-screen flex-col bg-background-light text-text-dark">
-      <header className="sticky top-0 z-50 border-b border-neutral-border bg-white/80 backdrop-blur-md">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
+      {/* Background gradient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-t from-primary/5 via-transparent to-primary/3 pointer-events-none" />
+      
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-neutral-900/60 backdrop-blur-xl">
         <div className="flex h-16 w-full items-center justify-between px-6">
-          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase hover:opacity-80 transition-opacity">
-            {labels.title.split(" | ")[0]}
+          <Link href="/" className="font-display text-lg font-bold tracking-tight uppercase text-primary hover:text-yellow-300 transition-colors">
+            YELLOWSKY
           </Link>
           <LanguageSwitcher initialLanguage={initialLanguage} />
         </div>
       </header>
 
-      <main className="flex-1 px-6 py-12 pb-24">
+      <main className="relative px-4 py-12 pb-24 md:px-6">
         <article className="mx-auto max-w-2xl">
-          <header className="mb-12">
-            <h1 className="font-outfit text-3xl font-semibold text-primary">
+          {/* Glass card header */}
+          <header className="mb-10 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
+            <h1 className="font-outfit text-2xl md:text-3xl font-semibold text-primary">
               {labels.title}
             </h1>
-            <p className="mt-2 text-sm text-neutral-400">
+            <p className="mt-2 text-sm text-white/70">
               {labels.lastUpdated}
             </p>
           </header>
 
-          <section className="space-y-10 text-neutral-700">
+          {/* Content sections wrapped in glass card */}
+          <div className="p-6 md:p-8 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 space-y-8 text-white/90">
             <p className="leading-relaxed">{labels.intro}</p>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.definitions.title}
               </h2>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.definitions.items.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.parties.title}
               </h2>
-              <div className="space-y-1 text-sm">
-                <p><strong>{labels.parties.provider}</strong> {labels.parties.providerName}, {labels.parties.providerType}</p>
+              <div className="space-y-1.5 text-sm text-white/80">
+                <p><strong className="text-white">{labels.parties.provider}</strong> {labels.parties.providerName}, {labels.parties.providerType}</p>
                 <p>{labels.parties.providerAddress}</p>
+                <p>{labels.parties.providerTaxId}</p>
                 <p>{labels.parties.providerEmail}</p>
-                <p className="mt-3"><strong>{labels.parties.user}</strong> {labels.parties.userText}</p>
+                <p className="mt-3"><strong className="text-white">{labels.parties.user}</strong> {labels.parties.userText}</p>
               </div>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.products.title}
               </h2>
-              <p className="leading-relaxed">{labels.products.text}</p>
-              <p className="mt-2 text-sm">{labels.products.images}</p>
+              <p className="leading-relaxed text-white/90">{labels.products.text}</p>
+              <p className="mt-2 text-sm text-white/70">{labels.products.images}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.ordering.title}
               </h2>
-              <ol className="list-inside list-decimal space-y-1 text-sm mb-3">
+              <ol className="list-inside list-decimal space-y-1.5 text-sm text-white/80 mb-3">
                 {labels.ordering.steps.map((step, i) => <li key={i}>{step}</li>)}
               </ol>
-              <p className="leading-relaxed">{labels.ordering.contract}</p>
-              <p className="mt-2 text-sm">{labels.ordering.language}</p>
+              <p className="leading-relaxed text-white/90">{labels.ordering.contract}</p>
+              <p className="mt-2 text-sm text-white/70">{labels.ordering.language}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.pricing.title}
               </h2>
-              <p className="leading-relaxed">{labels.pricing.currency}</p>
-              <p className="mt-2 text-sm">{labels.pricing.vat}</p>
-              <p className="mt-2 text-sm">{labels.pricing.payment}</p>
-              <p className="mt-2 text-sm">{labels.pricing.cards}</p>
+              <p className="leading-relaxed text-white/90">{labels.pricing.currency}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.pricing.vat}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.pricing.payment}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.pricing.cards}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.shipping.title}
               </h2>
-              <p className="leading-relaxed mb-2"><strong>{labels.shipping.worldwide}</strong></p>
-              <p className="leading-relaxed">{labels.shipping.timeframe}</p>
-              <p className="mt-2 text-sm">{labels.shipping.tracking}</p>
-              <p className="mt-2 text-sm">{labels.shipping.damage}</p>
+              <p className="leading-relaxed mb-2"><strong className="text-white">{labels.shipping.worldwide}</strong></p>
+              <p className="leading-relaxed text-white/90">{labels.shipping.timeframe}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.shipping.tracking}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.shipping.damage}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.returns.title}
               </h2>
-              <p className="leading-relaxed mb-2">{labels.returns.intro}</p>
-              <p className="leading-relaxed mb-2">{labels.returns.right}</p>
-              <p className="font-medium mb-1">{labels.returns.conditions}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm mb-3">
+              <p className="leading-relaxed mb-2 text-white/90">{labels.returns.intro}</p>
+              <p className="leading-relaxed mb-2 text-white/90">{labels.returns.right}</p>
+              <p className="font-medium mb-1 text-white">{labels.returns.conditions}</p>
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80 mb-3">
                 {labels.returns.conditionList.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
-              <p className="font-medium mb-1">{labels.returns.exceptions}</p>
-              <ul className="list-inside list-disc space-y-1 text-sm">
+              <p className="font-medium mb-1 text-white">{labels.returns.exceptions}</p>
+              <ul className="list-inside list-disc space-y-1.5 text-sm text-white/80">
                 {labels.returns.exceptionList.map((item, i) => <li key={i}>{item}</li>)}
               </ul>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.warranty.title}
               </h2>
-              <p className="leading-relaxed">{labels.warranty.text}</p>
-              <p className="mt-2 leading-relaxed">{labels.warranty.defects}</p>
+              <p className="leading-relaxed text-white/90">{labels.warranty.text}</p>
+              <p className="mt-2 leading-relaxed text-white/90">{labels.warranty.defects}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.intellectual.title}
               </h2>
-              <p className="leading-relaxed">{labels.intellectual.text}</p>
+              <p className="leading-relaxed text-white/90">{labels.intellectual.text}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.liability.title}
               </h2>
-              <p className="leading-relaxed">{labels.liability.text}</p>
-              <p className="mt-2 leading-relaxed">{labels.liability.limitation}</p>
+              <p className="leading-relaxed text-white/90">{labels.liability.text}</p>
+              <p className="mt-2 leading-relaxed text-white/90">{labels.liability.limitation}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.governing.title}
               </h2>
-              <p className="leading-relaxed">{labels.governing.text}</p>
-              <p className="mt-2 text-sm">{labels.governing.disputes}</p>
-              <p className="mt-2 text-sm">{labels.governing.eu}</p>
+              <p className="leading-relaxed text-white/90">{labels.governing.text}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.governing.disputes}</p>
+              <p className="mt-2 text-sm text-white/80">{labels.governing.eu}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.changes.title}
               </h2>
-              <p className="leading-relaxed">{labels.changes.text}</p>
+              <p className="leading-relaxed text-white/90">{labels.changes.text}</p>
             </section>
 
-            <section>
-              <h2 className="font-outfit text-xl font-semibold text-primary mb-3">
+            <section className="p-5 rounded-xl bg-white/[0.02] border border-white/5">
+              <h2 className="font-outfit text-lg font-semibold text-primary mb-3">
                 {labels.contact.title}
               </h2>
-              <p className="leading-relaxed mb-2">{labels.contact.text}</p>
-              <p className="text-sm"><strong>Email:</strong> {labels.contact.email}</p>
-              <p className="text-sm">{labels.contact.response}</p>
+              <p className="leading-relaxed mb-2 text-white/90">{labels.contact.text}</p>
+              <p className="text-sm text-white/80"><strong className="text-white">Email:</strong> {labels.contact.email}</p>
+              <p className="text-sm text-white/80">{labels.contact.response}</p>
             </section>
-          </section>
+          </div>
 
-          <footer className="mt-12 pt-8 border-t border-neutral-200 flex items-center justify-between">
-            <Link href="/" className="text-sm text-neutral-400 hover:text-primary transition-colors">
+          <footer className="mt-8 flex items-center justify-between">
+            <Link href="/" className="text-sm text-neutral-500 hover:text-primary transition-colors">
               {labels.backToHome}
             </Link>
-            <Link href="/privacy" className="text-sm text-primary underline hover:opacity-80 transition-opacity">
+            <Link href="/privacy" className="text-sm text-primary hover:text-yellow-300 transition-colors">
               {labels.privacy}
             </Link>
           </footer>

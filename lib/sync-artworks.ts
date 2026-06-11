@@ -118,7 +118,7 @@ export async function syncArtworksToStripe(
       // Create product
       const product = await stripe.products.create({
         name: artwork.name,
-        description: `Giclée print on hemp paper — ${artwork.name} by András Dénes`,
+        description: `Fine art print on hemp paper — ${artwork.name} by András Dénes`,
         type: "good",
         shippable: true,
         images: [],
