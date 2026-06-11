@@ -148,6 +148,13 @@ function ImageCard({
         </div>
       )}
 
+      {/* Title at bottom */}
+      {loaded && !error && (
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/80 to-transparent pt-6 pb-3 px-3 pointer-events-none">
+          <p className="text-sm font-bold text-black truncate">{item.title}</p>
+        </div>
+      )}
+
       {/* Price overlay */}
       {item.hasProduct && item.prices && item.prices.length > 0 && (
         <div
