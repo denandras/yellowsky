@@ -65,8 +65,8 @@ function ImageCard({
   const hasSelectedSize = !!selectedPrice[item.id];
   const slug = filenameToSlug(item.title + ".png"); // title is already without extension
   
-  // Default to portrait while loading, then use actual aspect ratio
-  const imageAspect = aspectRatio ?? 0.75; // 3/4 portrait default
+  // Use actual aspect ratio once loaded, otherwise use A4 portrait ratio
+  const imageAspect = aspectRatio ?? 0.707; // A4 portrait ≈ 1:√2
 
   return (
     <div
@@ -74,7 +74,7 @@ function ImageCard({
       data-item-id={item.id}
       style={{ aspectRatio: imageAspect }}
     >
-      {/* Skeleton placeholder - always show while loading */}
+      {/* Skeleton placeholder - show while loading */}
       {!loaded && !error && (
         <div className="absolute inset-0 bg-neutral-100 animate-pulse" />
       )}
@@ -89,7 +89,7 @@ function ImageCard({
       {/* Image - clickable link to artwork page */}
       <Link
         href={`/artwork/${slug}`}
-        className="block absolute inset-0 rounded-lg overflow-hidden"
+        className="block absolute inset-0"
         onClick={() => {
           if (typeof window !== "undefined") {
             sessionStorage.setItem("yellowsky-last-artwork-id", item.id);
@@ -108,8 +108,7 @@ function ImageCard({
           }}
           src={item.viewUrl}
           alt={item.alt}
-          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] cursor-pointer ${loaded ? 'opacity-100' : 'opacity-0'}`}
-          style={{ transition: 'opacity 0.5s ease-out' }}
+          className="absolute inset-0 w-full h-full object-cover cursor-pointer"
           loading={index < 6 ? "eager" : "lazy"}
           fetchPriority={index < 3 ? "high" : "low"}
           decoding={index < 6 ? "sync" : "async"}
