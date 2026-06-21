@@ -346,8 +346,8 @@ export async function DELETE(request: NextRequest) {
   const duplicateProducts: Stripe.Product[] = [];
   for (const [, products] of nameMatchCounts) {
     if (products.length > 1) {
-      // Sort by creation date, keep first, archive rest
-      products.sort((a, b) => a.created - b.created);
+      // Sort by creation date descending (newest first), keep newest, archive rest
+      products.sort((a, b) => b.created - a.created);
       duplicateProducts.push(...products.slice(1));
     }
   }
