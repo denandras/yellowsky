@@ -132,13 +132,13 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   const labels = isHungarian
     ? {
-        title: "Yellowsky",
+        title: "YellowSky",
         subtitle: "Dénes András",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
         ctaLabel: "minőségi printek vásárlása",
         ctaTitle: "A galériához",
-        footerTagline: "Yellowsky • Építészeti grafikák",
+        footerTagline: "YellowSky • Építészeti grafikák",
         cart: {
           title: "Kosár",
           empty: "A kosarad üres",
@@ -151,13 +151,13 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         },
       }
     : {
-        title: "Yellowsky",
+        title: "YellowSky",
         subtitle: "by András Dénes",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsEn,
         ctaLabel: "fine art prints available",
         ctaTitle: "To the Gallery",
-        footerTagline: "Yellowsky • Architectural graphics",
+        footerTagline: "YellowSky • Architectural graphics",
         cart: {
           title: "Cart",
           empty: "Your cart is empty",
