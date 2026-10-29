@@ -20,7 +20,7 @@ Stripe can automatically send email receipts to customers after successful payme
 
 ### Merchant Notifications (Webhook)
 
-**Status:** ✅ Implemented - Discord webhook to #monitoring
+**Status:** ✅ Implemented - Discord webhook to #automations
 
 A webhook handler at `/api/webhooks/stripe` receives `checkout.session.completed` events and sends Discord notifications.
 
@@ -31,7 +31,7 @@ A webhook handler at `/api/webhooks/stripe` receives `checkout.session.completed
 - Shipping address
 - Stripe session ID
 
-**Notification destination:** Discord #monitoring channel
+**Notification destination:** Discord #automations channel
 
 ## Setup Steps
 
@@ -79,7 +79,7 @@ stripe trigger checkout.session.completed
 
 ### 4. Implement Notification Method
 
-✅ Already implemented - Discord webhook sends to #monitoring channel
+✅ Already implemented - Discord webhook sends to #automations channel
 
 The webhook handler sends rich embed notifications with:
 - Customer name and email
@@ -97,15 +97,15 @@ The webhook handler sends rich embed notifications with:
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | ✅ | Stripe publishable key | [Dashboard](https://dashboard.stripe.com/apikeys) |
 | `STRIPE_WEBHOOK_SECRET` | ✅ | Webhook signing secret | CLI or Dashboard |
 | `NEXT_PUBLIC_SITE_URL` | ✅ | Site URL for redirects | Your domain |
-| `DISCORD_WEBHOOK_URL` | ✅ | Discord webhook for #monitoring | See TOOLS.md |
+| `DISCORD_WEBHOOK_URL` | ✅ | Discord webhook for #automations | See TOOLS.md |
 
 ## Testing Checklist
 
 - [ ] Stripe keys added to `.env.local`
-- [ ] `DISCORD_WEBHOOK_URL` added (from TOOLS.md - #monitoring webhook)
+- [ ] `DISCORD_WEBHOOK_URL` added (from TOOLS.md - #automations webhook)
 - [ ] Webhook secret added to `.env.local`
 - [ ] Local webhook handler receives test events (`stripe trigger checkout.session.completed`)
-- [ ] Check #monitoring channel for test notification
+- [ ] Check #automations channel for test notification
 - [ ] Customer receipts enabled in Stripe Dashboard
 - [ ] Production webhook endpoint registered in Stripe Dashboard
 - [ ] Production environment variables configured on Vercel
