@@ -306,7 +306,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             className={`object-cover object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 ease-out`}
             priority
             sizes="100vw"
-            unoptimized
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             onLoad={() => setHeroLoaded(true)}
