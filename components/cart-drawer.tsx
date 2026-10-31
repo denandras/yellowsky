@@ -31,6 +31,34 @@ function formatPrice(amount: number, currency: string): string {
   return formatter.format(amount / 100);
 }
 
+/**
+ * Cart thumbnail with graceful degradation: cart items persist in
+ * localStorage, and items added before the stable-token era can carry
+ * expired token URLs — the optimizer then returns an error. Show a
+ * neutral placeholder instead of a broken image (never fall back to the
+ * raw URL). Fresh items load a tiny optimized variant (~96-256px).
+ */
+function CartThumb({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-white/10">
+        <IconShoppingBag className="size-6 text-white/40" />
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="80px"
+      className="object-cover"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export default function CartDrawer({
   isOpen,
   onClose,
@@ -115,13 +143,7 @@ export default function CartDrawer({
                     >
                       {/* Thumbnail */}
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
-                        <Image
-                          src={item.viewUrl}
-                          alt={item.productTitle}
-                          fill
-                          sizes="80px"
-                          className="object-cover"
-                        />
+                        <CartThumb src={item.viewUrl} alt={item.productTitle} />
                       </div>
                       {/* Details */}
                       <div className="flex flex-1 flex-col justify-between">
