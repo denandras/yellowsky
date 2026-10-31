@@ -182,6 +182,13 @@ body {
   }
 }
 
+/* Dark page background: every page renders a dark fixed hero, so a dark
+   body prevents near-white flashes/gaps during iOS URL-bar transitions
+   and overscroll (Tailwind's default body is rgb(250,250,250)). */
+body {
+  background-color: #171717;
+}
+
 /* Fade in animation */
 @keyframes fadeIn {
   0% {

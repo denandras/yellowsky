@@ -30,6 +30,24 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   const heroRef = useRef<HTMLDivElement>(null);
   useEffect(() => setMounted(true), []);
 
+  // Cached-hero reveal: a memory-cached hero.jpg can complete during the
+  // mount commit — before React's onLoad listener attaches — leaving the
+  // image stuck at opacity-0 (black hero) forever. Poll the element
+  // directly on the mounted flip and again one tick later; fresh loads
+  // keep using the normal onLoad path.
+  useEffect(() => {
+    if (!mounted) return;
+    const check = () => {
+      const el = document.querySelector<HTMLImageElement>('img[alt^="Yellowsky German Street"]');
+      if (el && el.complete && el.naturalWidth) {
+        setHeroLoaded(true);
+      }
+    };
+    check();
+    const t = setTimeout(check, 50);
+    return () => clearTimeout(t);
+  }, [mounted]);
+
   // Detect mobile on client
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -235,11 +253,19 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
       {/* Fixed background - hero image with title overlay */}
       <div className="fixed inset-0 z-0 bg-neutral-900 h-screen w-screen">
-        <div className="relative w-full h-full">
+        <div className="hero-bg-wrap relative w-full h-full">
           {mounted && (
             <Image
+              ref={(img) => {
+                // Cached hero can complete before React attaches onLoad —
+                // reveal immediately instead of sticking at opacity-0
+                // (black hero) forever.
+                if (img && img.complete && img.naturalWidth) {
+                  setHeroLoaded(true);
+                }
+              }}
               alt="Yellowsky German Street sketch - yellow architectural illustration"
-              className={`transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`hero-bg-img transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
               style={{ objectFit: 'cover', objectPosition: 'center center' }}
               src="/hero.jpg"
               fill
@@ -257,15 +283,29 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         
         {/* Hero text - static position relative to image, scales from center */}
         <div 
-          className="absolute top-[62%] left-1/2"
+          className="hero-text-pos absolute left-1/2"
           style={{ opacity: showTitle ? heroOpacity : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
         >
           <div 
             className="w-max"
             style={{ transform: 'translateX(-50%) translateY(4px)', transformOrigin: 'center center' }}
           >
-            {/* Title */}
-            <div className="relative">
+            {/* Title - clickable anchor, scrolls to the story content */}
+            <div
+              className="relative cursor-pointer"
+              role="button"
+              tabIndex={0}
+              aria-label={language === 'hu' ? 'Görgess a tartalomhoz' : 'Scroll to content'}
+              onClick={() => {
+                document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               {/* Yellow offset text behind */}
               <h1
                 className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
@@ -339,13 +379,13 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </header>
 
         {/* Hero spacer - leaves room for the background image */}
-        <section ref={heroRef} className="h-screen" />
+        <section ref={heroRef} className="hero-spacer" />
 
         {/* Content section */}
         <div className="relative px-4 pb-24">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Story Glass Card */}
-            <section>
+            <section id="story" style={{ scrollMarginTop: '24px' }}>
               <div className="glass-panel !rounded-2xl">
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
@@ -509,6 +549,38 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         /* Smooth glass panel transition */
         .glass-panel {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hero spacer: dvh with vh fallback — iOS URL bar makes 100vh
+           taller than the visible viewport. */
+        .hero-spacer {
+          height: 100vh;
+          height: 100dvh;
+        }
+
+        /* Hero text block position (was Tailwind top-[62%], now explicit
+           CSS so the mobile override below is reliable). */
+        .hero-text-pos {
+          top: 62%;
+        }
+
+        .hero-bg-wrap {
+          overflow: hidden;
+        }
+
+        /* Tall phones: the 4:3 hero is cover-scaled by height there, so
+           its bottom (light wooden sideboard) showed as a light stripe at
+           the bottom of the landing. Zoom from the top so that band crops
+           off-screen — the framed artwork sits lower and fills the view;
+           the title follows it lower. Desktop is untouched. */
+        @media (max-width: 767px) {
+          .hero-bg-img {
+            transform: scale(1.3);
+            transform-origin: center top;
+          }
+          .hero-text-pos {
+            top: 72%;
+          }
         }
       `}</style>
     </>
