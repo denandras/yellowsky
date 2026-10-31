@@ -37,8 +37,6 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const { language, setLanguage } = useSiteLanguage(initialLanguage);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCanceled, setShowCanceled] = useState(false);
@@ -73,19 +71,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     }
   }, []);
 
-  // Handle navigation with blur transition
+  // Save scroll position before navigating to an artwork page
   const handleNavigate = (imageUrl: string, slug: string) => {
-    // Save scroll position before navigating
     if (galleryRef.current) {
       sessionStorage.setItem('yellowsky-scroll-y', String(window.scrollY));
     }
-    setIsTransitioning(true);
-    // Mark that we're transitioning so artwork page knows to animate out blur
-    sessionStorage.setItem('yellowsky-transitioning', 'true');
-    // Navigate after animation completes
-    setTimeout(() => {
-      router.push(`/artwork/${slug}`);
-    }, 150);
   };
 
   // Disable automatic scroll restoration
@@ -227,15 +217,11 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         </div>
       )}
 
-      {/* Blur overlay for transition */}
-      {isTransitioning && (
-        <div 
-          className="fixed inset-0 z-[100]"
-          style={{
-            animation: 'blur-transition 150ms ease-out forwards',
-          }}
-        />
-      )}
+      {/* Blur overlay for transition removed: the 150ms fade-to-black on the
+          outgoing page plus a client-only entrance cover on the artwork page
+          created a visible flash frame during the RSC fetch gap. The webshop
+          now stays visible until the new route paints, and the artwork hero
+          fades in on its own dark background. */}
 
       <CartDrawer
         isOpen={cartOpen}

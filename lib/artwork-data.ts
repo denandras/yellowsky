@@ -1,4 +1,6 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { cache as reactCache } from "react";
+import { unstable_cache } from "next/cache";
 import { getS4Config, getS4ArtPrefix, getMediaTokenSecret } from "./s4-config";
 import { createMediaAccessToken, nextMediaTokenExpiry } from "./media-access-token";
 import { fetchStripeProducts, mapArtworksToProducts } from "./stripe-products";
@@ -64,7 +66,7 @@ function generateSlug(filename: string): string {
  * Get all artworks from S3.
  * Returns sorted list (newest first by year.number).
  */
-export async function getArtworks(): Promise<Artwork[]> {
+async function fetchArtworks(): Promise<Artwork[]> {
   const cfg = getS4Config();
   const tokenSecret = getMediaTokenSecret();
   const artPrefix = getS4ArtPrefix();
@@ -209,9 +211,26 @@ export async function getArtworks(): Promise<Artwork[]> {
 }
 
 /**
+ * Server-side catalog cache. The S3 list + Stripe products fetch is
+ * expensive (~0.7s from home MinIO) and was previously paid TWICE per
+ * artwork page request (generateMetadata + page render, every request).
+ * unstable_cache shares the result across requests/instances for 5 min;
+ * reactCache dedupes the two getArtworkBySlug calls within one request.
+ */
+const getArtworksCached = unstable_cache(
+  () => fetchArtworks(),
+  ["yellowsky-artworks-v1"],
+  { revalidate: 300, tags: ["yellowsky-artworks"] },
+);
+
+export async function getArtworks(): Promise<Artwork[]> {
+  return getArtworksCached();
+}
+
+/**
  * Get a single artwork by slug.
  */
-export async function getArtworkBySlug(slug: string): Promise<Artwork | null> {
+export const getArtworkBySlug = reactCache(async (slug: string): Promise<Artwork | null> => {
   const artworks = await getArtworks();
   return artworks.find((a) => a.slug === slug) ?? null;
-}
+});

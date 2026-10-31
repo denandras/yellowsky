@@ -41,29 +41,15 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-  const [isExitingBlur, setIsExitingBlur] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false); // Start hidden until hydration check
+  const [contentVisible, setContentVisible] = useState(false); // Fade panel in shortly after mount
 
-  // Check for transition state after hydration
+  // Reveal the purchase panel shortly after mount so the opacity transition
+  // animates for both direct access and webshop origin (no sessionStorage
+  // handoff — that caused the transition flash frame).
   useEffect(() => {
-    const transitioning = sessionStorage.getItem('yellowsky-transitioning');
-    if (transitioning) {
-      // Coming from webshop - keep hidden, start blur exit animation
-      setIsExitingBlur(true);
-      sessionStorage.removeItem('yellowsky-transitioning');
-      // Content fades in after blur starts clearing
-      setTimeout(() => setContentVisible(true), 300);
-      setTimeout(() => setIsExitingBlur(false), 600);
-    } else {
-      // Direct access - small delay to ensure fade transition works
-      setTimeout(() => setContentVisible(true), 50);
-    }
+    const timer = setTimeout(() => setContentVisible(true), 50);
+    return () => clearTimeout(timer);
   }, []);
-
-  // Handle blur exit animation
-  useEffect(() => {
-    // Blur exit is handled in the first useEffect now
-  }, [isExitingBlur]);
 
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -260,16 +246,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
 
   return (
     <>
-      {/* Blur overlay that fades out on entrance */}
-      {isExitingBlur && (
-        <div 
-          className="fixed inset-0 z-[200] pointer-events-none"
-          style={{
-            animation: 'blur-transition-reverse 600ms ease-out forwards',
-          }}
-        />
-      )}
-
       <ImageZoomModal
         src={heroUrl}
         alt={`${artwork.alt} (preview)`}
@@ -300,10 +276,17 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         ) : (
           <Image
+            ref={(img) => {
+              // Cached hero: onLoad may have fired before hydration —
+              // reveal immediately instead of staying at opacity-0.
+              if (img && img.complete && img.naturalWidth) {
+                setHeroLoaded(true);
+              }
+            }}
             src={heroUrl}
             alt={artwork.alt}
             fill
-            className={`object-cover object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-1000 ease-out`}
+            className={`object-cover object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
             priority
             sizes="100vw"
             draggable={false}
