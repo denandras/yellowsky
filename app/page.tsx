@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import HomePageClient from "@/components/home-page-client";
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
+import { resolveSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 
 export default async function Home() {
   const cookieStore = await cookies();
-  const initialLanguage = normalizeSiteLanguage(
+  const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 

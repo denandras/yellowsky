@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
+import { resolveSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 import TermsPageClient from "@/components/terms-page-client";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function TermsPage() {
   const cookieStore = await cookies();
-  const initialLanguage = normalizeSiteLanguage(
+  const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 

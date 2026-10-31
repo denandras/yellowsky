@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import ContactPageClient from '@/components/contact-page-client';
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from '@/lib/site-language';
+import { SITE_LANGUAGE_COOKIE, resolveSiteLanguage } from "@/lib/site-language";
 import { SITE_URL } from '@/lib/config';
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const cookieStore = await cookies();
-  const initialLanguage = normalizeSiteLanguage(
+  const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 

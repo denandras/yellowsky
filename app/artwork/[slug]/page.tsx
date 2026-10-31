@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getArtworkBySlug } from "@/lib/artwork-data";
 import { cookies } from "next/headers";
 import ArtworkPageClient from "@/components/artwork-page-client";
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
+import { resolveSiteLanguage, SITE_LANGUAGE_COOKIE } from "@/lib/site-language";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -52,7 +52,7 @@ export default async function ArtworkPage({ params }: Props) {
   }
 
   const cookieStore = await cookies();
-  const initialLanguage = normalizeSiteLanguage(
+  const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 
