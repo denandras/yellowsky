@@ -3,6 +3,7 @@
 import { useCart } from "@/lib/cart-context";
 import { IconShoppingBag, IconX, IconTrash } from "@/components/icons";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 type CartDrawerProps = {
   isOpen: boolean;
@@ -113,11 +114,15 @@ export default function CartDrawer({
                       className="flex gap-3 rounded-xl bg-white/5 p-3 border border-white/10"
                     >
                       {/* Thumbnail */}
-                      <img
-                        src={item.viewUrl}
-                        alt={item.productTitle}
-                        className="h-20 w-20 shrink-0 rounded-lg object-cover"
-                      />
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
+                        <Image
+                          src={item.viewUrl}
+                          alt={item.productTitle}
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                        />
+                      </div>
                       {/* Details */}
                       <div className="flex flex-1 flex-col justify-between">
                         <div>

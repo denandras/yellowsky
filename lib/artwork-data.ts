@@ -1,6 +1,6 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { getS4Config, getS4ArtPrefix, getMediaTokenSecret } from "./s4-config";
-import { createMediaAccessToken } from "./media-access-token";
+import { createMediaAccessToken, nextMediaTokenExpiry } from "./media-access-token";
 import { fetchStripeProducts, mapArtworksToProducts } from "./stripe-products";
 import { normalizeAccents } from "./slug";
 
@@ -166,14 +166,14 @@ export async function getArtworks(): Promise<Artwork[]> {
     const hasProduct = !!product;
 
     const accessToken = createMediaAccessToken(
-      { key: files.artwork, name: filename, exp: Date.now() + 1000 * 60 * 60 * 24 },
+      { key: files.artwork, name: filename, exp: nextMediaTokenExpiry() },
       tokenSecret,
     );
 
     let heroUrl: string | undefined;
     if (files.jpg) {
       const heroToken = createMediaAccessToken(
-        { key: files.jpg, name: files.jpg.split("/").pop() ?? "", exp: Date.now() + 1000 * 60 * 60 * 24 },
+        { key: files.jpg, name: files.jpg.split("/").pop() ?? "", exp: nextMediaTokenExpiry() },
         tokenSecret,
       );
       heroUrl = `/api/media/file?token=${encodeURIComponent(heroToken)}`;

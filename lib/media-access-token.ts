@@ -6,6 +6,20 @@ export type MediaAccessPayload = {
   exp: number;
 };
 
+/**
+ * Token expiry snapped to a 30-day grid: always 30-60 days out, changing at
+ * most once per 30 days. Combined with a stable `name`, the same (key, name)
+ * produces the identical token for the whole window, so image URLs — and
+ * therefore Vercel edge / image-optimizer cache keys — stay stable across
+ * ISR regenerations instead of churning on every render (which forced every
+ * store-page image through the cold S3 proxy path every 30 minutes).
+ */
+const TOKEN_EXPIRY_GRID_MS = 30 * 24 * 60 * 60 * 1000;
+
+export function nextMediaTokenExpiry(now: number = Date.now()): number {
+  return (Math.floor(now / TOKEN_EXPIRY_GRID_MS) + 2) * TOKEN_EXPIRY_GRID_MS;
+}
+
 function signPayload(payloadBase64: string, secret: string) {
   return createHmac("sha256", secret).update(payloadBase64).digest("base64url");
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { IconShoppingBag, IconX } from "@/components/icons";
 import { filenameToSlug } from "@/lib/slug";
 
@@ -99,7 +100,7 @@ function ImageCard({
           }
         }}
       >
-        <img
+        <Image
           ref={(img) => {
             if (img && img.complete && img.naturalWidth) {
               setAspectRatio(img.naturalWidth / img.naturalHeight);
@@ -108,9 +109,11 @@ function ImageCard({
           }}
           src={item.viewUrl}
           alt={item.alt}
-          className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+          fill
+          sizes="(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 400px"
+          className="object-cover cursor-pointer"
           loading={index < 6 ? "eager" : "lazy"}
-          fetchPriority={index < 3 ? "high" : "low"}
+          priority={index < 3}
           decoding={index < 6 ? "sync" : "async"}
           onLoad={(e) => {
             const img = e.currentTarget;

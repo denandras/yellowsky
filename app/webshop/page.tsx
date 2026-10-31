@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
 import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from '@/lib/s4-config';
-import { createMediaAccessToken } from '@/lib/media-access-token';
-import { normalizeSiteLanguage, SITE_LANGUAGE_COOKIE } from '@/lib/site-language';
+import { createMediaAccessToken, nextMediaTokenExpiry } from "@/lib/media-access-token";
+import { SITE_LANGUAGE_COOKIE, resolveSiteLanguage } from "@/lib/site-language";
 import { fetchStripeProducts, mapArtworksToProducts } from '@/lib/stripe-products';
 import { SITE_URL } from '@/lib/config';
 import WebshopPageClient from '@/components/webshop-page-client';
@@ -156,14 +156,14 @@ async function getArtItems(): Promise<MediaItem[]> {
     const product = artworkToProduct.get(filename);
     const hasProduct = !!product;
 
-    const ext = key.split(".").pop()?.toLowerCase() ?? "jpg";
-    const ordinal = String(allItems.length + 1).padStart(3, "0");
-    const safeName = `yellowsky-${ordinal}.${ext}`;
+    // Stable name (real filename, not ordinal) + grid-snapped expiry keep
+    // tokens — and therefore CDN/optimizer cache keys — identical across ISR
+    // regenerations instead of churning every 30 minutes.
     const accessToken = createMediaAccessToken(
       {
         key,
-        name: safeName,
-        exp: Date.now() + 1000 * 60 * 60 * 24,
+        name: filename,
+        exp: nextMediaTokenExpiry(),
       },
       tokenSecret,
     );
@@ -196,7 +196,7 @@ async function getArtItems(): Promise<MediaItem[]> {
 
 export default async function WebshopPage() {
   const cookieStore = await cookies();
-  const initialLanguage = normalizeSiteLanguage(
+  const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 
