@@ -62,8 +62,10 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
     }
   }, [searchParams, clearCart, router]);
 
-  // Restore scroll position on mount (when navigating back)
-  useEffect(() => {
+  // Restore scroll position on mount (when navigating back) — layout
+  // effect so the page paints directly at the restored scroll instead of
+  // flashing the top of the page first.
+  useLayoutEffect(() => {
     const scrollY = sessionStorage.getItem('yellowsky-scroll-y');
     if (scrollY) {
       window.scrollTo(0, parseInt(scrollY, 10));

@@ -32,6 +32,15 @@ type ImageGalleryProps = {
   cartLoading: Record<string, boolean>;
 };
 
+/**
+ * Compute the column count synchronously BEFORE the first paint so a
+ * client-side navigation (home CTA -> webshop, back-nav) never paints a
+ * wrong-column grid that instantly reflows ("small cards scale up").
+ * The SSR pass has no viewport and uses the plain effect instead.
+ */
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 function ImageCard({
   item,
   index,
@@ -281,12 +290,13 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading, 
 
   const closeItem = useCallback(() => setActiveItem(null), []);
 
-  // Column count based on viewport
+  // Column count based on viewport — set before first paint (see
+  // useIsomorphicLayoutEffect above) so the grid never paints 3 columns
+  // on a phone and instantly reflows to 1.
   const [columnCount, setColumnCount] = useState(3);
-  
-  useEffect(() => {
+
+  useIsomorphicLayoutEffect(() => {
     const updateColumns = () => {
-      if (typeof window === "undefined") return;
       if (window.innerWidth < 640) setColumnCount(1);
       else if (window.innerWidth < 1024) setColumnCount(2);
       else setColumnCount(3);

@@ -372,7 +372,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
             {/* CTA Glass Card */}
             <section>
-              <a
+              <Link
                 href="/webshop"
                 className="block w-full"
               >
@@ -401,7 +401,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                     </div>
                   </div>
                 </div>
-              </a>
+              </Link>
             </section>
 
             {/* Footer Glass Card */}
