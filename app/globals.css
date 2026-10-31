@@ -189,6 +189,28 @@ body {
   background-color: #171717;
 }
 
+/* Systematic page transition — app/template.tsx remounts on every
+   navigation and replays this subtle mount fade. Opacity only: a
+   transform here would break position:fixed children mid-animation. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-enter {
+  animation: page-enter 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
 /* Fade in animation */
 @keyframes fadeIn {
   0% {

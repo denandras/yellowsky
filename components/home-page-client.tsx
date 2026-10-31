@@ -568,18 +568,21 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           overflow: hidden;
         }
 
-        /* Tall phones: the 4:3 hero is cover-scaled by height there, so
-           its bottom (light wooden sideboard) showed as a light stripe at
-           the bottom of the landing. Zoom from the top so that band crops
-           off-screen — the framed artwork sits lower and fills the view;
-           the title follows it lower. Desktop is untouched. */
+        /* Tall phones: the 1.3 zoom that hid the sideboard band left too
+           much empty wall at the top and softened the image (~1.2×
+           upscale at DPR3). Instead: a modest 1.1 zoom anchored at the
+           BOTTOM — cuts ~9% off the top (wall gone, frame near the top,
+           near-native sharpness); the furniture base stays visible as
+           the natural bottom of the photo. The real white-stripe guard
+           is the dark body background + 100dvh spacer, which remain.
+           Desktop is untouched. */
         @media (max-width: 767px) {
           .hero-bg-img {
-            transform: scale(1.3);
-            transform-origin: center top;
+            transform: scale(1.1);
+            transform-origin: center bottom;
           }
           .hero-text-pos {
-            top: 72%;
+            top: 60%;
           }
         }
       `}</style>

@@ -41,15 +41,6 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
   const [heroError, setHeroError] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [heroZoomOpen, setHeroZoomOpen] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false); // Fade panel in shortly after mount
-
-  // Reveal the purchase panel shortly after mount so the opacity transition
-  // animates for both direct access and webshop origin (no sessionStorage
-  // handoff — that caused the transition flash frame).
-  useEffect(() => {
-    const timer = setTimeout(() => setContentVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Auto-shrink title to fit
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -286,7 +277,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
             src={heroUrl}
             alt={artwork.alt}
             fill
-            className={`object-cover object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-out`}
+            className={`object-cover object-[center_75%] md:object-[center_60%] ${heroLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 ease-out`}
             priority
             sizes="100vw"
             draggable={false}
@@ -383,7 +374,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 </div>
 
               {/* Content */}
-              <div className={`relative p-4 md:p-6 transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <div className="relative p-4 md:p-6">
                 {/* Mobile: sizes + basket icon in one row */}
                 <div className="sm:hidden flex flex-row items-center gap-3">
                   {/* Size buttons */}
