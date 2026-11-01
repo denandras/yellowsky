@@ -585,7 +585,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             transform-origin: center bottom;
           }
           .hero-text-pos {
-            top: 58%;
+            top: 59%;
           }
         }
       `}</style>
