@@ -581,7 +581,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
            Desktop is untouched. */
         @media (max-width: 767px) {
           .hero-bg-img {
-            transform: scale(1.1);
+            transform: scale(1.05);
             transform-origin: center bottom;
           }
           .hero-text-pos {
