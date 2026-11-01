@@ -107,16 +107,14 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <>Egy jó kép beszélgetést indít - nem csupán szép. Ezek a rajzok vonalról vonalra készültek, és kiszállításuk előtt meglesheted, hogyan festenek majd faladon.</>,
     "A printek kenderpapírra, fine art minőségben készülnek, A4-es vagy A3-as méretben, világszerte díjmentesen kiszállítva.",
     <>A rajzolás 2020-ban, egy otthoni kihívással kezdődött: elindítottam a{" "}
-      <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>
-        <button
-          type="button"
-          onClick={openInstagram}
-          className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
-        >
-          #yellowskychallenge
-        </button>
-        -t, ami azóta is végigkíséri az utamat.
-      </span>{" "}
+      <button
+        type="button"
+        onClick={openInstagram}
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
+      >
+        #yellowskychallenge
+      </button>
+      -t, ami azóta is végigkíséri az utamat.{" "}
       <a
         href="https://andrasdenes.com"
         target="_blank"
@@ -132,16 +130,14 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     <>A good sketch starts conversations — it doesn&apos;t disappear inside a generic frame. Each of these pieces is drawn line by line, and shown hanging on a wall in a real room before it ever reaches the shop.</>,
     "Every print is made on archival hemp paper, fine art quality — A4 or A3, delivered worldwide with free shipping.",
     <>It all began in 2020 with a challenge at home: I started the{" "}
-      <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>
-        <button
-          type="button"
-          onClick={openInstagram}
-          className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
-        >
-          #yellowskychallenge
-        </button>
-        , and that journey hasn&apos;t stopped since.
-      </span>
+      <button
+        type="button"
+        onClick={openInstagram}
+        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
+      >
+        #yellowskychallenge
+      </button>
+      , and that journey hasn&apos;t stopped since.{" "}
       After my{" "}
       <a
         href="https://andrasdenes.com"
