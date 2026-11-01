@@ -57,20 +57,29 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Scroll reveal for the landing glass cards — mobile-only via CSS
+  // ([data-reveal-fade], opacity-only: transform on backdrop-filter
+  // glass flickers on phones). Bidirectional so cards fade back out
+  // when scrolled away. Trigger right at the fold; the small -1%
+  // bottom guard keeps the first card (which sits exactly at the
+  // 100dvh fold) from flapping or starting pre-visible.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal-fade]"));
     if (!nodes.length) return;
-    const observer = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) e.target.classList.add("is-visible");
-        else e.target.classList.remove("is-visible");
-      }
-    }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
-    const raf = window.requestAnimationFrame(() => nodes.forEach((n) => observer.observe(n)));
-    return () => { window.cancelAnimationFrame(raf); observer.disconnect(); };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          entry.target.classList.toggle("is-visible", entry.isIntersecting);
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -1% 0px" }
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
   }, []);
 
+  // Scroll tracking for hero fade
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -300,8 +309,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         {/* Subtle gradient overlay for depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40 pointer-events-none" />
         
-        {/* Invisible link to shop over the background image */}
-        <Link href="/webshop" aria-label={language === 'hu' ? 'Áruház' : 'Shop'} className="absolute inset-0 z-0" />
 
         
         {/* Hero text - static position relative to image, scales from center */}
@@ -313,12 +320,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             className="w-max"
             style={{ transform: 'translateX(-50%) translateY(4px)', transformOrigin: 'center center' }}
           >
-            {/* Title - invisible link to shop */}
-            <Link
-              href="/webshop"
-              className="relative cursor-pointer block"
-              aria-label={language === 'hu' ? 'Áruház' : 'Shop'}
-            >
+            {/* Title */}
+            <div className="relative block">
               {/* Yellow offset text behind */}
               <h1
                 className="font-display font-bold leading-none tracking-tighter absolute top-0 left-0 text-yellow-400 drop-shadow-lg"
@@ -339,7 +342,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               >
                 {labels.title}
               </h1>
-            </Link>
+            </div>
             {/* Subtitle */}
             <div className="mt-[1.5vw] flex items-center gap-[1vw]">
               <div className="h-px w-[4vw] min-w-[2rem] max-w-[4rem] bg-white/60" />
@@ -407,7 +410,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         <div className="relative px-4 pb-24">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Story Glass Card */}
-            <section id="story" data-reveal style={{ scrollMarginTop: '24px' }}>
+            <section id="story" data-reveal-fade style={{ scrollMarginTop: '24px' }}>
               <div className="glass-panel !rounded-2xl">
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
@@ -433,7 +436,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </section>
 
             {/* CTA Glass Card */}
-            <section>
+            <section data-reveal-fade>
               <Link
                 href="/webshop"
                 className="block w-full"
@@ -467,7 +470,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </section>
 
             {/* Footer Glass Card */}
-            <footer>
+            <footer data-reveal-fade>
               <div className={`glass-panel !rounded-2xl ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
@@ -583,7 +586,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         /* Hero text block position (was Tailwind top-[62%], now explicit
            CSS so the mobile override below is reliable). */
         .hero-text-pos {
-          top: 62%;
+          top: 64%;
         }
 
         .hero-bg-wrap {
@@ -604,7 +607,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             transform-origin: center bottom;
           }
           .hero-text-pos {
-            top: 60%;
+            top: 58%;
           }
         }
       `}</style>
