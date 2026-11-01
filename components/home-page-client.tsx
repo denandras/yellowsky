@@ -104,48 +104,55 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   };
 
   const storyParagraphsHu = [
-    <>2020-ban, a COVID idején kezdtem el rajzolni, mert a távoktatásban töltött bezártság alatt sehová sem mehettem; úgy éreztem, valahogy teret kell adnom kreativitásomnak. Eleinte csak kísérleteztem, de egy idő után kihívássá vált – mind magamnak, mind másoknak: elindítottam a{" "}
-      <button
-        type="button"
-        onClick={openInstagram}
-        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
-      >
-        #yellowskychallenge
-      </button>
-      -t.</>,
-    <>Sokan csatlakoztak ehhez az alkotói úthoz, melyről azóta sem tértem le teljesen. Voltak időszakok, amikor az{" "}
+    <>Egy jó rajz beszélgetést indít — nem süllyed el egy átlagos keretben. Ezek a képek vonalról vonalra készülnek, és még a boltba kerülésük előtt igazi szobákban láthatók a falon.</>,
+    "Mindegyik print kenderpapírra készül, fine art minőségben — A4-es vagy A3-as méretben, díjtalan, világszerte kiszállítva.",
+    <>A rajzolás 2020-ban, egy otthoni kihívással kezdődött: elindítottam a{" "}
+      <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>
+        <button
+          type="button"
+          onClick={openInstagram}
+          className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
+        >
+          #yellowskychallenge
+        </button>
+        -t, ami azóta is végigkíséri az utamat.
+      </span>
+      A{" "}
       <a
         href="https://andrasdenes.com"
         target="_blank"
         rel="noopener noreferrer"
         className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300"
       >
-        előadóművészetre
+        mesterképzésem
       </a>{" "}
-      kellett koncentrálnom, de néha akkor is készítettem építészeti grafikákat.</>,
-    "Most, hogy elvégeztem a mesterképzést a Liszt Ferenc Zeneművészeti Egyetemen, egy kicsit több időm van alkotni, ezért létrehoztam ezt az oldalt, hogy a közeli ismerősökön túlra is eljuthassanak grafikáim, melyek egyenként készülnek kenderpapírra, fine art minőségben.",
+      után végre több időm jut az alkotásra — ez az oldal az, ahol a grafikáim a közeli ismerősökön túlra is eljutnak.</>,
   ];
 
   const storyParagraphsEn = [
-    <>In 2020, during the covid lockdown, I began sketching because I had to study at home all day and could not go anywhere. I figured I needed to express myself. At first, I was just experimenting but after a while, I challenged myself and others for a whole journey: I started the{" "}
-      <button
-        type="button"
-        onClick={openInstagram}
-        className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
-      >
-        #yellowskychallenge
-      </button>
-      .</>,
-    <>Many people had been following this journey which I haven&apos;t stopped fully since. I had times when I had to concentrate more on{" "}
+    <>A good sketch starts conversations — it doesn&apos;t disappear inside a generic frame. Each of these pieces is drawn line by line, and shown hanging on a wall in a real room before it ever reaches the shop.</>,
+    "Every print is made on archival hemp paper, fine art quality — A4 or A3, delivered worldwide with free shipping.",
+    <>It all began in 2020 with a challenge at home: I started the{" "}
+      <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>
+        <button
+          type="button"
+          onClick={openInstagram}
+          className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300 cursor-pointer"
+        >
+          #yellowskychallenge
+        </button>
+        , and that journey hasn&apos;t stopped since.
+      </span>
+      After my{" "}
       <a
         href="https://andrasdenes.com"
         target="_blank"
         rel="noopener noreferrer"
         className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300"
       >
-        playing the trombone
-      </a>, but sometimes I sketched a bit.</>,
-    "Now that I've completed my master's degree at the Franz Liszt Academy of Budapest, I have more time to create. I created this site so my sketches can reach beyond my close circle — each one is printed on hemp paper, fine art quality.",
+        master&apos;s degree
+      </a>{" "}
+      I finally have time to create again — this site is where my sketches reach beyond my close circle.</>,
   ];
 
   const labels = isHungarian
@@ -154,8 +161,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         subtitle: "Dénes András",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsHu,
+        heroLine: "Építészeti rajzok, falra tervezve.",
+        heroSub: "Minden kép előbb egy igazi szobában látszik — így tudod, hogy a tiéden is működik.",
         ctaLabel: "minőségi printek vásárlása",
-        ctaTitle: "A galériához",
+        ctaTitle: "Galéria megtekintése",
         footerTagline: "YellowSky • Építészeti grafikák",
         cart: {
           title: "Kosár",
@@ -173,8 +182,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         subtitle: "by András Dénes",
         subtitleLink: "https://andrasdenes.com",
         storyParagraphs: storyParagraphsEn,
+        heroLine: "Architectural sketch prints, made to hang.",
+        heroSub: "Every piece is shown in a real room first — so you know it works on yours.",
         ctaLabel: "fine art prints available",
-        ctaTitle: "To the Gallery",
+        ctaTitle: "Explore the gallery",
         footerTagline: "YellowSky • Architectural graphics",
         cart: {
           title: "Cart",
@@ -279,7 +290,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           )}
         </div>
         {/* Subtle gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40 pointer-events-none" />
+        
+        {/* Invisible link to shop over the background image */}
+        <Link href="/webshop" aria-label={language === 'hu' ? 'Áruház' : 'Shop'} className="absolute inset-0 z-0" />
+
         
         {/* Hero text - static position relative to image, scales from center */}
         <div 
@@ -290,21 +305,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             className="w-max"
             style={{ transform: 'translateX(-50%) translateY(4px)', transformOrigin: 'center center' }}
           >
-            {/* Title - clickable anchor, scrolls to the story content */}
-            <div
-              className="relative cursor-pointer"
-              role="button"
-              tabIndex={0}
-              aria-label={language === 'hu' ? 'Görgess a tartalomhoz' : 'Scroll to content'}
-              onClick={() => {
-                document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  document.getElementById('story')?.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
+            {/* Title - invisible link to shop */}
+            <Link
+              href="/webshop"
+              className="relative cursor-pointer block"
+              aria-label={language === 'hu' ? 'Áruház' : 'Shop'}
             >
               {/* Yellow offset text behind */}
               <h1
@@ -326,7 +331,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               >
                 {labels.title}
               </h1>
-            </div>
+            </Link>
             {/* Subtitle */}
             <div className="mt-[1.5vw] flex items-center gap-[1vw]">
               <div className="h-px w-[4vw] min-w-[2rem] max-w-[4rem] bg-white/60" />
@@ -336,6 +341,15 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
               >
                 {labels.subtitle}
               </a>
+            </div>
+            {/* Conversion tagline */}
+            <div className="hero-tagline-block">
+              <p className="text-[clamp(0.85rem,1.5vw,1.15rem)] font-medium leading-snug text-white/90">
+                {labels.heroLine}
+              </p>
+              <p className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] leading-snug text-white/75">
+                {labels.heroSub}
+              </p>
             </div>
           </div>
         </div>

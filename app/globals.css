@@ -260,3 +260,20 @@ body {
 .animate-slide-up {
   animation: slideUp 0.4s ease-out forwards;
 }
+/* Hero conversion tagline: glass scrim behind the text for contrast over the
+   light furniture band on phones; desktop keeps the plain text-shadow look */
+.hero-tagline-block {
+  width: fit-content;
+  max-width: min(86vw, 40rem);
+  margin: 14px auto 0;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(10, 10, 10, 0.42);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.hero-tagline-block p {
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85), 0 0 12px rgba(0, 0, 0, 0.55);
+}
