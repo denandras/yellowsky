@@ -62,7 +62,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     if (!nodes.length) return;
     const observer = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); }
+      for (const e of entries) {
+        if (e.isIntersecting) e.target.classList.add("is-visible");
+        else e.target.classList.remove("is-visible");
+      }
     }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
     const raf = window.requestAnimationFrame(() => nodes.forEach((n) => observer.observe(n)));
     return () => { window.cancelAnimationFrame(raf); observer.disconnect(); };
