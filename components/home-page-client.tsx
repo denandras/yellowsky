@@ -57,7 +57,17 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scroll tracking for hero fade
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!nodes.length) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); }
+    }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+    const raf = window.requestAnimationFrame(() => nodes.forEach((n) => observer.observe(n)));
+    return () => { window.cancelAnimationFrame(raf); observer.disconnect(); };
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -394,7 +404,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         <div className="relative px-4 pb-24">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Story Glass Card */}
-            <section id="story" style={{ scrollMarginTop: '24px' }}>
+            <section id="story" data-reveal style={{ scrollMarginTop: '24px' }}>
               <div className="glass-panel !rounded-2xl">
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
