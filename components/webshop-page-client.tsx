@@ -257,7 +257,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
       <div className="relative z-10 min-h-screen">
         {/* Header - glass buttons like main page */}
         <header className="fixed top-0 left-0 right-0 z-50">
-          <div className="flex items-center justify-between px-6 pt-5">
+          <div className="flex items-center justify-between px-6 pt-[calc(1.25rem+env(safe-area-inset-top))]">
             {/* Yellowsky title */}
             <Link href="/" className="relative px-4 py-2">
               <div className="absolute inset-0 rounded-full bg-black/25 backdrop-blur-xl" />

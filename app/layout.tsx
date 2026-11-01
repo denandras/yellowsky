@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { CartProvider } from "@/lib/cart-context";
@@ -72,6 +72,15 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+};
+
+// viewport-fit=cover: paint into the iPhone notch / home-indicator
+// edge spaces and beneath the collapsing address bar, so the fixed
+// hero image fills the screen edges instead of leaving a dark strip.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 // Note: Keywords meta tag is deprecated for Google (ignored since 2009) but still used by Bing, Yandex, and some smaller search engines.

@@ -295,7 +295,7 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
       >
         {/* Header - glass buttons */}
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-auto">
-          <div className="flex items-center justify-between px-6 pt-5">
+          <div className="flex items-center justify-between px-6 pt-[calc(1.25rem+env(safe-area-inset-top))]">
             {/* Back button - glass circle */}
             <button
               onClick={() => {
@@ -349,9 +349,10 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
           </div>
         </header>
 
-        {/* Title overlay + Purchase panel */}
-        {artwork.prices && artwork.prices.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 z-20 p-4 md:p-6 pointer-events-auto">
+        {/* Title overlay + Purchase panel — the title always renders;
+            the purchase panel only when prices are loaded, so a Stripe
+            hiccup can never blank the page text again. */}
+        <div className="fixed bottom-0 left-0 right-0 z-20 p-4 max-md:pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-6 pointer-events-auto">
             <div className="relative mx-auto max-w-5xl">
               {/* Black stripe - ends where glass panel begins (background hidden) */}
               <div className="absolute bottom-full left-1 right-1 md:left-2 md:right-2 bg-transparent pointer-events-none rounded-t-lg py-1 md:py-0 -mb-1 overflow-hidden">
@@ -363,7 +364,8 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                   {artwork.title}
                 </h1>
               </div>
-              {/* Glass panel */}
+              {/* Glass panel — only when prices are loaded */}
+              {artwork.prices && artwork.prices.length > 0 && (
               <div className="relative rounded-2xl overflow-hidden">
                 {/* Glass overlay */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
@@ -522,9 +524,9 @@ export default function ArtworkPageClient({ artwork, initialLanguage }: ArtworkP
                 </div>
               </div>
             </div>
+            )}
           </div>
         </div>
-        )}
 
         {/* Footer - hidden on artwork page (full-screen hero experience) */}
       </div>

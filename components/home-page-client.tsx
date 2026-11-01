@@ -57,28 +57,6 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scroll reveal for the landing glass cards — mobile-only via CSS
-  // ([data-reveal-fade], opacity-only: transform on backdrop-filter
-  // glass flickers on phones). Bidirectional so cards fade back out
-  // when scrolled away. Trigger right at the fold; the small -1%
-  // bottom guard keeps the first card (which sits exactly at the
-  // 100dvh fold) from flapping or starting pre-visible.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal-fade]"));
-    if (!nodes.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          entry.target.classList.toggle("is-visible", entry.isIntersecting);
-        }
-      },
-      { threshold: 0, rootMargin: "0px 0px -1% 0px" }
-    );
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
-
   // Scroll tracking for hero fade
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -280,7 +258,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
       </svg>
 
       {/* Fixed background - hero image with title overlay */}
-      <div className="fixed inset-0 z-0 bg-neutral-900 h-screen w-screen">
+      <div className="fixed inset-0 z-0 bg-neutral-900 h-dvh w-dvw">
         <div className="hero-bg-wrap relative w-full h-full">
           {mounted && (
             <Image
@@ -370,7 +348,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
       <div className="relative z-10 min-h-screen">
         {/* Header - minimal, glass buttons only */}
         <header className="fixed top-0 left-0 right-0 z-50">
-          <div className="flex items-center justify-end px-6 pt-5">
+          <div className="flex items-center justify-end px-6 pt-[calc(1.25rem+env(safe-area-inset-top))]">
             <div className="flex items-center gap-3">
               {/* Language switcher - glass circle */}
               <button
@@ -410,7 +388,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         <div className="relative px-4 pb-24">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Story Glass Card */}
-            <section id="story" data-reveal-fade style={{ scrollMarginTop: '24px' }}>
+            <section id="story" style={{ scrollMarginTop: '24px' }}>
               <div className="glass-panel !rounded-2xl">
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
@@ -436,7 +414,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </section>
 
             {/* CTA Glass Card */}
-            <section data-reveal-fade>
+            <section>
               <Link
                 href="/webshop"
                 className="block w-full"
@@ -470,7 +448,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
             </section>
 
             {/* Footer Glass Card */}
-            <footer data-reveal-fade>
+            <footer>
               <div className={`glass-panel !rounded-2xl ${heroLoaded ? 'opacity-100' : 'opacity-0'}`} style={{ transition: 'opacity 600ms ease-out' }}>
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
