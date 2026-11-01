@@ -273,7 +273,14 @@ body {
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
+/* keep pill styles available; temporarily hidden */
+.hero-tagline-block { display: none; }
+
+/* Desktop: shift the hero text (YellowSky title) further right */
+@media (min-width: 768px) {
+  .hero-text-pos { left: 68%; }
+}
 .hero-tagline-block p {
-  text-align: center;
+  text-align: left;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85), 0 0 12px rgba(0, 0, 0, 0.55);
 }

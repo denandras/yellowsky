@@ -104,8 +104,8 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   };
 
   const storyParagraphsHu = [
-    <>Egy jó rajz beszélgetést indít — nem süllyed el egy átlagos keretben. Ezek a képek vonalról vonalra készülnek, és még a boltba kerülésük előtt igazi szobákban láthatók a falon.</>,
-    "Mindegyik print kenderpapírra készül, fine art minőségben — A4-es vagy A3-as méretben, díjtalan, világszerte kiszállítva.",
+    <>Egy jó kép beszélgetést indít - nem csupán szép. Ezek a rajzok vonalról vonalra készültek, és kiszállításuk előtt meglesheted, hogyan festenek majd faladon.</>,
+    "A printek kenderpapírra, fine art minőségben készülnek, A4-es vagy A3-as méretben, világszerte díjmentesen kiszállítva.",
     <>A rajzolás 2020-ban, egy otthoni kihívással kezdődött: elindítottam a{" "}
       <span style={{ whiteSpace: 'nowrap', display: 'inline-block' }}>
         <button
@@ -116,17 +116,16 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           #yellowskychallenge
         </button>
         -t, ami azóta is végigkíséri az utamat.
-      </span>
-      A{" "}
+      </span>{" "}
       <a
         href="https://andrasdenes.com"
         target="_blank"
         rel="noopener noreferrer"
         className="font-semibold text-yellow-400 underline decoration-yellow-400/30 underline-offset-2 transition-colors hover:text-yellow-300"
       >
-        mesterképzésem
+        Mesterképzésem
       </a>{" "}
-      után végre több időm jut az alkotásra — ez az oldal az, ahol a grafikáim a közeli ismerősökön túlra is eljutnak.</>,
+      után végre több időm jut az alkotásra — ez az oldal az, ahol a grafikáim a te faladra is eljuthatnak.</>,
   ];
 
   const storyParagraphsEn = [
@@ -415,7 +414,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                   {labels.storyParagraphs.map((paragraph, idx) => (
                     <p
                       key={`story-${idx}`}
-                      className="text-base leading-relaxed text-white/85 text-left md:text-justify drop-shadow-sm"
+                      className="text-base leading-relaxed text-white/85 text-left drop-shadow-sm"
                     >
                       {paragraph}
                     </p>
