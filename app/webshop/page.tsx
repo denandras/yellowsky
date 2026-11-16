@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
-import { getMediaTokenSecret, getS4ArtPrefix, getS4Config } from '@/lib/s4-config';
-import { createMediaAccessToken, nextMediaTokenExpiry } from "@/lib/media-access-token";
-import { SITE_LANGUAGE_COOKIE, resolveSiteLanguage } from "@/lib/site-language";
-import { fetchStripeProducts, mapArtworksToProducts } from '@/lib/stripe-products';
+import { getS4ArtPrefix, getS4Config } from '@/lib/s4-config';
+import { SITE_LANGUAGE_COOKIE, resolveSiteLanguage } from '@/lib/site-language';
+import { getArtworks } from '@/lib/artwork-data';
 import { SITE_URL } from '@/lib/config';
 import WebshopPageClient from '@/components/webshop-page-client';
 import JsonLd from '@/components/json-ld';
@@ -31,176 +29,44 @@ export const metadata: Metadata = {
   },
 };
 
-// Revalidate every 30 minutes - ISR caching (avoid Stripe rate limits)
-export const revalidate = 1800;
-
-// Webshop images: PNG/WebP/AVIF only (no JPG/JPEG)
-// JPG files are reserved for product page previews
-const IMAGE_EXTENSIONS = new Set(["png", "webp", "gif", "avif"]);
-
-function isImageKey(key: string) {
-  const ext = key.split(".").pop()?.toLowerCase();
-  return !!ext && IMAGE_EXTENSIONS.has(ext);
-}
-
-function extractFilename(key: string): string {
-  return key.split("/").pop() ?? key;
-}
-
-/**
- * Generate alt text from filename.
- * Pattern: "2020.105 Amsterdam.png" → "Architectural sketch of Amsterdam, 2020 — fine art print on hemp paper"
- */
-function generateAltText(filename: string): string {
-  // Remove extension
-  const title = filename.replace(/\.[^.]+$/, "");
-  
-  // Extract year (first 4 digits)
-  const yearMatch = title.match(/^(\d{4})/);
-  const year = yearMatch ? yearMatch[1] : "";
-  
-  // Extract subject (everything after "YEAR.NUMBER ")
-  const subjectMatch = title.match(/^\d{4}\.\d+\s+(.+)$/);
-  const subject = subjectMatch ? subjectMatch[1] : title;
-  
-  // Build alt text
-  const yearPart = year ? `, ${year}` : "";
-  return `Architectural sketch of ${subject}${yearPart} — fine art print on hemp paper`;
-}
-
-async function getArtItems(): Promise<MediaItem[]> {
-  const cfg = getS4Config();
-  const tokenSecret = getMediaTokenSecret();
-  const artPrefix = getS4ArtPrefix();
-  if (!cfg || !tokenSecret || !artPrefix) return [];
-
-  // Parallelize: fetch S3 list and Stripe products at the same time
-  const [s3Result, stripeProducts] = await Promise.all([
-    (async () => {
-      const client = new S3Client({
-        endpoint: cfg.endpoint,
-        region: cfg.region,
-        forcePathStyle: true,
-        credentials: {
-          accessKeyId: cfg.accessKeyId,
-          secretAccessKey: cfg.secretAccessKey,
-        },
-      });
-
-      const keys: string[] = [];
-      let token: string | undefined;
-
-      do {
-        const list = await client.send(
-          new ListObjectsV2Command({
-            Bucket: cfg.bucket,
-            Prefix: artPrefix,
-            ContinuationToken: token,
-            MaxKeys: 500,
-          }),
-        );
-
-        for (const obj of list.Contents ?? []) {
-          if (!obj.Key) continue;
-          if (!isImageKey(obj.Key)) continue;
-          keys.push(obj.Key);
-        }
-
-        token = list.IsTruncated ? list.NextContinuationToken : undefined;
-      } while (token);
-
-      return { keys, client };
-    })(),
-    fetchStripeProducts(),
-  ]);
-
-  const { keys, client } = s3Result;
-  const filenames = keys.map(extractFilename);
-  const artworkToProduct = mapArtworksToProducts(filenames, stripeProducts);
-
-  // Sync is handled by systemd timer (yellowsky-sync.timer) every 10 minutes
-  // No need to run on every page load
-
-  // Sort by year first, then by artwork number (numeric)
-  // Filenames like "2020.105 Amsterdam.png" need numeric sort, not alphabetic
-  const sortedKeys = [...keys].sort((a, b) => {
-    const filenameA = extractFilename(a);
-    const filenameB = extractFilename(b);
-    
-    const matchA = filenameA.match(/^(\d{4})\.(\d+)/);
-    const matchB = filenameB.match(/^(\d{4})\.(\d+)/);
-    
-    if (!matchA || !matchB) {
-      // Fallback to alphabetic sort for non-standard filenames
-      return b.localeCompare(a);
-    }
-    
-    const yearA = parseInt(matchA[1], 10);
-    const yearB = parseInt(matchB[1], 10);
-    
-    if (yearA !== yearB) {
-      return yearB - yearA; // Newer year first
-    }
-    
-    const numA = parseInt(matchA[2], 10);
-    const numB = parseInt(matchB[2], 10);
-    
-    return numB - numA; // Higher number = newer artwork
-  });
-
-  // Show all artworks, with prices when products exist
-  const allItems: MediaItem[] = [];
-
-  for (const key of sortedKeys) {
-    const filename = extractFilename(key);
-    const product = artworkToProduct.get(filename);
-    const hasProduct = !!product;
-
-    // Stable name (real filename, not ordinal) + grid-snapped expiry keep
-    // tokens — and therefore CDN/optimizer cache keys — identical across ISR
-    // regenerations instead of churning every 30 minutes.
-    const accessToken = createMediaAccessToken(
-      {
-        key,
-        name: filename,
-        exp: nextMediaTokenExpiry(),
-      },
-      tokenSecret,
-    );
-
-    // Extract title from filename (remove extension)
-    const title = filename.replace(/\.[^.]+$/, "");
-    const alt = generateAltText(filename);
-
-    allItems.push({
-      id: hasProduct ? product.id : `art-${allItems.length}`,
-      title: hasProduct ? product.name : title,
-      alt,
-      viewUrl: `/api/media/file?token=${encodeURIComponent(accessToken)}`,
-      hasProduct,
-      ...(hasProduct && product ? {
-        productId: product.id,
-        productName: product.name,
-        prices: product.prices.map(p => ({
-          id: p.id,
-          nickname: p.nickname ?? undefined,
-          unitAmount: p.unitAmount ?? undefined,
-          currency: p.currency,
-        })),
-      } : {}),
-    });
-  }
-
-  return allItems;
-}
-
 export default async function WebshopPage() {
   const cookieStore = await cookies();
   const initialLanguage = await resolveSiteLanguage(
     cookieStore.get(SITE_LANGUAGE_COOKIE)?.value,
   );
 
-  const artItems = await getArtItems();
+  // Shared catalog cache (unstable_cache, 5 min) — previously this page did
+  // its own S3 list + Stripe fetch on every render, which made the
+  // landing -> webshop navigation wait on MinIO + Stripe round trips.
+  const artworks = await getArtworks();
+
+  // Sort by year first, then by artwork number (numeric).
+  // Filenames like "2020.105 Amsterdam.png" need numeric sort, not alphabetic.
+  const sorted = [...artworks].sort((a, b) => {
+    const matchA = a.filename.match(/^(\d{4})\.(\d+)/);
+    const matchB = b.filename.match(/^(\d{4})\.(\d+)/);
+    if (!matchA || !matchB) return b.filename.localeCompare(a.filename);
+    const yearA = parseInt(matchA[1], 10);
+    const yearB = parseInt(matchB[1], 10);
+    if (yearA !== yearB) return yearB - yearA;
+    return parseInt(matchB[2], 10) - parseInt(matchA[2], 10);
+  });
+
+  const artItems: MediaItem[] = sorted.map((art, index) => ({
+    id: art.productId ?? `art-${index}`,
+    title: art.productName ?? art.title,
+    alt: art.alt,
+    viewUrl: art.viewUrl,
+    hasProduct: art.hasProduct,
+    ...(art.hasProduct && art.productId && art.prices
+      ? {
+          productId: art.productId,
+          productName: art.productName,
+          prices: art.prices,
+        }
+      : {}),
+  }));
+
   const hasConfig = !!getS4Config() && !!getS4ArtPrefix();
   const hasStripe = artItems.length > 0;
 
