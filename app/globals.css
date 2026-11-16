@@ -39,7 +39,11 @@ html {
 }
 
 body {
-  min-height: max(884px, 100dvh);
+  /* svh, not dvh: on iOS dvh changes on every frame the URL bar collapses
+     or expands, and a changing body box invalidates style+layout for the
+     whole document while scrolling. svh is the stable (toolbars-visible)
+     viewport floor; content taller than it is unaffected. */
+  min-height: max(884px, 100svh);
   background: #fafafa;
   color: #1a1a1a;
   font-family: var(--font-inter), sans-serif;

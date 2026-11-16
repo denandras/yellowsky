@@ -61,14 +61,15 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
   // Story copy fade-in (the fold-peek fix).
   //
-  // The story card sits exactly one viewport down (`100dvh` hero spacer), so
-  // on iOS — where the visual viewport is briefly taller than 100dvh while
-  // the toolbars settle — its first lines peek above the fold and can be
-  // read before any scroll. Opacity is driven straight from scroll offset and
-  // written to the DOM: no React state (a re-render per frame re-painted the
-  // glass panels), no IntersectionObserver (a positive bottom rootMargin
-  // fires at load here, because the card already overlaps the fold; a
-  // negative one arrives too late — both were tried and rejected).
+  // The story card sits one hero-height down. Since the hero and its spacer
+  // are now sized in `lvh` (not `dvh`), the card starts exactly one *large*
+  // viewport down and no longer peeks above the fold on iOS at all — the
+  // fade is kept as a guard for the toolbar-visible state, where the visual
+  // viewport is shorter than `lvh`. Opacity is driven straight from scroll
+  // offset and written to the DOM: no React state (a re-render per frame
+  // re-painted the glass panels), no IntersectionObserver (a positive bottom
+  // rootMargin fires at load here, because the card already overlaps the
+  // fold; a negative one arrives too late — both were tried and rejected).
   //
   // Scope and safety:
   //  - Mobile only. Desktop never peeks (spacer = viewport), so it is left
@@ -336,31 +337,46 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         </defs>
       </svg>
 
-      {/* Fixed background - hero image with title overlay */}
-      <div className="fixed inset-0 z-0 bg-neutral-900 h-dvh w-dvw">
+      {/* Fixed background - hero image with title overlay.
+
+          Height is `100lvh`, NOT `100dvh`: iOS Safari updates `dvh` on
+          every frame where its toolbars collapse or expand while scrolling.
+          The photo is a 4:3 landscape in a portrait box, so `object-fit:
+          cover` scales it by the box HEIGHT — a changing `dvh` therefore
+          rescales (zooms) the photograph continuously, and re-rasterises a
+          4000px image every frame. Measured in Chrome: box 844px → photo
+          886px, box 745px → photo 782px, i.e. 1:1. `lvh` is the largest
+          viewport and does not change while scrolling, so the photo is
+          rasterised once and never resized. It also still covers the notch
+          and the home-indicator area (`viewport-fit=cover`). */}
+      <div className="fixed inset-x-0 top-0 z-0 bg-neutral-900 hero-layer">
         <div className="hero-bg-wrap relative w-full h-full">
           {mounted && (
-            <Image
-              ref={(img) => {
-                // Cached hero can complete before React attaches onLoad —
-                // reveal immediately instead of sticking at opacity-0
-                // (black hero) forever.
-                if (img && img.complete && img.naturalWidth) {
-                  setHeroLoaded(true);
-                }
-              }}
-              alt="Yellowsky German Street sketch - yellow architectural illustration"
-              className={`hero-bg-img transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
-              style={{ objectFit: 'cover', objectPosition: 'center center' }}
-              src="/hero.jpg"
-              fill
-              priority
-              sizes="100vw"
-              unoptimized
-              draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
-              onLoad={() => setHeroLoaded(true)}
-            />
+            /* The 1.05 crop lives on this wrapper, so the photograph itself
+               keeps its native raster and only the layer is transformed. */
+            <div className="hero-zoom absolute inset-0">
+              <Image
+                ref={(img) => {
+                  // Cached hero can complete before React attaches onLoad —
+                  // reveal immediately instead of sticking at opacity-0
+                  // (black hero) forever.
+                  if (img && img.complete && img.naturalWidth) {
+                    setHeroLoaded(true);
+                  }
+                }}
+                alt="Yellowsky German Street sketch - yellow architectural illustration"
+                className={`hero-bg-img transition-opacity duration-1000 ${heroLoaded ? 'opacity-100' : 'opacity-0'}`}
+                style={{ objectFit: 'cover', objectPosition: 'center center' }}
+                src="/hero.jpg"
+                fill
+                priority
+                sizes="100vw"
+                unoptimized
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                onLoad={() => setHeroLoaded(true)}
+              />
+            </div>
           )}
         </div>
         {/* Subtle gradient overlay for depth */}
@@ -634,11 +650,28 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        /* Hero spacer: dvh with vh fallback — iOS URL bar makes 100vh
-           taller than the visible viewport. */
+        /* Hero layer + spacer: constant lvh, never dvh.
+
+           iOS Safari updates dvh while its toolbars collapse/expand during a
+           scroll. The hero photo is object-fit:cover in a portrait box, so it
+           is scaled by the box height — under dvh the photograph was therefore
+           re-scaled and re-rasterised on nearly every scroll frame (the
+           owner's "auto zoom" at low fps). lvh is the largest viewport and is
+           constant while scrolling: the photo is rasterised once, and the
+           layer still covers the notch and the home-indicator area.
+
+           The spacer uses the same unit as the layer so the content starts
+           exactly where the fixed hero ends in every toolbar state — that is
+           what keeps the glass panels over the photo and the bottom edge free
+           of any seam. vh first is the pre-2022-browser fallback. */
+        .hero-layer {
+          height: 100vh;
+          height: 100lvh;
+        }
+
         .hero-spacer {
           height: 100vh;
-          height: 100dvh;
+          height: 100lvh;
         }
 
         /* Hero text block position (was Tailwind top-[62%], now explicit
@@ -652,10 +685,11 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
         }
 
         /* Story copy fade-in (fold-peek fix). Hidden at rest on phones only:
-           the card starts exactly one viewport down, but iOS can paint the
-           visual viewport taller than 100dvh while the toolbars settle, so
-           the first lines used to peek in readable. The scroll handler in
-           home-page-client writes opacity straight onto this element.
+           the card starts one hero-height down, but while the iOS toolbars
+           are visible the visual viewport is shorter than the lvh spacer, so
+           the top of the card is still in view — its first lines are hidden
+           until the reader scrolls. The scroll handler in home-page-client
+           writes opacity straight onto this element.
            Deliberately text-only (no backdrop-filter inside it): fading an
            element that owns backdrop-filter makes Safari re-blur the glass
            on every frame — that was the flicker. Desktop is untouched: the
@@ -679,10 +713,15 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
            BOTTOM — cuts ~9% off the top (wall gone, frame near the top,
            near-native sharpness); the furniture base stays visible as
            the natural bottom of the photo. The real white-stripe guard
-           is the dark body background + 100dvh spacer, which remain.
-           Desktop is untouched. */
+           is the dark body background + the lvh hero spacer, which
+           remain. Desktop is untouched. */
+        /* Mobile crop: the 1.05 scale is applied to the wrapper layer, not to
+           the <img>, so the 4000px photograph is rasterised at its own size
+           and the compositor scales the finished layer once. The visible
+           framing is identical to scaling the <img> directly (same box, same
+           origin) — it was NOT tuned here, only moved. */
         @media (max-width: 767px) {
-          .hero-bg-img {
+          .hero-zoom {
             transform: scale(1.05);
             transform-origin: center bottom;
           }
