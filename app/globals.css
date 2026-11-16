@@ -160,11 +160,13 @@ body {
    the gradient tint carry the look. Small fixed pills keep their blur. */
 @media (max-width: 767px) {
   [data-glass-scroll] {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    /* Matte fill: without the blur the gradient alone was see-through, so
-       give the panel a frosted-dark base colour. */
-    background-color: rgba(12, 12, 12, 0.62);
+    /* Frosted matte at a much smaller radius than the 24px desktop blur —
+       keeps the glass look while cutting the per-frame compositing cost
+       that made scrolling stagger. The fill under it keeps it opaque
+       enough to read text. */
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+    background-color: rgba(15, 15, 15, 0.45);
   }
 }
 
