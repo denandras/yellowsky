@@ -28,6 +28,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   const [isMobile, setIsMobile] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
+  const storyFadeRef = useRef<HTMLDivElement>(null);
   const showTitleRef = useRef(false);
   useEffect(() => setMounted(true), []);
 
@@ -56,6 +57,63 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Story copy fade-in (the fold-peek fix).
+  //
+  // The story card sits exactly one viewport down (`100dvh` hero spacer), so
+  // on iOS — where the visual viewport is briefly taller than 100dvh while
+  // the toolbars settle — its first lines peek above the fold and can be
+  // read before any scroll. Opacity is driven straight from scroll offset and
+  // written to the DOM: no React state (a re-render per frame re-painted the
+  // glass panels), no IntersectionObserver (a positive bottom rootMargin
+  // fires at load here, because the card already overlaps the fold; a
+  // negative one arrives too late — both were tried and rejected).
+  //
+  // Scope and safety:
+  //  - Mobile only. Desktop never peeks (spacer = viewport), so it is left
+  //    exactly as it is.
+  //  - Opacity only, and only on the text wrapper. That wrapper contains no
+  //    backdrop-filter, so Safari composites text instead of re-blurring the
+  //    glass on every frame — the transform/filter reveal was what flickered.
+  //  - Nothing resizes or moves: one existing div, opacity only.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = storyFadeRef.current;
+    if (!el) return;
+
+    const mobile = window.matchMedia('(max-width: 767px)');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      if (!mobile.matches || reduced.matches) {
+        // Desktop and reduced-motion: no animation, content fully visible.
+        el.style.opacity = '1';
+        return;
+      }
+      // Fade completes 22% of a viewport into the scroll — the copy is
+      // unreadable at rest, is already on its way in when the card reaches
+      // the middle of the screen, and is opaque long before it is centred.
+      const distance = Math.max(120, window.innerHeight * 0.22);
+      const opacity = Math.min(1, Math.max(0, window.scrollY / distance));
+      el.style.opacity = String(opacity);
+    };
+    const queue = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(apply);
+    };
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    apply();
+
+    return () => {
+      window.removeEventListener('scroll', queue);
+      window.removeEventListener('resize', queue);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, []);
 
   // Scroll tracking for hero fade — written straight to the DOM so
@@ -422,7 +480,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                   <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_3px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
                 </div>
                 {/* Content */}
-                <div className="relative p-6 md:p-8 space-y-5">
+                <div ref={storyFadeRef} className="story-fade relative p-6 md:p-8 space-y-5">
                   {labels.storyParagraphs.map((paragraph, idx) => (
                     <p
                       key={`story-${idx}`}
@@ -591,6 +649,28 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
         .hero-bg-wrap {
           overflow: hidden;
+        }
+
+        /* Story copy fade-in (fold-peek fix). Hidden at rest on phones only:
+           the card starts exactly one viewport down, but iOS can paint the
+           visual viewport taller than 100dvh while the toolbars settle, so
+           the first lines used to peek in readable. The scroll handler in
+           home-page-client writes opacity straight onto this element.
+           Deliberately text-only (no backdrop-filter inside it): fading an
+           element that owns backdrop-filter makes Safari re-blur the glass
+           on every frame — that was the flicker. Desktop is untouched: the
+           card never overlaps the fold there, so it has no rule at all. */
+        @media (max-width: 767px) {
+          .story-fade {
+            opacity: 0;
+            will-change: opacity;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .story-fade {
+            opacity: 1 !important;
+            will-change: auto;
+          }
         }
 
         /* Tall phones: the 1.3 zoom that hid the sideboard band left too
