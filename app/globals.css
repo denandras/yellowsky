@@ -154,21 +154,10 @@ body {
   }
 }
 
-/* Mobile: large scrolling glass panels sit over a fixed hero — their
-   backdrop-filter re-blurs every frame while scrolling, which is the main
-   source of janky scrolling on phones. Drop the blur below 768px and let
-   the gradient tint carry the look. Small fixed pills keep their blur. */
-@media (max-width: 767px) {
-  [data-glass-scroll] {
-    /* Frosted matte at a much smaller radius than the 24px desktop blur —
-       keeps the glass look while cutting the per-frame compositing cost
-       that made scrolling stagger. The fill under it keeps it opaque
-       enough to read text. */
-    -webkit-backdrop-filter: blur(10px) !important;
-    backdrop-filter: blur(10px) !important;
-    background-color: rgba(15, 15, 15, 0.45);
-  }
-}
+/* Mobile glass panels keep their original backdrop-blur-xl. An earlier
+   attempt to swap the blur for a flat fill on phones made the panels read
+   far too dark — the panel's gradient tint already matches the small
+   header pills, so the blur must stay as designed. */
 
 /* Cart counter animation */
 @keyframes popCircle {
