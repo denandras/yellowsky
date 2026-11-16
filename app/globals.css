@@ -154,6 +154,17 @@ body {
   }
 }
 
+/* Mobile: large scrolling glass panels sit over a fixed hero — their
+   backdrop-filter re-blurs every frame while scrolling, which is the main
+   source of janky scrolling on phones. Drop the blur below 768px and let
+   the gradient tint carry the look. Small fixed pills keep their blur. */
+@media (max-width: 767px) {
+  [data-glass-scroll] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
 /* Cart counter animation */
 @keyframes popCircle {
   0% {

@@ -25,9 +25,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
   const [showTitle, setShowTitle] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [heroOpacity, setHeroOpacity] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroTextRef = useRef<HTMLDivElement>(null);
+  const showTitleRef = useRef(false);
   useEffect(() => setMounted(true), []);
 
   // Cached-hero reveal: a memory-cached hero.jpg can complete during the
@@ -57,22 +58,42 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scroll tracking for hero fade
+  // Scroll tracking for hero fade — written straight to the DOM so
+  // scrolling never triggers a React re-render (the old setState-per-scroll
+  // re-rendered the glass panels every frame = low-fps, staggering scroll
+  // on phones). Scroll events are already coalesced per frame by the
+  // browser, and a style write is layout-free.
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      // Linear fade from 0 to 160px (or 200px on desktop)
+    const update = () => {
+      const el = heroTextRef.current;
+      if (!el) return;
       const fadeDistance = isMobile ? 160 : 200;
-      const opacity = Math.max(0, 1 - scrollY / fadeDistance);
-      setHeroOpacity(opacity);
+      const opacity = Math.max(0, 1 - window.scrollY / fadeDistance);
+      el.style.opacity = String(showTitleRef.current ? opacity : 0);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Call immediately to set initial state
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
   }, [isMobile]);
+
+  // Reveal the title once the hero is ready (or after 300ms), then keep it
+  // in sync with the scroll-driven opacity above.
+  useEffect(() => {
+    showTitleRef.current = showTitle;
+    const el = heroTextRef.current;
+    if (el) {
+      const fadeDistance = isMobile ? 160 : 200;
+      const opacity = Math.max(0, 1 - window.scrollY / fadeDistance);
+      el.style.opacity = String(showTitle ? opacity : 0);
+    }
+  }, [showTitle, isMobile]);
 
   // Show title after hero loads or after 300ms
   useEffect(() => {
@@ -290,9 +311,10 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
 
         
         {/* Hero text - static position relative to image, scales from center */}
-        <div 
+        <div
+          ref={heroTextRef}
           className="hero-text-pos absolute left-1/2"
-          style={{ opacity: showTitle ? heroOpacity : 0, transition: showTitle ? 'opacity 0ms' : 'opacity 700ms' }}
+          style={{ opacity: 0 }}
         >
           <div 
             className="w-max"
@@ -393,7 +415,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
                 {/* Glass overlay - darker tone */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/20 via-black/15 to-black/10 backdrop-blur-2xl" />
+                <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/20 via-black/15 to-black/10 backdrop-blur-2xl" />
                 {/* Specular highlight */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                   <div className="absolute inset-0 rounded-2xl border border-white/20" />
@@ -423,7 +445,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                   {/* Distortion filter layer */}
                   <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
                   {/* Glass overlay - darker tone */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/25 via-black/18 to-black/12 backdrop-blur-xl" />
+                  <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/25 via-black/18 to-black/12 backdrop-blur-xl" />
                   {/* Specular highlight */}
                   <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                     <div className="absolute inset-0 rounded-2xl border border-white/20" />
@@ -453,7 +475,7 @@ export default function HomePageClient({ initialLanguage }: HomePageClientProps)
                 {/* Distortion filter layer */}
                 <div className="absolute inset-0 rounded-2xl backdrop-filter-[url(#liquid-glass-distortion)]" />
                 {/* Glass overlay - darker tone */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/18 via-black/12 to-black/8 backdrop-blur-xl" />
+                <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/18 via-black/12 to-black/8 backdrop-blur-xl" />
                 {/* Specular highlight */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                   <div className="absolute inset-0 rounded-2xl border border-white/15" />

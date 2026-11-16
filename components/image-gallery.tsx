@@ -114,9 +114,9 @@ function ImageCard({
           fill
           sizes="(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 400px"
           className={`object-cover cursor-pointer transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-          loading={index < 6 ? "eager" : "lazy"}
+          loading={index < 12 ? "eager" : "lazy"}
           priority={index < 3}
-          decoding={index < 6 ? "sync" : "async"}
+          decoding="async"
           onLoad={(e) => {
             const img = e.currentTarget;
             if (img.naturalWidth && img.naturalHeight) {

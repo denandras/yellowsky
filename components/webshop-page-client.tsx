@@ -302,7 +302,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
             {/* Glass panel wrapper */}
             <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
               {/* Glass overlay */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+              <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
               {/* Specular highlight */}
               <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 rounded-2xl border border-white/20" />
@@ -346,7 +346,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
         {!hasConfig && (
           <section className="relative px-4 pb-24 pt-20 md:px-8 lg:px-12">
             <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+              <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
               <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 rounded-2xl border border-white/20" />
                 <div className="absolute inset-0 rounded-2xl shadow-[inset_1px_1px_2px_rgba(255,255,255,0.2),inset_-1px_-1px_1px_rgba(255,255,255,0.08)]" />
@@ -363,7 +363,7 @@ export default function WebshopPageClient({ items, hasConfig, initialLanguage }:
           {/* Glass panel wrapper */}
           <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden">
             {/* Glass overlay */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
+            <div data-glass-scroll className="absolute inset-0 rounded-2xl bg-gradient-to-br from-black/30 via-black/22 to-black/15 backdrop-blur-xl" />
             {/* Specular highlight */}
             <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
               <div className="absolute inset-0 rounded-2xl border border-white/20" />
