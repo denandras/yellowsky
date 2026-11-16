@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo, useLayoutEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IconShoppingBag, IconX } from "@/components/icons";
@@ -32,14 +32,7 @@ type ImageGalleryProps = {
   cartLoading: Record<string, boolean>;
 };
 
-/**
- * Compute the column count synchronously BEFORE the first paint so a
- * client-side navigation (home CTA -> webshop, back-nav) never paints a
- * wrong-column grid that instantly reflows ("small cards scale up").
- * The SSR pass has no viewport and uses the plain effect instead.
- */
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+/** Removed unused column-alignment helper (now CSS-driven). */
 
 function ImageCard({
   item,
@@ -120,7 +113,7 @@ function ImageCard({
           alt={item.alt}
           fill
           sizes="(max-width: 639px) 92vw, (max-width: 1023px) 46vw, 400px"
-          className="object-cover cursor-pointer"
+          className={`object-cover cursor-pointer transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           loading={index < 6 ? "eager" : "lazy"}
           priority={index < 3}
           decoding={index < 6 ? "sync" : "async"}
@@ -252,7 +245,7 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading, 
   }, [activeItem]);
 
   // Restore scroll position to last clicked item on mobile
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined" || scrollRestoredRef.current) return;
     
     // Only on mobile (check viewport width)
@@ -290,74 +283,26 @@ export default function ImageGallery({ items, labels, onAddToCart, cartLoading, 
 
   const closeItem = useCallback(() => setActiveItem(null), []);
 
-  // Column count based on viewport — set before first paint (see
-  // useIsomorphicLayoutEffect above) so the grid never paints 3 columns
-  // on a phone and instantly reflows to 1.
-  const [columnCount, setColumnCount] = useState(3);
-
-  useIsomorphicLayoutEffect(() => {
-    const updateColumns = () => {
-      if (window.innerWidth < 640) setColumnCount(1);
-      else if (window.innerWidth < 1024) setColumnCount(2);
-      else setColumnCount(3);
-    };
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
-  }, []);
-
-  // Distribute items to minimize column height difference
-  // Use image aspect ratio to estimate heights
-  const columnItems = useMemo(() => {
-    if (columnCount === 1) return [items];
-    
-    const columns: MediaItem[][] = Array.from({ length: columnCount }, () => []);
-    const heights: number[] = Array(columnCount).fill(0);
-    
-    // Estimate heights: assume ~300px width, so height = 300 / aspectRatio
-    // Portrait images (ratio < 1) are taller, landscape (ratio > 1) are shorter
-    // Default to portrait if unknown (0.75 = 4:3 portrait)
-    const estimatedHeight = (item: MediaItem) => {
-      // Extract aspect ratio from viewUrl if available, or default to portrait
-      // For now, use a constant estimate ~360px for cards (image + padding)
-      return 360;
-    };
-    
-    items.forEach((item) => {
-      // Find the shortest column
-      const shortestIndex = heights.indexOf(Math.min(...heights));
-      columns[shortestIndex].push(item);
-      heights[shortestIndex] += estimatedHeight(item);
-    });
-    
-    return columns;
-  }, [items, columnCount]);
-
+  // Responsive grid driven entirely by CSS — no JS column-count state,
+  // so the page never paints a wrong-column grid that reflows on mobile.
   return (
-    <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}>
-      {columnItems.map((colItems, colIndex) => (
-        <div key={colIndex} className="flex flex-col gap-4">
-          {colItems.map((item) => {
-            const globalIndex = items.indexOf(item);
-            return (
-              <ImageCard
-                key={item.id}
-                item={item}
-                index={globalIndex}
-                labels={labels}
-                isVisible={true}
-                onAddToCart={onAddToCart}
-                cartLoading={cartLoading}
-                isActive={activeItem === item.id}
-                setActiveItem={setActiveItem}
-                closeItem={closeItem}
-                selectedPrice={selectedPrice}
-                setSelectedPrice={setSelectedPrice}
-                onNavigate={onNavigate}
-              />
-            );
-          })}
-        </div>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item, globalIndex) => (
+        <ImageCard
+          key={item.id}
+          item={item}
+          index={globalIndex}
+          labels={labels}
+          isVisible={true}
+          onAddToCart={onAddToCart}
+          cartLoading={cartLoading}
+          isActive={activeItem === item.id}
+          setActiveItem={setActiveItem}
+          closeItem={closeItem}
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          onNavigate={onNavigate}
+        />
       ))}
     </div>
   );
