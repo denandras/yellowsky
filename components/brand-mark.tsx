@@ -3,6 +3,7 @@ export default function BrandMark({ size = 24, className = "" }: { size?: number
     <div
       className={`rounded-full bg-primary ${className}`}
       style={{ height: size, width: size }}
+      role="img"
       aria-label="Yellowsky logo"
     />
   );
