@@ -220,7 +220,7 @@ async function fetchArtworks(): Promise<Artwork[]> {
 const getArtworksCached = unstable_cache(
   () => fetchArtworks(),
   ["yellowsky-artworks-v1"],
-  { revalidate: 300, tags: ["yellowsky-artworks"] },
+  { revalidate: 600, tags: ["yellowsky-artworks"] },
 );
 
 export async function getArtworks(): Promise<Artwork[]> {
