@@ -162,6 +162,9 @@ body {
   [data-glass-scroll] {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+    /* Matte fill: without the blur the gradient alone was see-through, so
+       give the panel a frosted-dark base colour. */
+    background-color: rgba(12, 12, 12, 0.62);
   }
 }
 
