@@ -176,6 +176,9 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
             <div style="font-family:${SANS};font-size:12px;line-height:1.6;color:${MUTED};padding-top:4px;">
               ${item.size ? `${esc(item.size)} &middot; ` : ""}Quantity ${item.quantity}
             </div>
+            <div style="padding-top:7px;">
+              <a href="${esc(url)}" style="font-family:${SANS};font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:${INK};text-decoration:none;border-bottom:1px solid ${YELLOW};padding-bottom:1px;">View print</a>
+            </div>
           </td>
           <td align="right" style="padding:16px 0;border-bottom:1px solid ${bottom};font-family:${SANS};font-size:15px;color:${INK};white-space:nowrap;vertical-align:top;">
             ${moneyHtml(item.amount * item.quantity, order.currency)}
