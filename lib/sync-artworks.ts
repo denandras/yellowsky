@@ -230,3 +230,166 @@ export async function syncArtworksToStripe(
 
   return result;
 }
+// ---------------------------------------------------------------------------
+// Price backfill
+//
+// Stripe prices are immutable: you cannot edit a price's amount. When the A4/A3
+// price changes, every artwork product needs a NEW price, the old one deactivated
+// and the product's default_price repointed. syncArtworksToStripe only creates
+// prices together with a NEW product, so without this a price change would never
+// reach the existing 38 artworks.
+// ---------------------------------------------------------------------------
+
+export type PricePlanRow = {
+  product: string;
+  nickname: string;
+  from: number | null;
+  to: number;
+  action: "create" | "replace" | "ok";
+};
+
+export type PriceRepairResult = {
+  dryRun: boolean;
+  checkedProducts: number;
+  created: number;
+  replaced: number;
+  deactivated: number;
+  untouched: number;
+  plans: PricePlanRow[];
+  errors: Array<{ name: string; error: string }>;
+};
+
+/** Lists webshop artwork names (same rules as syncArtworksToStripe). */
+export async function listArtworkNames(): Promise<string[]> {
+  const cfg = getS4Config();
+  const artPrefix = getS4ArtPrefix();
+  if (!cfg || !artPrefix) throw new Error("S3 not configured");
+
+  const s3 = new S3Client({
+    endpoint: cfg.endpoint,
+    region: cfg.region,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: cfg.accessKeyId,
+      secretAccessKey: cfg.secretAccessKey,
+    },
+  });
+
+  const names = new Set<string>();
+  let token: string | undefined;
+  do {
+    const list = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: cfg.bucket,
+        Prefix: artPrefix,
+        ContinuationToken: token,
+        MaxKeys: 500,
+      }),
+    );
+    for (const obj of list.Contents ?? []) {
+      if (!obj.Key || !isImageKey(obj.Key)) continue;
+      names.add(extractProductName(extractFilename(obj.Key)));
+    }
+    token = list.IsTruncated ? list.NextContinuationToken : undefined;
+  } while (token);
+
+  return [...names];
+}
+
+export async function ensureArtworkPrices(
+  priceA4: number,
+  priceA3: number,
+  dryRun = true,
+): Promise<PriceRepairResult> {
+  const result: PriceRepairResult = {
+    dryRun,
+    checkedProducts: 0,
+    created: 0,
+    replaced: 0,
+    deactivated: 0,
+    untouched: 0,
+    plans: [],
+    errors: [],
+  };
+
+  const secretKey = getStripeSecretKey();
+  if (!secretKey) throw new Error("Stripe not configured");
+
+  const stripe = new Stripe(secretKey, { apiVersion: "2026-04-22.dahlia" });
+
+  const artworkNames = new Set(await listArtworkNames());
+
+  const allProducts: Stripe.Product[] = [];
+  let startingAfter: string | undefined;
+  while (true) {
+    const batch = await stripe.products.list({ limit: 100, starting_after: startingAfter });
+    allProducts.push(...batch.data);
+    if (!batch.has_more) break;
+    startingAfter = batch.data[batch.data.length - 1]?.id;
+  }
+
+  // Only active products that belong to an existing artwork
+  const targets = allProducts.filter(
+    (p) => p.active && artworkNames.has(p.name),
+  );
+
+  const wanted: Array<{ nickname: "A4" | "A3"; amount: number }> = [
+    { nickname: "A4", amount: priceA4 },
+    { nickname: "A3", amount: priceA3 },
+  ];
+
+  for (const product of targets) {
+    result.checkedProducts++;
+    try {
+      const prices = await stripe.prices.list({ product: product.id, active: true, limit: 100 });
+
+      for (const target of wanted) {
+        const current = prices.data.find((p) => p.nickname === target.nickname);
+        const row: PricePlanRow = {
+          product: product.name,
+          nickname: target.nickname,
+          from: current?.unit_amount ?? null,
+          to: target.amount,
+          action: !current
+            ? "create"
+            : current.unit_amount === target.amount
+              ? "ok"
+              : "replace",
+        };
+        result.plans.push(row);
+
+        if (row.action === "ok") {
+          result.untouched++;
+          continue;
+        }
+        if (dryRun) continue;
+
+        const created = await stripe.prices.create({
+          product: product.id,
+          unit_amount: target.amount,
+          currency: "huf",
+          nickname: target.nickname,
+        });
+        if (row.action === "create") {
+          result.created++;
+        } else {
+          result.replaced++;
+        }
+
+        // Point the product at the new price, then retire the old one.
+        await stripe.products.update(product.id, { default_price: created.id });
+        if (current) {
+          await stripe.prices.update(current.id, { active: false });
+          result.deactivated++;
+        }
+      }
+    } catch (err) {
+      result.errors.push({
+        name: product.name,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  return result;
+}

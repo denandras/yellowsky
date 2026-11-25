@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getStripeSecretKey } from "@/lib/stripe-config";
 import { getS4Config, getS4ArtPrefix } from "@/lib/s4-config";
 import { validateAdminAuth } from "@/lib/auth-utils";
-import { syncArtworksToStripe } from "@/lib/sync-artworks";
+import { ensureArtworkPrices, syncArtworksToStripe } from "@/lib/sync-artworks";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 export const dynamic = "force-dynamic";
@@ -212,6 +212,21 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}));
   const dryRun = body.dryRun === true; // Default to false (actually sync)
   const limit = body.limit ?? 50;
+
+  // Price backfill: {"action":"prices"} - Stripe prices are immutable, so a price
+  // change means new prices for every existing artwork. Defaults to a dry run.
+  if (body.action === "prices") {
+    const priceA4 = Number.isFinite(body.priceA4) ? Number(body.priceA4) : 1600000;
+    const priceA3 = Number.isFinite(body.priceA3) ? Number(body.priceA3) : 2400000;
+    const priceDryRun = body.dryRun !== false; // default true: report only
+    try {
+      const plan = await ensureArtworkPrices(priceA4, priceA3, priceDryRun);
+      return NextResponse.json({ message: priceDryRun ? "Price dry run - no changes made" : "Price backfill complete", ...plan });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
 
   if (dryRun) {
     // Run sync but report what would happen (no changes)
