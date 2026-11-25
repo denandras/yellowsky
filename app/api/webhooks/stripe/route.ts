@@ -101,7 +101,13 @@ async function handleSuccessfulOrder(
     // Extract order details
     const customerEmail = session.customer_details?.email || session.customer_email || "unknown";
     const customerName = session.customer_details?.name || "Unknown";
-    const shippingAddress = session.customer_details?.address ?? undefined;
+    // Shipping address is collected by Stripe Checkout (shipping_address_collection).
+    // customer_details.address is the BILLING address; the shipping one lives in
+    // collected_information.shipping_details on current API versions.
+    const shippingAddress =
+      session.collected_information?.shipping_details?.address ??
+      session.customer_details?.address ??
+      undefined;
 
     // Format order details for notification
     const items = lineItems.data.map((item) => {
