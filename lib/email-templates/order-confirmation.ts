@@ -35,8 +35,20 @@ const INK = "#1a1a1a";
 const MUTED = "#666666";
 const BORDER = "#e6e3dc";
 const CREAM = "#f7f6f3";
-const SERIF = "Georgia,'Times New Roman',serif";
-const SANS = "Helvetica,Arial,sans-serif";
+// Same families as the webshop (next/font: Outfit for display, Inter for text),
+// with system fallbacks for clients that strip <style> (Gmail).
+const DISPLAY = "'Outfit','Helvetica Neue',Helvetica,Arial,sans-serif";
+const SANS = "'Inter','Helvetica Neue',Helvetica,Arial,sans-serif";
+const WEBFONTS = `<style>
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7W0Q5n-wU.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7W0Q5n-wU.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face{font-family:'Outfit';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Outfit';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+@font-face{font-family:'Outfit';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJuktqUYLkn8BJ.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Outfit';font-style:normal;font-weight:500;font-display:swap;src:url(https://fonts.gstatic.com/s/outfit/v15/QGYvz_MVcBeNP4NJtEtqUYLknw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+</style>`;
 
 function esc(value: string): string {
   return value
@@ -145,7 +157,7 @@ export function buildOrderConfirmationText(order: OrderEmailData): string {
   lines.push("");
   lines.push("Your invoice arrives in a separate email.");
   lines.push("");
-  lines.push("Yellowsky — fine art prints");
+  lines.push("YellowSky — fine art prints");
   lines.push(`contact@andrasdenes.com · ${SITE_URL.replace(/^https?:\/\//, "")}`);
   return lines.join("\n");
 }
@@ -170,7 +182,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
               : ""
           }
           <td style="padding:16px 0;border-bottom:1px solid ${bottom};vertical-align:top;">
-            <div style="font-family:${SERIF};font-size:17px;line-height:1.3;">
+            <div style="font-family:${DISPLAY};font-size:17px;line-height:1.3;">
               <a href="${esc(url)}" style="color:${INK};text-decoration:none;">${esc(item.name)}</a>
             </div>
             <div style="font-family:${SANS};font-size:12px;line-height:1.6;color:${MUTED};padding-top:4px;">
@@ -206,6 +218,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no" />
     <meta name="color-scheme" content="light" />
+    ${WEBFONTS}
     <title>Order ${esc(order.orderId)}</title>
   </head>
   <body style="margin:0;padding:0;background:${CREAM};-webkit-font-smoothing:antialiased;">
@@ -221,7 +234,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
             </tr>
             <tr>
               <td style="padding:24px 32px 0 32px;font-family:${SANS};">
-                <h1 style="margin:0;font-family:${SERIF};font-size:26px;line-height:1.25;color:${INK};font-weight:400;">Thank you for your order</h1>
+                <h1 style="margin:0;font-family:${DISPLAY};font-size:26px;line-height:1.25;color:${INK};font-weight:400;">Thank you for your order</h1>
                 <p style="margin:10px 0 0 0;font-size:14px;line-height:1.65;color:${MUTED};">
                   ${esc(firstName(order.customerName))}, your ${noun} ${verb} free of charge.
                   Order <span style="color:${INK};">${esc(order.orderId)}</span>.
@@ -266,7 +279,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
                 <p style="margin:16px 0 0 0;font-size:12px;line-height:1.6;color:${MUTED};">
                   Questions? Reply to this email or write to
                   <a href="mailto:contact@andrasdenes.com" style="color:${INK};text-decoration:none;border-bottom:1px solid ${YELLOW};">contact@andrasdenes.com</a>.<br />
-                  Yellowsky — fine art prints · <a href="${siteBase()}" style="color:${MUTED};text-decoration:none;">${siteBase().replace(/^https?:\/\//, "")}</a>
+                  YellowSky — fine art prints · <a href="${siteBase()}" style="color:${MUTED};text-decoration:none;">${siteBase().replace(/^https?:\/\//, "")}</a>
                 </p>
               </td>
             </tr>
