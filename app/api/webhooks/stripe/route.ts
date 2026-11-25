@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getStripeSecretKey } from "@/lib/stripe-config";
+import { sendOrderConfirmation } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -101,19 +102,20 @@ async function handleSuccessfulOrder(
     // Extract order details
     const customerEmail = session.customer_details?.email || session.customer_email || "unknown";
     const customerName = session.customer_details?.name || "Unknown";
-    // Shipping address is collected by Stripe Checkout (shipping_address_collection).
-    // customer_details.address is the BILLING address; the shipping one lives in
+    // Both addresses matter: the invoice needs the BILLING address
+    // (customer_details.address), fulfilment needs the SHIPPING one, which Stripe
+    // Checkout collects via shipping_address_collection and exposes under
     // collected_information.shipping_details on current API versions.
+    const billingAddress = session.customer_details?.address ?? undefined;
     const shippingAddress =
-      session.collected_information?.shipping_details?.address ??
-      session.customer_details?.address ??
-      undefined;
+      session.collected_information?.shipping_details?.address ?? billingAddress;
 
     // Format order details for notification
     const items = lineItems.data.map((item) => {
       const product = item.price?.product as Stripe.Product;
       return {
         name: product?.name || item.description || "Unknown product",
+        size: item.price?.nickname || null,
         quantity: item.quantity || 1,
         amount: item.amount_total ? item.amount_total / 100 : 0,
         currency: item.currency?.toUpperCase() || "EUR",
@@ -122,6 +124,22 @@ async function handleSuccessfulOrder(
 
     const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
     const currency = session.currency?.toUpperCase() || "EUR";
+
+    // Customer confirmation email (cc the owner). Never throws: a mail failure must
+    // not turn a paid order into a webhook error that Stripe retries forever.
+    const mailResult = await sendOrderConfirmation({
+      orderId: session.id,
+      customerName,
+      customerEmail,
+      items,
+      totalAmount,
+      currency,
+      shippingAddress,
+      billingAddress,
+    });
+    if (!mailResult.ok) {
+      console.error("Order confirmation email not sent:", session.id, mailResult.error);
+    }
 
     // Send Discord notification
     await sendDiscordNotification({
