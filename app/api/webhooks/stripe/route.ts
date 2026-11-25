@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getStripeSecretKey } from "@/lib/stripe-config";
 import { sendOrderConfirmation } from "@/lib/email";
+import { artworkImageUrl } from "@/lib/artwork-image-url";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,7 @@ async function handleSuccessfulOrder(
       return {
         name: product?.name || item.description || "Unknown product",
         size: item.price?.nickname || null,
+        imageUrl: artworkImageUrl(product?.metadata?.filename),
         quantity: item.quantity || 1,
         amount: item.amount_total ? item.amount_total / 100 : 0,
         currency: item.currency?.toUpperCase() || "EUR",

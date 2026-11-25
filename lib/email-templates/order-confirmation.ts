@@ -10,6 +10,7 @@ export type AddressLike = {
 export type OrderEmailItem = {
   name: string;
   size?: string | null;
+  imageUrl?: string | null;
   quantity: number;
   amount: number; // major units (Ft), already divided by 100
   currency: string;
@@ -96,17 +97,20 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
     .map(
       (item, index) => `
         <tr>
-          <td style="padding:14px 0;border-bottom:1px solid ${index === order.items.length - 1 ? "transparent" : BORDER};">
-            <div style="font-size:15px;line-height:1.45;color:${INK};font-weight:500;">${esc(item.name)}</div>
-            <div style="font-size:13px;line-height:1.5;color:${MUTED};">
-              ${
-                item.size
-                  ? `${esc(item.size)} · `
-                  : ""
-              }Quantity ${item.quantity}
+          ${
+            item.imageUrl
+              ? `<td width="84" style="padding:16px 14px 16px 0;vertical-align:top;">
+                   <img src="${esc(item.imageUrl)}" width="70" height="70" alt="" style="display:block;width:70px;height:70px;object-fit:cover;border:1px solid ${BORDER};" />
+                 </td>`
+              : ""
+          }
+          <td style="padding:16px 0;border-bottom:1px solid ${index === order.items.length - 1 ? "transparent" : BORDER};vertical-align:top;">
+            <div style="font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.3;color:${INK};">${esc(item.name)}</div>
+            <div style="font-size:12px;line-height:1.6;color:${MUTED};padding-top:4px;letter-spacing:0.02em;">
+              ${item.size ? `${esc(item.size)} &middot; ` : ""}Quantity ${item.quantity}
             </div>
           </td>
-          <td align="right" style="padding:14px 0;border-bottom:1px solid ${
+          <td align="right" style="padding:16px 0;border-bottom:1px solid ${
             index === order.items.length - 1 ? "transparent" : BORDER
           };font-size:15px;color:${INK};white-space:nowrap;vertical-align:top;">
             ${esc(money(item.amount * item.quantity, order.currency))}
@@ -121,7 +125,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
       : `
       <tr>
         <td style="padding-top:26px;">
-          <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${MUTED};padding-bottom:6px;">${title}</div>
+          <div style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:${INK};font-weight:700;padding-bottom:8px;">${title}</div>
           <div style="font-size:14px;line-height:1.6;color:${INK};">${lines.map(esc).join("<br />")}</div>
         </td>
       </tr>`;
@@ -147,7 +151,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
             </tr>
             <tr>
               <td style="padding:24px 32px 0 32px;font-family:Helvetica,Arial,sans-serif;">
-                <h1 style="margin:0;font-size:24px;line-height:1.25;color:${INK};font-weight:600;">Thank you for your order</h1>
+                <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:26px;line-height:1.25;color:${INK};font-weight:400;">Thank you for your order</h1>
                 <p style="margin:10px 0 0 0;font-size:14px;line-height:1.65;color:${MUTED};">
                   ${esc(order.customerName)}, your print${order.items.length > 1 ? "s are" : " is"} on ${order.items.length > 1 ? "their" : "its"} way soon.
                   Order <span style="color:${INK};">${esc(order.orderId)}</span>.
@@ -159,7 +163,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:Helvetica,Arial,sans-serif;">
                   ${rows}
                   <tr>
-                    <td style="padding:16px 0 0 0;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${MUTED};">Total</td>
+                    <td style="padding:16px 0 0 0;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:${INK};font-weight:700;">Total</td>
                     <td align="right" style="padding:16px 0 0 0;font-size:17px;color:${INK};font-weight:600;white-space:nowrap;">${esc(money(order.totalAmount, order.currency))}</td>
                   </tr>
                   <tr>

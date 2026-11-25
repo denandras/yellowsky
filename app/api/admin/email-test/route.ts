@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateAdminAuth } from "@/lib/auth-utils";
 import { sendTestEmail } from "@/lib/email";
 import { sendOrderConfirmation } from "@/lib/email";
+import { artworkImageUrl } from "@/lib/artwork-image-url";
 import { buildOrderConfirmationHtml, buildOrderConfirmationText, type OrderEmailData } from "@/lib/email-templates/order-confirmation";
 
 export const dynamic = "force-dynamic";
@@ -27,8 +28,8 @@ export async function POST(request: NextRequest) {
       customerName: "András Dénes",
       customerEmail: to,
       items: [
-        { name: "2020.01 Venice", size: "A3", quantity: 1, amount: 24000, currency: "HUF" },
-        { name: "2020.101 Church", size: "A4", quantity: 2, amount: 16000, currency: "HUF" },
+        { name: "2020.01 Venice", size: "A3", quantity: 1, amount: 24000, currency: "HUF", imageUrl: artworkImageUrl("2020.01 Venice.png") },
+        { name: "2020.101 Church", size: "A4", quantity: 2, amount: 16000, currency: "HUF", imageUrl: artworkImageUrl("2020.101 Church.png") },
       ],
       totalAmount: 56000,
       currency: "HUF",
