@@ -6,6 +6,8 @@ import { artworkImageUrl } from "@/lib/artwork-image-url";
 import { ART_LINE_DESCRIPTION, createOrderInvoice } from "@/lib/tacito";
 
 export const dynamic = "force-dynamic";
+// Invoice creation + issue + e-mail runs inside this request; give it room.
+export const maxDuration = 60;
 
 // Webhook secret from Stripe CLI (local) or Dashboard (production)
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;

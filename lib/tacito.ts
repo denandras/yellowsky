@@ -186,11 +186,15 @@ export async function createOrderInvoice(input: {
   navOutcome = issuedInvoice?.nav_outcome ?? navOutcome;
 
   // Tenant-level auto-send cannot be switched by an API key (403 on
-  // /settings/issuer), so the e-mail is requested explicitly. Best effort:
-  // a failed send must not fail the invoice, which already exists and is at NAV.
+  // /settings/issuer), so the e-mail is requested explicitly — and we can give it
+  // context the standard TACITo template does not have. Best effort: a failed send
+  // must not fail the invoice, which already exists and is at NAV.
+  const subject = number ? `YellowSky — számla ${number}` : "YellowSky — számla";
+  const message = `Thank you for your order. The invoice (számla) for order ${input.orderId} is attached.`;
   let emailed = false;
   const sent = await call(`/api/v1/invoices/${id}/send`, {
     method: "POST",
+    body: { custom_subject: subject, custom_message: message },
     idempotencyKey: `${input.orderId}:send`,
   }).catch(() => ({ status: 0, body: {} as any }));
   emailed = sent.status === 200 || sent.status === 201 || sent.status === 204;
