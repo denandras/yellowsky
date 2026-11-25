@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { getStripeSecretKey } from "@/lib/stripe-config";
 import { sendOrderConfirmation } from "@/lib/email";
 import { artworkImageUrl } from "@/lib/artwork-image-url";
+import { ART_LINE_DESCRIPTION, createOrderInvoice } from "@/lib/tacito";
 
 export const dynamic = "force-dynamic";
 
@@ -165,6 +166,61 @@ async function handleSuccessfulOrder(
       console.error("Order has no customer email, confirmation skipped:", session.id);
     }
 
+    // --- Invoice (TACITo -> NAV) -------------------------------------------
+    // Real paid orders get a real számla. Exactly once: the session carries the
+    // invoice id once it exists, and the Idempotency-Key is derived from the
+    // session, so a Stripe retry cannot number a second invoice.
+    if (!session.metadata?.tacito_invoice_id && items.length > 0) {
+      const invoiceLines = items.map((item) => ({
+        description: ART_LINE_DESCRIPTION,
+        quantity: item.quantity,
+        unit: "DB",
+        unitPriceGross: item.quantity > 0 ? item.amount / item.quantity : item.amount,
+        vatRate: "AAM",
+      }));
+      const titles = items.map((item) => item.name);
+      const note =
+        (titles.length === 1 ? titles[0] : titles.map((t, i) => `${i + 1}. ${t}`).join("\n")) +
+        `\nRendelés: ys:${session.id}`;
+
+      const invoiceResult = await createOrderInvoice({
+        orderId: `ys:${session.id}`,
+        buyer: {
+          name: customerName,
+          email: customerEmail === "unknown" ? null : customerEmail,
+          countryCode: billingAddress?.country ?? "HU",
+          postalCode: billingAddress?.postal_code ?? null,
+          city: billingAddress?.city ?? null,
+          address: [billingAddress?.line1, billingAddress?.line2].filter(Boolean).join(" ") || null,
+        },
+        lines: invoiceLines,
+        note,
+      });
+
+      if (invoiceResult.ok) {
+        await stripe.checkout.sessions
+          .update(session.id, {
+            metadata: {
+              tacito_invoice_id: invoiceResult.id,
+              tacito_invoice_number: invoiceResult.number ?? "",
+              tacito_state: invoiceResult.state,
+              tacito_nav: invoiceResult.navOutcome ?? "",
+            },
+          })
+          .catch((err) => console.error("Could not store invoice id:", session.id, err));
+      } else if (invoiceResult.skipped) {
+        console.warn("Invoice skipped:", session.id, invoiceResult.error);
+      } else {
+        console.error("INVOICE FAILED:", session.id, invoiceResult.error);
+        await postDiscordAlert(
+          `Invoice failed for paid order \`${session.id}\` (${totalAmount} ${currency}). Stripe took the money, TACITo did not invoice.\n${invoiceResult.error}`,
+        );
+        await stripe.checkout.sessions
+          .update(session.id, { metadata: { tacito_error: invoiceResult.error.slice(0, 450) } })
+          .catch(() => undefined);
+      }
+    }
+
     // Send Discord notification (once per order)
     if (session.metadata?.order_notified !== "1") {
       await sendDiscordNotification({
@@ -236,6 +292,21 @@ async function handleFailedPayment(
     });
   } catch (error) {
     console.error("Failed to send Discord notification:", error);
+  }
+}
+
+/** Plain-text Discord alert for failures that need a human. Best effort. */
+async function postDiscordAlert(content: string): Promise<void> {
+  const url = process.env.DISCORD_WEBHOOK_URL;
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+  } catch (error) {
+    console.error("Discord alert failed:", error);
   }
 }
 
