@@ -4,6 +4,7 @@ import { getStripeSecretKey } from "@/lib/stripe-config";
 import { getS4Config, getS4ArtPrefix } from "@/lib/s4-config";
 import { validateAdminAuth } from "@/lib/auth-utils";
 import { ensureArtworkPrices, syncArtworksToStripe } from "@/lib/sync-artworks";
+import { getPrices } from "@/lib/price-config";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 export const dynamic = "force-dynamic";
@@ -216,8 +217,9 @@ export async function POST(request: NextRequest) {
   // Price backfill: {"action":"prices"} - Stripe prices are immutable, so a price
   // change means new prices for every existing artwork. Defaults to a dry run.
   if (body.action === "prices") {
-    const priceA4 = Number.isFinite(body.priceA4) ? Number(body.priceA4) : 1600000;
-    const priceA3 = Number.isFinite(body.priceA3) ? Number(body.priceA3) : 2400000;
+    const managed = await getPrices();
+    const priceA4 = Number.isFinite(body.priceA4) ? Number(body.priceA4) : managed.a4;
+    const priceA3 = Number.isFinite(body.priceA3) ? Number(body.priceA3) : managed.a3;
     const priceDryRun = body.dryRun !== false; // default true: report only
     try {
       const plan = await ensureArtworkPrices(priceA4, priceA3, priceDryRun);
@@ -230,7 +232,8 @@ export async function POST(request: NextRequest) {
 
   if (dryRun) {
     // Run sync but report what would happen (no changes)
-    const result = await syncArtworksToStripe(1600000, 2400000, 0); // limit 0 = dry run
+    const managed = await getPrices();
+    const result = await syncArtworksToStripe(managed.a4, managed.a3, 0); // limit 0 = dry run
     return NextResponse.json({
       message: "Dry run - no changes made",
       dryRun: true,
@@ -239,7 +242,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Run full sync
-  const result = await syncArtworksToStripe(1600000, 2400000, limit);
+  const managed = await getPrices();
+  const result = await syncArtworksToStripe(managed.a4, managed.a3, limit);
 
   return NextResponse.json({
     message: `Sync complete`,
