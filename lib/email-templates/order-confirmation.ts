@@ -1,4 +1,4 @@
-import { filenameToSlug } from "../slug";
+import { normalizeAccents } from "../slug";
 import { SITE_URL } from "../config";
 
 export type AddressLike = {
@@ -100,8 +100,22 @@ function firstName(fullName: string): string {
   return parts[0];
 }
 
+// NB: filenameToSlug() strips what it takes for a file extension, so feeding it
+// a title like "2020.01 Venice" truncates to "2020". Build the slug from the
+// title directly, with the same normalisation rules the artwork page uses.
+function titleToSlug(title: string): string {
+  return normalizeAccents(title)
+    .replace(/[.\s]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function siteBase(): string {
+  return SITE_URL.replace(/\/+$/, "");
+}
+
 function artworkUrl(name: string): string {
-  return `${SITE_URL}/artwork/${filenameToSlug(name)}`;
+  return `${siteBase()}/artwork/${titleToSlug(name)}`;
 }
 
 export function buildOrderConfirmationText(order: OrderEmailData): string {
@@ -249,7 +263,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
                 <p style="margin:16px 0 0 0;font-size:12px;line-height:1.6;color:${MUTED};">
                   Questions? Reply to this email or write to
                   <a href="mailto:contact@andrasdenes.com" style="color:${INK};text-decoration:none;border-bottom:1px solid ${YELLOW};">contact@andrasdenes.com</a>.<br />
-                  Yellowsky — fine art prints · <a href="${SITE_URL}" style="color:${MUTED};text-decoration:none;">${SITE_URL.replace(/^https?:\/\//, "")}</a>
+                  Yellowsky — fine art prints · <a href="${siteBase()}" style="color:${MUTED};text-decoration:none;">${siteBase().replace(/^https?:\/\//, "")}</a>
                 </p>
               </td>
             </tr>
