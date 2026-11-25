@@ -36,6 +36,10 @@ export async function POST(request: NextRequest) {
       shippingAddress: { line1: "Garam utca 23.", city: "Budapest", postal_code: "1133", country: "HU" },
       billingAddress: { line1: "Garam utca 23.", city: "Budapest", postal_code: "1133", country: "HU" },
     };
+    if (body.single === true) {
+      sample.items = [sample.items[0]];
+      sample.totalAmount = sample.items[0].amount * sample.items[0].quantity;
+    }
     if (body.dryRun === true) {
       return NextResponse.json({ html: buildOrderConfirmationHtml(sample), text: buildOrderConfirmationText(sample) });
     }
