@@ -134,9 +134,10 @@ export function buildOrderConfirmationText(order: OrderEmailData): string {
   const lines: string[] = [];
   const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
   const noun = totalQty === 1 ? "print" : "prints";
-  const verb = totalQty === 1 ? "ships" : "ship";
 
-  lines.push(`${firstName(order.customerName)}, thank you for your order.`);
+  lines.push(
+    `${firstName(order.customerName)}, your ${noun} ${totalQty === 1 ? "is" : "are"} on ${totalQty === 1 ? "its" : "their"} way soon.`,
+  );
   lines.push("");
   lines.push(`Order ${order.orderId}`);
   lines.push("");
@@ -147,7 +148,7 @@ export function buildOrderConfirmationText(order: OrderEmailData): string {
   }
   lines.push("");
   lines.push(`Total: ${money(order.totalAmount, order.currency)}`);
-  lines.push(`Your ${noun} ${verb} free of charge.`);
+  lines.push("Shipping is free.");
   const shipping = addressLines(order.shippingAddress);
   if (shipping.length) {
     lines.push("");
@@ -165,7 +166,6 @@ export function buildOrderConfirmationText(order: OrderEmailData): string {
 export function buildOrderConfirmationHtml(order: OrderEmailData): string {
   const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
   const noun = totalQty === 1 ? "print" : "prints";
-  const verb = totalQty === 1 ? "ships" : "ship";
 
   const rows = order.items
     .map((item, index) => {
@@ -236,7 +236,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
               <td style="padding:24px 32px 0 32px;font-family:${SANS};">
                 <h1 style="margin:0;font-family:${DISPLAY};font-size:26px;line-height:1.25;color:${INK};font-weight:400;">Thank you for your order</h1>
                 <p style="margin:10px 0 0 0;font-size:14px;line-height:1.65;color:${MUTED};">
-                  ${esc(firstName(order.customerName))}, your ${noun} ${verb} free of charge.
+                  ${esc(firstName(order.customerName))}, your ${noun} ${totalQty === 1 ? "is" : "are"} on ${totalQty === 1 ? "its" : "their"} way soon.
                   Order <span style="color:${INK};">${esc(order.orderId)}</span>.
                 </p>
               </td>
@@ -252,6 +252,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
               <td align="right" style="padding:22px 32px 0 32px;font-family:${SANS};">
                 <span style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:${INK};font-weight:700;">Total</span>
                 <span style="font-size:18px;color:${INK};font-weight:600;padding-left:12px;white-space:nowrap;">${moneyHtml(order.totalAmount, order.currency)}</span>
+                <div style="font-size:12px;color:${MUTED};padding-top:4px;">Shipping is free.</div>
               </td>
             </tr>
             ${
