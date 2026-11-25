@@ -127,33 +127,60 @@ async function handleSuccessfulOrder(
     const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
     const currency = session.currency?.toUpperCase() || "EUR";
 
+    // --- Live-order guards -------------------------------------------------
+    // 1. Only confirm orders that are actually paid. With delayed payment methods
+    //    checkout.session.completed arrives while payment_status is still
+    //    "unpaid"; the confirmation must wait for async_payment_succeeded.
+    if (session.payment_status !== "paid") {
+      console.log("Order not paid yet, no confirmation sent:", session.id, session.payment_status);
+      return;
+    }
+    // 2. Exactly once. Stripe retries webhooks and can deliver both
+    //    completed and async_payment_succeeded for the same session, so the
+    //    session itself carries the marker.
+    const alreadySent = session.metadata?.confirmation_email_sent === "1";
+    const hasEmail = Boolean(customerEmail && customerEmail !== "unknown");
+
     // Customer confirmation email (cc the owner). Never throws: a mail failure must
     // not turn a paid order into a webhook error that Stripe retries forever.
-    const mailResult = await sendOrderConfirmation({
-      orderId: session.id,
-      customerName,
-      customerEmail,
-      items,
-      totalAmount,
-      currency,
-      shippingAddress,
-      billingAddress,
-    });
-    if (!mailResult.ok) {
-      console.error("Order confirmation email not sent:", session.id, mailResult.error);
+    if (hasEmail && !alreadySent) {
+      const mailResult = await sendOrderConfirmation({
+        orderId: session.id,
+        customerName,
+        customerEmail,
+        items,
+        totalAmount,
+        currency,
+        shippingAddress,
+        billingAddress,
+      });
+      if (mailResult.ok) {
+        await stripe.checkout.sessions
+          .update(session.id, { metadata: { confirmation_email_sent: "1" } })
+          .catch((err) => console.error("Could not mark confirmation sent:", session.id, err));
+      } else {
+        console.error("Order confirmation email not sent:", session.id, mailResult.error);
+      }
+    } else if (!hasEmail) {
+      console.error("Order has no customer email, confirmation skipped:", session.id);
     }
 
-    // Send Discord notification
-    await sendDiscordNotification({
-      customerEmail,
-      customerName,
-      items,
-      totalAmount,
-      currency,
-      shippingAddress,
-      sessionId: session.id,
-      eventType,
-    });
+    // Send Discord notification (once per order)
+    if (session.metadata?.order_notified !== "1") {
+      await sendDiscordNotification({
+        customerEmail,
+        customerName,
+        items,
+        totalAmount,
+        currency,
+        shippingAddress,
+        sessionId: session.id,
+        eventType,
+      });
+      await stripe.checkout.sessions
+        .update(session.id, { metadata: { order_notified: "1" } })
+        .catch(() => undefined);
+    }
 
   } catch (error) {
     console.error("Error handling successful order:", error);
