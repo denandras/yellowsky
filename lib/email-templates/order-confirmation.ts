@@ -219,7 +219,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no" />
     <meta name="color-scheme" content="light" />
     ${WEBFONTS}
-    <title>Order ${esc(order.orderId)}</title>
+    <title>Order ${esc(order.orderId)} — YellowSky</title>
   </head>
   <body style="margin:0;padding:0;background:${CREAM};-webkit-font-smoothing:antialiased;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CREAM};padding:32px 16px;">
@@ -249,7 +249,7 @@ export function buildOrderConfirmationHtml(order: OrderEmailData): string {
               </td>
             </tr>
             <tr>
-              <td align="right" style="padding:14px 32px 0 32px;font-family:${SANS};">
+              <td align="right" style="padding:22px 32px 0 32px;font-family:${SANS};">
                 <span style="font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:${INK};font-weight:700;">Total</span>
                 <span style="font-size:18px;color:${INK};font-weight:600;padding-left:12px;white-space:nowrap;">${moneyHtml(order.totalAmount, order.currency)}</span>
               </td>

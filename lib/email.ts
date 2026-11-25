@@ -58,7 +58,7 @@ export async function sendOrderConfirmation(order: OrderEmailData): Promise<Send
       to: order.customerEmail,
       cc: cfg.cc,
       replyTo: cfg.cc,
-      subject: `Order ${order.orderId} — Yellowsky`,
+      subject: `Order ${order.orderId} — YellowSky`,
       text: buildOrderConfirmationText(order),
       html: buildOrderConfirmationHtml(order),
     });
